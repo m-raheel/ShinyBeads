@@ -1,0 +1,12 @@
+Package: RnBeadsInterface
+Type: Package
+Title: Interface for RnBeads analysis
+Version: 0.1.0
+Author: Muhammad Raheel
+Maintainer: <s8murahe@stud.uni-saarland.de>
+Description: It is a package used to work with Rnbeads analysis performed by the
+    users. It makes it easier to visualize and compare different analysis performed
+    on same or different datasets and much more...
+License: MIT
+LazyData: TRUE
+RoxygenNote: 5.0.1

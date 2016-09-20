@@ -1,0 +1,333 @@
+2016-07-07 11:28:41     0.7   12.9  STATUS STARTED RnBeads Pipeline
+2016-07-07 11:28:41     0.7   12.9    INFO     Initialized report index and saved to index.html
+2016-07-07 11:28:41     0.7   12.9  STATUS     STARTED Loading Data
+2016-07-07 11:28:41     0.7   12.9    INFO         Number of cores: 1
+2016-07-07 11:28:41     0.8   12.9    INFO         Loading data of type "infinium.idat.dir"
+2016-07-07 11:28:41     0.8   12.9  STATUS         STARTED Loading Data from IDAT Files
+2016-07-07 11:28:41     0.8   12.9    INFO             Added column barcode to the provided sample annotation table
+2016-07-07 11:28:42     0.8   12.9    INFO             Detected platform: HumanMethylation450
+2016-07-07 11:31:46     1.1   14.9  STATUS         COMPLETED Loading Data from IDAT Files
+2016-07-07 11:46:19     1.4   15.7  STATUS         Loaded data from /projects/factorization/raw_data/GSE42861/idat
+2016-07-07 11:46:31     2.4   15.7  STATUS         Predicted gender for the loaded samples
+2016-07-07 11:46:35     2.0   15.7  STATUS         Added data loading section to the report
+2016-07-07 11:46:35     2.0   15.7  STATUS         Loaded 92 samples and 485577 sites
+2016-07-07 11:46:35     2.0   15.7    INFO         Output object is of type RnBeadRawSet
+2016-07-07 11:46:35     2.0   15.7  STATUS     COMPLETED Loading Data
+2016-07-07 11:49:25     1.4   15.7    INFO     Initialized report index and saved to index.html
+2016-07-07 11:49:31     1.4   15.7  STATUS     STARTED Quality Control
+2016-07-07 11:49:31     1.4   15.7    INFO         Number of cores: 1
+2016-07-07 11:49:31     1.4   15.7  STATUS         STARTED Quality Control Section
+2016-07-07 11:49:51     1.4   15.7  STATUS             Added quality control box plots
+2016-07-07 11:51:48     1.4   15.7  STATUS             Added quality control bar plots
+2016-07-07 11:51:57     1.4   15.7  STATUS             Added negative control boxplots
+2016-07-07 11:51:57     1.4   15.7  STATUS         COMPLETED Quality Control Section
+2016-07-07 11:51:57     1.4   15.7  STATUS         STARTED Visualizing Sample Mixups
+2016-07-07 11:51:57     1.4   15.7  STATUS             STARTED Mixups Visualization Section
+2016-07-07 11:52:11     2.0   15.7  STATUS                 Added SNP Heatmap
+2016-07-07 11:52:17     2.0   15.7  STATUS                 Calculated Manhattan distances between samples based on SNP probes
+2016-07-07 11:52:18     2.0   15.7  STATUS                 Add plot of SNP distances
+2016-07-07 11:52:18     2.0   15.7  STATUS                 Exported SNP-based distances to snp_distances.csv
+2016-07-07 11:52:18     2.0   15.7  STATUS                 Added SNP-based Distances
+2016-07-07 11:52:18     2.0   15.7  STATUS             COMPLETED Mixups Visualization Section
+2016-07-07 11:52:18     2.0   15.7  STATUS         COMPLETED Visualizing Sample Mixups
+2016-07-07 11:52:30     2.2   15.7  STATUS     COMPLETED Quality Control
+2016-07-07 11:52:31     2.2   15.7    INFO     Initialized report index and saved to index.html
+2016-07-07 11:52:37     1.4   15.7  STATUS     STARTED Preprocessing
+2016-07-07 11:52:37     1.4   15.7    INFO         Number of cores: 1
+2016-07-07 11:52:37     1.4   15.7  STATUS         STARTED Filtering Procedures I
+2016-07-07 11:52:38     1.4   15.7  STATUS             STARTED Removal of SNP-enriched Sites
+2016-07-07 11:52:38     1.4   15.7  STATUS                 Removed 10119 sites using SNP criterion "3"
+2016-07-07 11:52:38     1.4   15.7  STATUS                 Saved removed sites to /projects/factorization/raw_data/results_with_adjustment/preprocessing_data/removed_sites_snp.csv
+2016-07-07 11:52:38     1.4   15.7  STATUS                 Added a corresponding section to the report
+2016-07-07 11:52:38     1.4   15.7  STATUS             COMPLETED Removal of SNP-enriched Sites
+2016-07-07 11:52:44     2.0   15.7    INFO             Working with a p-value threshold of 0.05
+2016-07-07 11:52:46     2.2   15.7  STATUS             STARTED Greedycut
+2016-07-07 11:53:04     2.3   15.7  STATUS                 Calculated a total of 1485 iterations
+2016-07-07 11:53:04     2.3   15.7    INFO                 Optimal number of iterations is 1485
+2016-07-07 11:53:08     2.3   15.7  STATUS                 Created ROC plot
+2016-07-07 11:53:11     2.2   15.7  STATUS                 Created line plots for matrix dimensions and other statistics
+2016-07-07 11:53:11     2.2   15.7  STATUS                 Saved removed sites to /projects/factorization/raw_data/results_with_adjustment/preprocessing_data/removed_sites_greedycut.csv
+2016-07-07 11:53:11     2.2   15.7  STATUS             COMPLETED Greedycut
+2016-07-07 11:53:11     2.2   15.7  STATUS             Retained 92 samples and 473974 sites
+2016-07-07 11:53:11     2.2   15.7  STATUS         COMPLETED Filtering Procedures I
+2016-07-07 11:53:11     2.2   15.7  STATUS         STARTED Summary of Filtering Procedures I
+2016-07-07 11:53:11     2.2   15.7  STATUS             Creating summary table of removed sites, samples and unreliable measurements...
+2016-07-07 11:53:24     2.0   15.7  STATUS             Saving table and figures...
+2016-07-07 11:53:25     2.0   15.7  STATUS             Added summary table of removed and retained items
+2016-07-07 11:53:25     2.0   15.7    INFO             Subsampling 485577 sites for plotting density distributions
+2016-07-07 11:53:33     3.2   15.7  STATUS             Constructed sequences of removed and retained methylation values
+2016-07-07 11:53:50     2.7   15.7  STATUS             Added comparison between removed and retained beta values
+2016-07-07 11:53:50     2.7   15.7  STATUS         COMPLETED Summary of Filtering Procedures I
+2016-07-07 11:53:50     2.7   15.7  STATUS         STARTED Manipulating the object
+2016-07-07 12:08:58     1.8   18.3  STATUS             Removed 11603 sites (probes)
+2016-07-07 12:08:58     1.8   18.3  STATUS         COMPLETED Manipulating the object
+2016-07-07 12:08:59     1.8   18.3  STATUS         STARTED Normalization Procedure
+2016-07-07 12:30:04     6.8   21.0  STATUS             Performed background subtraction with method methylumi.noob
+2016-07-07 12:50:30     4.0   21.0  STATUS             Performed normalization with method "wm.dasen"
+2016-07-07 12:51:17     4.0   21.0  STATUS             Added comparison between non-normalized and normalized beta values
+2016-07-07 12:51:48     4.9   21.0  STATUS             Added histogram of observed beta shifts (magnitude of correction)
+2016-07-07 12:51:49     4.9   21.0  STATUS             Added 2D histogram of observed beta values and shifts
+2016-07-07 12:52:13     4.9   21.0  STATUS             Added normalization section
+2016-07-07 12:52:13     4.9   21.0  STATUS         COMPLETED Normalization Procedure
+2016-07-07 12:52:23     3.7   18.3  STATUS         STARTED Filtering Procedures II
+2016-07-07 12:52:24     3.7   18.3  STATUS             STARTED Probe Context Removal
+2016-07-07 12:52:24     3.7   18.3  STATUS                 Removed 3123 probe(s) having not acceptable context
+2016-07-07 12:52:25     3.7   18.3  STATUS                 Saved removed sites to /projects/factorization/raw_data/results_with_adjustment/preprocessing_data/removed_sites_context.csv
+2016-07-07 12:52:25     3.7   18.3  STATUS                 Added a corresponding section to the report
+2016-07-07 12:52:25     3.7   18.3  STATUS             COMPLETED Probe Context Removal
+2016-07-07 12:52:25     3.7   18.3  STATUS             STARTED Removal of Sites on Sex Chromosomes
+2016-07-07 12:52:25     3.7   18.3  STATUS                 Removed 11079 site(s) on sex chromosomes
+2016-07-07 12:52:25     3.7   18.3  STATUS                 Saved removed sites to /projects/factorization/raw_data/results_with_adjustment/preprocessing_data/removed_sites_sex.csv
+2016-07-07 12:52:25     3.7   18.3  STATUS                 Added a corresponding section to the report
+2016-07-07 12:52:25     3.7   18.3  STATUS             COMPLETED Removal of Sites on Sex Chromosomes
+2016-07-07 12:52:25     3.7   18.3  STATUS             Retained 92 samples and 459772 sites
+2016-07-07 12:52:25     3.7   18.3  STATUS         COMPLETED Filtering Procedures II
+2016-07-07 12:52:34     3.7   18.3  STATUS         STARTED Summary of Filtering Procedures II
+2016-07-07 12:52:34     3.7   18.3  STATUS             Creating summary table of removed sites, samples and unreliable measurements...
+2016-07-07 12:52:52     3.7   18.3  STATUS             Saving table and figures...
+2016-07-07 12:52:52     3.7   18.3  STATUS             Added summary table of removed and retained items
+2016-07-07 12:52:53     3.7   18.3    INFO             Subsampling 473974 sites for plotting density distributions
+2016-07-07 12:53:01     3.7   18.3  STATUS             Constructed sequences of removed and retained methylation values
+2016-07-07 12:53:19     3.7   18.3  STATUS             Added comparison between removed and retained beta values
+2016-07-07 12:53:19     3.7   18.3  STATUS         COMPLETED Summary of Filtering Procedures II
+2016-07-07 12:53:19     3.7   18.3  STATUS         STARTED Manipulating the object
+2016-07-07 13:08:35     3.7   20.9  STATUS             Removed 14202 sites (probes)
+2016-07-07 13:08:35     3.7   20.9  STATUS         COMPLETED Manipulating the object
+2016-07-07 13:08:42     3.6   18.2  STATUS     COMPLETED Preprocessing
+2016-07-07 13:10:46     3.6   15.5    INFO     Initialized report index and saved to index.html
+2016-07-07 13:10:52     3.6   15.5  STATUS     STARTED Tracks and Tables
+2016-07-07 13:10:52     3.6   15.5    INFO         Number of cores: 1
+2016-07-07 13:10:52     3.6   15.5  STATUS         STARTED Generating Tracks and Tables
+2016-07-07 13:10:52     3.6   15.5  STATUS             STARTED Exporting sites
+2016-07-07 13:10:52     3.6   15.5  STATUS                 STARTED Creating Track Hub -- bigBed
+2016-07-07 13:10:52     3.6   15.5  STATUS                     STARTED Conversion to BED
+2016-07-07 13:10:52     3.6   15.5  STATUS                         Converting to GRangesList
+2016-07-07 13:11:44     3.6   15.5  STATUS                         Exporting sample 1
+2016-07-07 13:11:49     3.6   15.5  STATUS                         Exporting sample 2
+2016-07-07 13:11:54     3.6   15.5  STATUS                         Exporting sample 3
+2016-07-07 13:11:59     3.6   15.5  STATUS                         Exporting sample 4
+2016-07-07 13:12:04     3.6   15.5  STATUS                         Exporting sample 5
+2016-07-07 13:12:09     3.6   15.5  STATUS                         Exporting sample 6
+2016-07-07 13:12:15     3.6   15.5  STATUS                         Exporting sample 7
+2016-07-07 13:12:20     3.6   15.5  STATUS                         Exporting sample 8
+2016-07-07 13:12:24     3.6   15.5  STATUS                         Exporting sample 9
+2016-07-07 13:12:29     3.6   15.5  STATUS                         Exporting sample 10
+2016-07-07 13:12:34     3.6   15.5  STATUS                         Exporting sample 11
+2016-07-07 13:12:39     3.6   15.5  STATUS                         Exporting sample 12
+2016-07-07 13:12:44     3.6   15.5  STATUS                         Exporting sample 13
+2016-07-07 13:12:49     3.6   15.5  STATUS                         Exporting sample 14
+2016-07-07 13:12:54     3.6   15.5  STATUS                         Exporting sample 15
+2016-07-07 13:12:59     3.6   15.5  STATUS                         Exporting sample 16
+2016-07-07 13:13:03     3.6   15.5  STATUS                         Exporting sample 17
+2016-07-07 13:13:08     3.6   15.5  STATUS                         Exporting sample 18
+2016-07-07 13:13:13     3.6   15.5  STATUS                         Exporting sample 19
+2016-07-07 13:13:18     3.6   15.5  STATUS                         Exporting sample 20
+2016-07-07 13:13:23     3.6   15.5  STATUS                         Exporting sample 21
+2016-07-07 13:13:28     3.6   15.5  STATUS                         Exporting sample 22
+2016-07-07 13:13:33     3.6   15.5  STATUS                         Exporting sample 23
+2016-07-07 13:13:38     3.6   15.5  STATUS                         Exporting sample 24
+2016-07-07 13:13:42     3.6   15.5  STATUS                         Exporting sample 25
+2016-07-07 13:13:47     3.6   15.5  STATUS                         Exporting sample 26
+2016-07-07 13:13:52     3.6   15.5  STATUS                         Exporting sample 27
+2016-07-07 13:13:57     3.6   15.5  STATUS                         Exporting sample 28
+2016-07-07 13:14:02     3.6   15.5  STATUS                         Exporting sample 29
+2016-07-07 13:14:06     3.6   15.5  STATUS                         Exporting sample 30
+2016-07-07 13:14:11     3.6   15.5  STATUS                         Exporting sample 31
+2016-07-07 13:14:16     3.6   15.5  STATUS                         Exporting sample 32
+2016-07-07 13:14:21     3.6   15.5  STATUS                         Exporting sample 33
+2016-07-07 13:14:26     3.6   15.5  STATUS                         Exporting sample 34
+2016-07-07 13:14:30     3.6   15.5  STATUS                         Exporting sample 35
+2016-07-07 13:14:35     3.6   15.5  STATUS                         Exporting sample 36
+2016-07-07 13:14:40     3.6   15.5  STATUS                         Exporting sample 37
+2016-07-07 13:14:45     3.6   15.5  STATUS                         Exporting sample 38
+2016-07-07 13:14:50     3.6   15.5  STATUS                         Exporting sample 39
+2016-07-07 13:14:54     3.6   15.5  STATUS                         Exporting sample 40
+2016-07-07 13:14:59     3.6   15.5  STATUS                         Exporting sample 41
+2016-07-07 13:15:04     3.6   15.5  STATUS                         Exporting sample 42
+2016-07-07 13:15:09     3.6   15.5  STATUS                         Exporting sample 43
+2016-07-07 13:15:14     3.6   15.5  STATUS                         Exporting sample 44
+2016-07-07 13:15:19     3.6   15.5  STATUS                         Exporting sample 45
+2016-07-07 13:15:24     3.6   15.5  STATUS                         Exporting sample 46
+2016-07-07 13:15:29     3.6   15.5  STATUS                         Exporting sample 47
+2016-07-07 13:15:33     3.6   15.5  STATUS                         Exporting sample 48
+2016-07-07 13:15:38     3.6   15.5  STATUS                         Exporting sample 49
+2016-07-07 13:15:43     3.6   15.5  STATUS                         Exporting sample 50
+2016-07-07 13:15:48     3.6   15.5  STATUS                         Exporting sample 51
+2016-07-07 13:15:52     3.6   15.5  STATUS                         Exporting sample 52
+2016-07-07 13:15:57     3.6   15.5  STATUS                         Exporting sample 53
+2016-07-07 13:16:02     3.6   15.5  STATUS                         Exporting sample 54
+2016-07-07 13:16:07     3.6   15.5  STATUS                         Exporting sample 55
+2016-07-07 13:16:11     3.6   15.5  STATUS                         Exporting sample 56
+2016-07-07 13:16:16     3.6   15.5  STATUS                         Exporting sample 57
+2016-07-07 13:16:21     3.6   15.5  STATUS                         Exporting sample 58
+2016-07-07 13:16:26     3.6   15.5  STATUS                         Exporting sample 59
+2016-07-07 13:16:31     3.6   15.5  STATUS                         Exporting sample 60
+2016-07-07 13:16:36     3.6   15.5  STATUS                         Exporting sample 61
+2016-07-07 13:16:40     3.6   15.5  STATUS                         Exporting sample 62
+2016-07-07 13:16:45     3.6   15.5  STATUS                         Exporting sample 63
+2016-07-07 13:16:50     3.6   15.5  STATUS                         Exporting sample 64
+2016-07-07 13:16:55     3.6   15.5  STATUS                         Exporting sample 65
+2016-07-07 13:17:00     3.6   15.5  STATUS                         Exporting sample 66
+2016-07-07 13:17:04     3.6   15.5  STATUS                         Exporting sample 67
+2016-07-07 13:17:09     3.6   15.5  STATUS                         Exporting sample 68
+2016-07-07 13:17:14     3.6   15.5  STATUS                         Exporting sample 69
+2016-07-07 13:17:19     3.6   15.5  STATUS                         Exporting sample 70
+2016-07-07 13:17:24     3.6   15.5  STATUS                         Exporting sample 71
+2016-07-07 13:17:28     3.6   15.5  STATUS                         Exporting sample 72
+2016-07-07 13:17:33     3.6   15.5  STATUS                         Exporting sample 73
+2016-07-07 13:17:38     3.6   15.5  STATUS                         Exporting sample 74
+2016-07-07 13:17:43     3.6   15.5  STATUS                         Exporting sample 75
+2016-07-07 13:17:48     3.6   15.5  STATUS                         Exporting sample 76
+2016-07-07 13:17:53     3.6   15.5  STATUS                         Exporting sample 77
+2016-07-07 13:17:58     3.6   15.5  STATUS                         Exporting sample 78
+2016-07-07 13:18:02     3.6   15.5  STATUS                         Exporting sample 79
+2016-07-07 13:18:07     3.6   15.5  STATUS                         Exporting sample 80
+2016-07-07 13:18:12     3.6   15.5  STATUS                         Exporting sample 81
+2016-07-07 13:18:17     3.6   15.5  STATUS                         Exporting sample 82
+2016-07-07 13:18:22     3.6   15.5  STATUS                         Exporting sample 83
+2016-07-07 13:18:27     3.6   15.5  STATUS                         Exporting sample 84
+2016-07-07 13:18:32     3.6   15.5  STATUS                         Exporting sample 85
+2016-07-07 13:18:37     3.6   15.5  STATUS                         Exporting sample 86
+2016-07-07 13:18:42     3.6   15.5  STATUS                         Exporting sample 87
+2016-07-07 13:18:47     3.6   15.5  STATUS                         Exporting sample 88
+2016-07-07 13:18:53     3.6   15.5  STATUS                         Exporting sample 89
+2016-07-07 13:18:58     3.6   15.5  STATUS                         Exporting sample 90
+2016-07-07 13:19:04     3.6   15.5  STATUS                         Exporting sample 91
+2016-07-07 13:19:09     3.6   15.5  STATUS                         Exporting sample 92
+2016-07-07 13:19:14     3.6   15.5  STATUS                     COMPLETED Conversion to BED
+2016-07-07 13:19:15     3.6   15.5  STATUS                     STARTED Creating Track Hub
+2016-07-07 13:23:59     3.6   15.5  STATUS                     COMPLETED Creating Track Hub
+2016-07-07 13:23:59     3.6   15.5  STATUS                 COMPLETED Creating Track Hub -- bigBed
+2016-07-07 13:23:59     3.6   15.5  STATUS                 STARTED Creating UCSC Track Hub -- bigWig
+2016-07-07 13:23:59     3.6   15.5  STATUS                     STARTED Conversion to bedGraph
+2016-07-07 13:25:51     3.6   15.5  STATUS                     COMPLETED Conversion to bedGraph
+2016-07-07 13:25:51     3.6   15.5  STATUS                     STARTED Creating Track Hub
+2016-07-07 13:27:30     3.6   15.5  STATUS                     COMPLETED Creating Track Hub
+2016-07-07 13:27:30     3.6   15.5  STATUS                 COMPLETED Creating UCSC Track Hub -- bigWig
+2016-07-07 13:27:30     3.6   15.5  STATUS             COMPLETED Exporting sites
+2016-07-07 13:27:30     3.6   15.5  STATUS         COMPLETED Generating Tracks and Tables
+2016-07-07 13:27:30     3.6   15.5  STATUS         STARTED Writing export report
+2016-07-07 13:29:39     3.6   15.5  STATUS         COMPLETED Writing export report
+2016-07-07 13:29:39     3.6   15.5  STATUS     COMPLETED Tracks and Tables
+2016-07-07 13:29:39     3.6   15.5    INFO     Initialized report index and saved to index.html
+2016-07-07 13:29:39     3.6   15.5  STATUS     STARTED Covariate Inference
+2016-07-07 13:29:39     3.6   15.5    INFO         Number of cores: 1
+2016-07-07 13:29:39     3.6   15.5  STATUS     COMPLETED Covariate Inference
+2016-07-07 13:31:37     3.6   15.5    INFO     Initialized report index and saved to index.html
+2016-07-07 13:31:46     3.6   15.5  STATUS     STARTED Exploratory Analysis
+2016-07-07 13:31:46     3.6   15.5    INFO         Number of cores: 1
+2016-07-07 13:31:46     3.6   15.5  STATUS         Designed color mappings for probe type and CGI status
+2016-07-07 13:32:19     3.7   15.5  STATUS         STARTED Dimension Reduction Techniques
+2016-07-07 13:32:27     3.7   15.5  STATUS             STARTED MDS
+2016-07-07 13:33:26     3.7   15.5  STATUS                 Calculated MDS coordinates using manhattan distance
+2016-07-07 13:34:36     3.7   15.5  STATUS                 Calculated MDS coordinates using euclidean distance
+2016-07-07 13:34:36     3.7   15.5  STATUS             COMPLETED MDS
+2016-07-07 13:34:36     3.7   15.5  STATUS             STARTED PCA
+2016-07-07 13:35:03     3.7   15.5  STATUS             COMPLETED PCA
+2016-07-07 13:35:05     3.7   15.5  STATUS             STARTED MDS
+2016-07-07 13:35:23     3.7   15.5  STATUS                 Calculated MDS coordinates using manhattan distance
+2016-07-07 13:35:41     3.7   15.5  STATUS                 Calculated MDS coordinates using euclidean distance
+2016-07-07 13:35:41     3.7   15.5  STATUS             COMPLETED MDS
+2016-07-07 13:35:41     3.7   15.5  STATUS             STARTED PCA
+2016-07-07 13:35:50     3.7   15.5  STATUS             COMPLETED PCA
+2016-07-07 13:35:51     3.7   15.5  STATUS             STARTED MDS
+2016-07-07 13:35:53     3.7   15.5  STATUS                 Calculated MDS coordinates using manhattan distance
+2016-07-07 13:35:56     3.7   15.5  STATUS                 Calculated MDS coordinates using euclidean distance
+2016-07-07 13:35:56     3.7   15.5  STATUS             COMPLETED MDS
+2016-07-07 13:35:56     3.7   15.5  STATUS             STARTED PCA
+2016-07-07 13:35:58     3.7   15.5  STATUS             COMPLETED PCA
+2016-07-07 13:35:59     3.7   15.5  STATUS             STARTED MDS
+2016-07-07 13:36:02     3.7   15.5  STATUS                 Calculated MDS coordinates using manhattan distance
+2016-07-07 13:36:05     3.7   15.5  STATUS                 Calculated MDS coordinates using euclidean distance
+2016-07-07 13:36:05     3.7   15.5  STATUS             COMPLETED MDS
+2016-07-07 13:36:05     3.7   15.5  STATUS             STARTED PCA
+2016-07-07 13:36:07     3.7   15.5  STATUS             COMPLETED PCA
+2016-07-07 13:36:08     3.7   15.5  STATUS             STARTED MDS
+2016-07-07 13:36:09     3.7   15.5  STATUS                 Calculated MDS coordinates using manhattan distance
+2016-07-07 13:36:11     3.7   15.5  STATUS                 Calculated MDS coordinates using euclidean distance
+2016-07-07 13:36:11     3.7   15.5  STATUS             COMPLETED MDS
+2016-07-07 13:36:11     3.7   15.5  STATUS             STARTED PCA
+2016-07-07 13:36:12     3.7   15.5  STATUS             COMPLETED PCA
+2016-07-07 13:36:13     3.7   15.5    INFO             Mapping 7 traits to point colors and types
+2016-07-07 14:03:32     3.7   15.5    INFO             Principal components that explain at least 95 % of the total variance: 55
+2016-07-07 14:03:32     3.7   15.5    INFO             Saved percentage of total variance to pca_variance_explained_1.csv
+2016-07-07 14:03:33     3.7   15.5    INFO             Principal components that explain at least 95 % of the total variance: 52
+2016-07-07 14:03:33     3.7   15.5    INFO             Saved percentage of total variance to pca_variance_explained_2.csv
+2016-07-07 14:03:34     3.7   15.5    INFO             Principal components that explain at least 95 % of the total variance: 52
+2016-07-07 14:03:34     3.7   15.5    INFO             Saved percentage of total variance to pca_variance_explained_3.csv
+2016-07-07 14:03:35     3.7   15.5    INFO             Principal components that explain at least 95 % of the total variance: 51
+2016-07-07 14:03:35     3.7   15.5    INFO             Saved percentage of total variance to pca_variance_explained_4.csv
+2016-07-07 14:03:36     3.7   15.5    INFO             Principal components that explain at least 95 % of the total variance: 56
+2016-07-07 14:03:36     3.7   15.5    INFO             Saved percentage of total variance to pca_variance_explained_5.csv
+2016-07-07 14:03:36     3.7   15.5  STATUS             Created scatter plots and CDFs summarizing the reduced dimensional representations
+2016-07-07 14:03:36     3.7   15.5  STATUS         COMPLETED Dimension Reduction Techniques
+2016-07-07 14:03:36     3.7   15.5  STATUS         STARTED Tests for Associations
+2016-07-07 14:03:36     3.7   15.5    INFO             Testing the following traits for associations: Sentrix_ID; Sentrix_Position; diseaseState; age; gender; smokingStatus; CellType; AnalysisGroup; Predicted Male Probability; Predicted Gender
+2016-07-07 14:03:37     3.7   15.5  STATUS             Created 10000 sample permutations
+2016-07-07 14:06:04     3.7   15.5  STATUS             Computed correlations between principal components and traits.
+2016-07-07 14:06:16     3.7   15.5  STATUS             Computed pairwise correlations between traits.
+2016-07-07 14:06:16     3.7   15.5  STATUS         COMPLETED Tests for Associations
+2016-07-07 14:06:28     3.7   15.5  STATUS         STARTED Quality-associated Batch Effects
+2016-07-07 14:10:39     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for sites
+2016-07-07 14:12:03     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for sites
+2016-07-07 14:13:28     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and extension for sites
+2016-07-07 14:14:31     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and hybridization for sites
+2016-07-07 14:15:55     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for sites
+2016-07-07 14:19:59     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity I for sites
+2016-07-07 14:21:04     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity II for sites
+2016-07-07 14:22:27     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and staining for sites
+2016-07-07 14:23:10     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and target removal for sites
+2016-07-07 14:27:12     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for tiling
+2016-07-07 14:28:34     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for tiling
+2016-07-07 14:29:59     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and extension for tiling
+2016-07-07 14:31:00     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and hybridization for tiling
+2016-07-07 14:32:25     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for tiling
+2016-07-07 14:36:31     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity I for tiling
+2016-07-07 14:37:37     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity II for tiling
+2016-07-07 14:39:05     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and staining for tiling
+2016-07-07 14:39:49     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and target removal for tiling
+2016-07-07 14:44:03     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for genes
+2016-07-07 14:45:27     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for genes
+2016-07-07 14:46:54     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and extension for genes
+2016-07-07 14:47:59     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and hybridization for genes
+2016-07-07 14:49:27     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for genes
+2016-07-07 14:53:33     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity I for genes
+2016-07-07 14:54:34     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity II for genes
+2016-07-07 14:56:03     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and staining for genes
+2016-07-07 14:56:46     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and target removal for genes
+2016-07-07 15:00:57     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for promoters
+2016-07-07 15:02:22     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for promoters
+2016-07-07 15:03:48     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and extension for promoters
+2016-07-07 15:04:54     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and hybridization for promoters
+2016-07-07 15:06:18     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for promoters
+2016-07-07 15:10:29     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity I for promoters
+2016-07-07 15:11:33     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity II for promoters
+2016-07-07 15:12:57     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and staining for promoters
+2016-07-07 15:13:40     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and target removal for promoters
+2016-07-07 15:17:48     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for cpgislands
+2016-07-07 15:19:15     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for cpgislands
+2016-07-07 15:20:37     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and extension for cpgislands
+2016-07-07 15:21:42     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and hybridization for cpgislands
+2016-07-07 15:23:05     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for cpgislands
+2016-07-07 15:27:10     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity I for cpgislands
+2016-07-07 15:28:13     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and specificity II for cpgislands
+2016-07-07 15:29:36     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and staining for cpgislands
+2016-07-07 15:30:18     3.7   15.5  STATUS             Computed associations between 8 principal component(s) and target removal for cpgislands
+2016-07-07 15:32:48     3.7   15.5  STATUS             Added heatmaps of correlation between principal components and signal levels of Q probes
+2016-07-07 15:32:48     3.7   15.5  STATUS         COMPLETED Quality-associated Batch Effects
+2016-07-07 15:32:58     3.7   15.5  STATUS         STARTED Methylation Value Distributions - Sample Groups
+2016-07-07 15:32:58     3.7   15.5    INFO             processing beta_density_samples_1_1
+2016-07-07 15:33:00     3.7   15.5    INFO             Density estimation ( all samples--sites ): Groupwise retained observations after missing value removal: all:42299024/42299024
+2016-07-07 15:33:02     3.7   15.5    INFO             Density estimation ( all samples--sites ): Groupwise retained observations after subsampling: all:1000000/42299024
+2016-07-07 15:33:16     3.7   15.5    INFO             processing beta_density_samples_1_2
+2016-07-07 15:33:16     3.7   15.5    INFO             Density estimation ( all samples--tiling ): Groupwise retained observations after missing value removal: all:12077852/12077852
+2016-07-07 15:33:17     3.7   15.5    INFO             Density estimation ( all samples--tiling ): Groupwise retained observations after subsampling: all:1000000/12077852
+2016-07-07 15:33:29     3.7   15.5    INFO             processing beta_density_samples_1_3
+2016-07-07 15:33:29     3.7   15.5    INFO             Density estimation ( all samples--genes ): Groupwise retained observations after missing value removal: all:2737828/2737828
+2016-07-07 15:33:29     3.7   15.5    INFO             Density estimation ( all samples--genes ): Groupwise retained observations after subsampling: all:1000000/2737828
+2016-07-07 15:33:41     3.7   15.5    INFO             processing beta_density_samples_1_4
+2016-07-07 15:33:41     3.7   15.5    INFO             Density estimation ( all samples--promoters ): Groupwise retained observations after missing value removal: all:2753836/2753836
+2016-07-07 15:33:41     3.7   15.5    INFO             Density estimation ( all samples--promoters ): Groupwise retained observations after subsampling: all:1000000/2753836
+2016-07-07 15:33:53     3.7   15.5    INFO             processing beta_density_samples_1_5
+2016-07-07 15:33:53     3.7   15.5    INFO             Density estimation ( all samples--cpgislands ): Groupwise retained observations after missing value removal: all:2376912/2376912
+2016-07-07 15:33:53     3.7   15.5    INFO             Density estimation ( all samples--cpgislands ): Groupwise retained observations after subsampling: all:1000000/2376912
