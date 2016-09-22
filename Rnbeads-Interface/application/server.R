@@ -158,21 +158,42 @@ shinyServer(function(input, output, session) {
   # check and return the results folder that have the same sample annotation file.###############
   # uses the functions from the rnbeadsinterface package
 
-  common.datasets = datasets_groups(results.dir)
+  common.datasets <- reactive({
+
+
+    datasets_groups(results.dir)
+
+  })
+
+  observe(
+
+    lapply(1:length(common.datasets()), function(i) {
+
+      lapply(1:length(common.datasets()[i]), function(j) {
+        output[[paste0('c',i)]] <- renderUI({
+
+
+          paste0(common.datasets()[i][j])
+        })
+      })
+    })
+  )
+
+  #common.datasets = datasets_groups(results.dir)
   #datasets_files = datasets_list(results.dir)
 
 
 
-  lapply(1:length(common.datasets), function(i) {
-
-    lapply(1:length(common.datasets[i]), function(j) {
-      output[[paste0('c',i)]] <- renderUI({
-
-
-        paste0(common.datasets[i][j])
-      })
-    })
-  })
+  # lapply(1:length(common.datasets), function(i) {
+  #
+  #   lapply(1:length(common.datasets[i]), function(j) {
+  #     output[[paste0('c',i)]] <- renderUI({
+  #
+  #
+  #       paste0(common.datasets[i][j])
+  #     })
+  #   })
+  # })
 
   # lapply(1:length(datasets_files), function(i) {
   #
