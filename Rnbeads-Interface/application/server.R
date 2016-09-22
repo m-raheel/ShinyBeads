@@ -14,6 +14,8 @@ shinyServer(function(input, output, session) {
   # return the Rnbeads directories
   results.dir = file.path(getwd(), 'results')
 
+  print (results.dir)
+
   choices <- list.files(path = results.dir)
 
   lapply(1:length(choices), function(i) {
@@ -158,6 +160,7 @@ shinyServer(function(input, output, session) {
 
   common.datasets = datasets_groups(results.dir)
   datasets_files = datasets_list(results.dir)
+
 
 
   lapply(1:length(common.datasets), function(i) {
@@ -391,6 +394,8 @@ shinyServer(function(input, output, session) {
 
     vec <- as.list(input$check_comp)
 
+    check.choices.list <- list()
+
     if (length(vec) == 0){
       x <- list()
       output$compqqplot3 <- renderPlot({
@@ -415,7 +420,7 @@ shinyServer(function(input, output, session) {
     }
     else{
 
-      check.choices.list <- list()
+
 
       for (i in 1:length(vec)) {
 
@@ -423,7 +428,6 @@ shinyServer(function(input, output, session) {
 
         qq.value <- as.character(unlist(vec[i][1]) )
         check.choices.list[i] <- list(comparison_plot(qq.dir , qq.value))
-
 
 
       }
@@ -448,7 +452,7 @@ shinyServer(function(input, output, session) {
           y<- unlist(check.choices.list[1])
 
 
-          qqplot(y,y,main="single data file", xlab="diffmeth.p.val", ylab="diffmeth.p.val")
+          qqnorm(y,main="Normal Q-Q plot", xlab="Theoretical Distribution", ylab="diffmeth.p.val")
 
 
 

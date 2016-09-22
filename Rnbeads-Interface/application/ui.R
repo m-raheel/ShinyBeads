@@ -206,7 +206,7 @@ tabPanel("Integrative Visualization",
                                                               choices = list("",1),
                                                               selected = 1),
 
-                                           actionButton('insertBtn', 'Insert'),
+                                           actionButton('insertBtn', 'Show'),
 
 
                                            plotOutput('compqqplot3')
