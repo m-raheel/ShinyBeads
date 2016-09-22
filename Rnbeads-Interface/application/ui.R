@@ -229,18 +229,22 @@ tabPanel("Integrative Visualization",
 
                                                    br(), br(),
 
-                                                   tags$p("The table below lists the options of the executed module."),
+                                                   tags$p("The table below lists the options of the executed module.")
 
-                                                   tableOutput("htmlTable")
+                                                   #,
+
+                                                   #tableOutput("htmlTable")
 
                                           ),
 
                                           tabPanel("Comparisons",
                                                    br(), br(),
 
-                                                   tags$p("The following comparisons were made:"),
+                                                   tags$p("The following comparisons were made:")
 
-                                                   tableOutput("htmlcomparisonTable")
+                                                   #,
+
+                                                   #tableOutput("htmlcomparisonTable")
 
 
 
