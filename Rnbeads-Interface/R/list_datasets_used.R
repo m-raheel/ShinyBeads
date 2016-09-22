@@ -18,6 +18,7 @@ datasets_groups <- function(rd) {
     dn <- dirname(file.path(rd, folders[i],'data_import_data/annotation.csv'))
     full.path <- file.path(dn,bn)
 
+    print (full.path)
 
     #tmp <- file.path(rd, paste(folders[i],'/data_import_data/annotation.csv'),sep='')
     #removing space
