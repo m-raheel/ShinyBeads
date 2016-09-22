@@ -14,10 +14,15 @@ datasets_groups <- function(rd) {
   path.lists <- list()
   for (i in 1:length(folders)) {
 
-    tmp <- file.path(rd, paste(folders[i],'/data_import_data/annotation.csv'),sep='')
+    bn <- basename(file.path(rd, folders[i],'data_import_data/annotation.csv'))
+    dn <- dirname(file.path(rd, folders[i],'data_import_data/annotation.csv'))
+    full.path <- paste(dn,bn, sep = '/')
+
+
+    #tmp <- file.path(rd, paste(folders[i],'/data_import_data/annotation.csv'),sep='')
     #removing space
-    tmp <- gsub(" /", "/", tmp)
-    path.lists[i] <- tmp
+    #tmp <- gsub(" /", "/", tmp)
+    path.lists[i] <- full.path
 
 
 
@@ -86,11 +91,15 @@ datasets_groups <- function(rd) {
     temp.variable <- a[1]
     temp.list <- append(temp.list, temp.variable)
 
+    bn <- basename(file.path(rd, temp.variable,'data_import_data/annotation.csv'))
+    dn <- dirname(file.path(rd, temp.variable,'data_import_data/annotation.csv'))
+    full.path <- paste(dn,bn, sep = '/')
+
     # storing the path of annotation.csv file
-    tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
+    #tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
     #removing space
-    tmp <- gsub(" /", "/", tmp)
-    apath.lists[apath.counter] <- tmp
+    #tmp <- gsub(" /", "/", tmp)
+    apath.lists[apath.counter] <- full.path
     apath.counter <- apath.counter + 1
 
 

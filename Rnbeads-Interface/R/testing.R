@@ -99,3 +99,27 @@
 #
 #
 # }, height = 400, width = 500)
+
+# bn <- basename(file.path(getwd(), 'results/Dataset 1','data_import_data/annotation.csv'))
+# print (bn)
+# dn <- dirname(file.path(getwd(), 'results/Dataset 1','data_import_data/annotation.csv'))
+# print (dn)
+#
+# comb <- paste(dn,bn, sep = '/')
+# print (comb)
+#
+# tmp <- file.path(getwd(), paste('results/Dataset 1','/data_import_data/annotation.csv'))
+# print (tmp)
+# #removing space
+# tmp <- gsub(" /", "/", tmp)
+# print (tmp)
+# data[-length(data)] <- paste0(data[-length(data)], ',')
+# print (data)
+#
+# data <- strsplit(paste(data, collapse=', '), ' ')[[1]]
+# print (data)
+
+
+
+
+
