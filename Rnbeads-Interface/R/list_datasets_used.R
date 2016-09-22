@@ -16,7 +16,7 @@ datasets_groups <- function(rd) {
 
     bn <- basename(file.path(rd, folders[i],'data_import_data', c("annotation.csv")))
     dn <- dirname(file.path(rd, folders[i],'data_import_data/annotation.csv'))
-    full.path <- file.path(dn,bn)
+    full.path <- file.path(dn,'annotation.csv')
 
     print (full.path)
 
@@ -94,7 +94,7 @@ datasets_groups <- function(rd) {
 
     bn <- basename(file.path(rd, temp.variable,'data_import_data', c("annotation.csv")))
     dn <- dirname(file.path(rd, temp.variable,'data_import_data/annotation.csv'))
-    full.path <- file.path(dn,bn)
+    full.path <- file.path(dn,'annotation.csv')
 
 
     print (full.path)
