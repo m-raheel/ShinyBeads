@@ -97,6 +97,8 @@ datasets_groups <- function(rd) {
     full.path <- file.path(dn,bn)
 
 
+    print (full.path)
+
     # storing the path of annotation.csv file
     #tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
     #removing space
