@@ -192,34 +192,38 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
-  # # Comparisons Table from HTML files
-  #
+  # Comparisons Table from HTML files
+
+  filename <- normalizePath(file.path(results.dir, 'mesangial cell','differential_methylation.html'))
+
+  #filename= as.character(filename)
+
   # tmp <- file.path(results.dir, paste('mesangial cell','/differential_methylation.html'),sep='')
   # #removing space
   # tmp <- gsub(" /", "/", tmp)
-  # differential.methylation.path <- tmp
-  #
-  # webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-  # pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-  #
-  # # Extract table header and contents of the analysis option table of differential methylation
-  # tablehead <- xpathSApply(pagetree, "//*/table[@class='tindex']/thead/tr/th", xmlValue)
-  # results <- xpathSApply(pagetree, "//*/table[@class='tindex']/tbody/tr/td", xmlValue)
-  #
-  #
-  # # Convert character vector to dataframe
-  # content <- as.data.frame(matrix(results, ncol =2, byrow = TRUE))
-  #
-  # # Clean up the results
-  # content[,1] <- gsub("Â ", "", content[,1])
-  # tablehead <- gsub("Â ", "", tablehead)
-  # names(content) <- tablehead
-  #
-  # output$htmlTable = renderTable({
-  #   content
-  # })
-  #
-  #
+  differential.methylation.path <- filename
+
+  webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+  pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+  # Extract table header and contents of the analysis option table of differential methylation
+  tablehead <- xpathSApply(pagetree, "//*/table[@class='tindex']/thead/tr/th", xmlValue)
+  results <- xpathSApply(pagetree, "//*/table[@class='tindex']/tbody/tr/td", xmlValue)
+
+
+  # Convert character vector to dataframe
+  content <- as.data.frame(matrix(results, ncol =2, byrow = TRUE))
+
+  # Clean up the results
+  content[,1] <- gsub("Â ", "", content[,1])
+  tablehead <- gsub("Â ", "", tablehead)
+  names(content) <- tablehead
+
+  output$htmlTable = renderTable({
+    content
+  })
+
+
   #
   # # Extract table header and contents of the comparison table of differential methylation
   #

@@ -231,9 +231,9 @@ tabPanel("Integrative Visualization",
 
                                                    tags$p("The table below lists the options of the executed module.")
 
-                                                   #,
+                                                   ,
 
-                                                   #tableOutput("htmlTable")
+                                                   tableOutput("htmlTable")
 
                                           ),
 
