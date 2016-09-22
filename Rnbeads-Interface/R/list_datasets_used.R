@@ -16,7 +16,7 @@ datasets_groups <- function(rd) {
 
     bn <- basename(file.path(rd, folders[i],'data_import_data', c("annotation.csv")))
     dn <- dirname(file.path(rd, folders[i],'data_import_data/annotation.csv'))
-    full.path <- paste(dn,bn, sep = '/')
+    full.path <- file.path(dn,bn)
 
 
     #tmp <- file.path(rd, paste(folders[i],'/data_import_data/annotation.csv'),sep='')
@@ -93,7 +93,7 @@ datasets_groups <- function(rd) {
 
     bn <- basename(file.path(rd, temp.variable,'data_import_data', c("annotation.csv")))
     dn <- dirname(file.path(rd, temp.variable,'data_import_data/annotation.csv'))
-    full.path <- paste(dn,bn, sep = '/')
+    full.path <- file.path(dn,bn)
 
 
     # storing the path of annotation.csv file
