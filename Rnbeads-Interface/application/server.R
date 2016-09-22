@@ -159,7 +159,7 @@ shinyServer(function(input, output, session) {
   # uses the functions from the rnbeadsinterface package
 
   #common.datasets = datasets_groups(results.dir)
-  datasets_files = datasets_list(results.dir)
+  #datasets_files = datasets_list(results.dir)
 
 
 
