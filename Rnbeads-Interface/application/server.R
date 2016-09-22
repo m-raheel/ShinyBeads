@@ -174,20 +174,20 @@ shinyServer(function(input, output, session) {
   #   })
   # })
 
-  lapply(1:length(datasets_files), function(i) {
-
-    a.file <- reactive({read.csv(as.character(datasets_files[i]))[ ,1:6]})
-
-    # Generate a summary of the dataset
-    output[[paste0('annotation',i)]] <- renderTable({
-      #paste0("Annotation.csv")
-      dataset <- a.file()
-      dataset
-
-
-    })
-
-  })
+  # lapply(1:length(datasets_files), function(i) {
+  #
+  #   a.file <- reactive({read.csv(as.character(datasets_files[i]))[ ,1:6]})
+  #
+  #   # Generate a summary of the dataset
+  #   output[[paste0('annotation',i)]] <- renderTable({
+  #     #paste0("Annotation.csv")
+  #     dataset <- a.file()
+  #     dataset
+  #
+  #
+  #   })
+  #
+  # })
 
 
   ############################################################################################

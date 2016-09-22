@@ -49,17 +49,17 @@ shinyUI(navbarPage(
                                 #   uiOutput(paste0('c',i))
                                 # }),
 
-                                br(),
+                                br()
 
 
 
-                                tags$strong("List of different data sets used in RnBeads analysis:"),
-                                tags$p(""),
-
-                                lapply(1:10, function(i) {
-                                  tableOutput(paste0('annotation',i))
-
-                                })
+                                # tags$strong("List of different data sets used in RnBeads analysis:"),
+                                # tags$p(""),
+                                #
+                                # lapply(1:10, function(i) {
+                                #   tableOutput(paste0('annotation',i))
+                                #
+                                # })
 
 
 
