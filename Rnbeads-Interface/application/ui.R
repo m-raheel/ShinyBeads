@@ -44,10 +44,10 @@ shinyUI(navbarPage(
 
 
 
-                                # # UI output
-                                # lapply(1:10, function(i) {
-                                #   uiOutput(paste0('c',i))
-                                # }),
+                                # UI output
+                                lapply(1:10, function(i) {
+                                  uiOutput(paste0('c',i))
+                                }),
 
                                 br()
 

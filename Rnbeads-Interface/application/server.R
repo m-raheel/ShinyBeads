@@ -179,21 +179,21 @@ shinyServer(function(input, output, session) {
   #   })
   # )
 
-  #common.datasets = datasets_groups(results.dir)
+  common.datasets = datasets_groups(results.dir)
   #datasets_files = datasets_list(results.dir)
 
 
 
-  # lapply(1:length(common.datasets), function(i) {
-  #
-  #   lapply(1:length(common.datasets[i]), function(j) {
-  #     output[[paste0('c',i)]] <- renderUI({
-  #
-  #
-  #       paste0(common.datasets[i][j])
-  #     })
-  #   })
-  # })
+  lapply(1:length(common.datasets), function(i) {
+
+    lapply(1:length(common.datasets[i]), function(j) {
+      output[[paste0('c',i)]] <- renderUI({
+
+
+        paste0(common.datasets[i][j])
+      })
+    })
+  })
 
   # lapply(1:length(datasets_files), function(i) {
   #

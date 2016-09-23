@@ -7,7 +7,7 @@
 launch_app <- function()
 {
   print (getwd())
-  app.dir = file.path(getwd())
+  app.dir = file.path(getwd(),'application')
   print (app.dir)
   shiny::runApp(appDir = app.dir)
 }
