@@ -20,10 +20,9 @@ datasets_groups <- function(rd) {
 
     filepath <- file.path(rd, folders[i], 'data_import_data')
 
-    filename <- paste(filepath, '/annotation.csv')
+    filename <- paste(filepath, 'annotation.csv', sep="/")
     #removing space
-    filename <- gsub(" /", "/", filename)
-    filename <- gsub(".csv/", ".csv", filename)
+
     print (filename)
     #tmp <- file.path(rd, paste(folders[i],'/data_import_data/annotation.csv'),sep='')
     #removing space
@@ -105,10 +104,9 @@ datasets_groups <- function(rd) {
     # storing the path of annotation.csv file
     filepath <- file.path(rd, folders[i], 'data_import_data')
 
-    filename <- paste(filepath, '/annotation.csv')
+    filename <- paste(filepath, 'annotation.csv', sep="/")
     #removing space
-    filename <- gsub(" /", "/", filename)
-    filename <- gsub(".csv/", ".csv", filename)
+
 
     #tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
     #removing space
