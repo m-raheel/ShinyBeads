@@ -346,8 +346,8 @@ shinyServer(function(input, output, session) {
 
     cd_list <- list()
     cd_list_counter <- 1
-    common.datasets = datasets_groups(results.dir())
-
+    #common.datasets = datasets_groups(results.dir())
+    common.datasets <- list()
 
 
     #if ( file.exists( isolate({ paste(dirfolder()[1],'index.html',sep="/") }) ) ){
