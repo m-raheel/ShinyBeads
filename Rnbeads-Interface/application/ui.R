@@ -1,7 +1,7 @@
 library(shiny)
 library(DT)
 library(shinyjs)
-#library(V8)
+#library(V8) # package for extended shinyJS
 #library(shinyFiles)
 
 
@@ -31,7 +31,7 @@ shinyUI(
            fluidRow(
              column(width = 12,
                     shinyjs::useShinyjs(),
-                    shinyjs::extendShinyjs(text = "shinyjs.workingDirButton = function() { location.reload(); }"),
+                    #shinyjs::extendShinyjs(text = "shinyjs.workingDirButton = function() { location.reload(); }"),
 
                     tags$strong("Choose RnBeads analysis Repository:"),
                     br(),br(),
