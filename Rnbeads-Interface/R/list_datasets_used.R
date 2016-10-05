@@ -27,18 +27,23 @@ datasets_groups <- function(rd) {
       # dn <- dirname(file.path(rd, folders[i],'data_import_data/annotation.csv'))
       # full.path <- file.path(dn,'annotation.csv')
 
-      filepath <- file.path(rd, folders[i], 'data_import_data')
+      filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
-      filename <- paste(filepath, 'annotation.csv', sep="/")
-      #removing space
+      #filename <- paste(filepath, 'annotation.csv', sep="/")
 
+      if (file.exists( isolate({ paste(filepath) }) ) ){
+        filename <- as.character(filepath)
 
-      #tmp <- file.path(rd, paste(folders[i],'/data_import_data/annotation.csv'),sep='')
-      #removing space
-      #tmp <- gsub(" /", "/", tmp)
-      path.lists[i] <- filename
+        #removing space
 
 
+        #tmp <- file.path(rd, paste(folders[i],'/data_import_data/annotation.csv'),sep='')
+        #removing space
+        #tmp <- gsub(" /", "/", tmp)
+
+        path.lists[i] <- filename
+
+      }
 
     }
 
@@ -110,47 +115,51 @@ datasets_groups <- function(rd) {
       # full.path <- file.path(dn,'annotation.csv')
 
 
-      # storing the path of annotation.csv file
-      filepath <- file.path(rd, folders[i], 'data_import_data')
+      filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
-      filename <- paste(filepath, 'annotation.csv', sep="/")
-      #removing space
+      #filename <- paste(filepath, 'annotation.csv', sep="/")
 
+      if (file.exists( isolate({ paste(filepath) }) ) ){
 
-      #tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
-      #removing space
-      #tmp <- gsub(" /", "/", tmp)
-      apath.lists[apath.counter] <- filename
-      apath.counter <- apath.counter + 1
+        filename <- filepath
+        #removing space
 
 
-      for (l in k:length(same.sample.list)) {
-        b <- unlist(same.sample.list[l], use.names = FALSE)
-        b1 <- b[1]
-        if (b1 == temp.variable){
+        #tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
+        #removing space
+        #tmp <- gsub(" /", "/", tmp)
+        apath.lists[apath.counter] <- filename
+        apath.counter <- apath.counter + 1
 
-          temp.list <- append(temp.list, b[2])
+
+        for (l in k:length(same.sample.list)) {
+          b <- unlist(same.sample.list[l], use.names = FALSE)
+          b1 <- b[1]
+          if (b1 == temp.variable){
+
+            temp.list <- append(temp.list, b[2])
+
+          }
+          else{
+            increament = l -1
+
+            break
+          }
 
         }
-        else{
-          increament = l -1
 
-          break
-        }
+        #message(paste0("Value of K =  ", k))
 
+        k <- k + increament
+
+        temp.variable <- b
+
+        actual.list[actual.counter] <- list(temp.list)
+        temp.list <- list()
+
+
+        actual.counter <- actual.counter + 1
       }
-
-      #message(paste0("Value of K =  ", k))
-
-      k <- k + increament
-
-      temp.variable <- b
-
-      actual.list[actual.counter] <- list(temp.list)
-      temp.list <- list()
-
-
-      actual.counter <- actual.counter + 1
 
 
     }

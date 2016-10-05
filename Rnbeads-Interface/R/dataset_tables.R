@@ -16,7 +16,7 @@ datasets_list <- function(rd) {
     path.lists <- list()
     for (i in 1:length(folders)) {
 
-      tmp <- file.path(rd, paste(folders[i],'/data_import_data/annotation.csv'),sep='')
+      tmp <- file.path(rd,folders[i],'data_import_data','annotation.csv')
       #removing space
       tmp <- gsub(" /", "/", tmp)
       path.lists[i] <- tmp
@@ -89,7 +89,7 @@ datasets_list <- function(rd) {
       temp.list <- append(temp.list, temp.variable)
 
       # storing the path of annotation.csv file
-      tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
+      tmp <- file.path(rd, temp.variable,'data_import_data','annotation.csv')
       #removing space
       tmp <- gsub(" /", "/", tmp)
       apath.lists[apath.counter] <- tmp
