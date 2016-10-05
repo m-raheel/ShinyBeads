@@ -10,7 +10,9 @@ comparison_plot <- function(wd,f) {
 
   filename <- normalizePath(file.path(wd, paste('differential_methylation_data/',f, sep='')))
 
+
   filename= as.character(filename)
+
   # fread function from the library data.table
   list.diff.p.values <- fread(filename,sep = ",", select = c("diffmeth.p.val"))
 

@@ -6,8 +6,10 @@
 
 launch_app <- function()
 {
-  print (getwd())
-  app.dir = file.path(getwd(),'application')
-  print (app.dir)
-  shiny::runApp(appDir = app.dir)
+
+
+  app.path <- normalizePath(paste(getwd(),'application',sep = "/"), winslash = "\\", mustWork = NA)
+
+  print(app.path)
+  shiny::runApp(appDir = app.path)
 }

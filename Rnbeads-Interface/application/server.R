@@ -1,97 +1,276 @@
 library(shiny)
 library(RnBeadsInterface)
-library(shiny)
 library(RnBeads)
 library(XML)
 library(compare)
 library(data.table) # using the function fread for reading large csv files
 
 
+
 #library(shinyFiles)
+
+# createLink <- function(val) {
+#   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
+# }
+
+
 
 shinyServer(function(input, output, session) {
 
-  # return the Rnbeads directories
-  results.dir = file.path(getwd(), 'results')
+  # commented is the script to change the tab
 
-  print (results.dir)
+  observe({
+    if(input$action > 0){
 
-  choices <- list.files(path = results.dir)
-
-  lapply(1:length(choices), function(i) {
-    output[[paste0('choices', i)]] <- renderUI({
-
-
-      paste0(choices[i])
-    })
+      session$sendCustomMessage("myCallbackHandler", "1")
+    }
   })
 
+  observe({
+    if(input$view_datasets > 0){
+
+      session$sendCustomMessage("myCallbackHandler", "4")
+    }
+  })
+
+
+  #select working directory
+  selectedRepository <- eventReactive(input$workingDirButton,{
+    updatedDir =  choose.dir(getwd(), "Choose a Rnbeads analysis folder")
+
+    workDir = gsub("\\\\", "/", updatedDir)
+
+    selectedDir <-  as.character(workDir)
+
+    # return the Rnbeads directories
+    #setwd(selectedDir)
+
+    #shinyjs::js$workingDirButton()
+
+    # updating all the selectInput dropdowns
+
+    updateSelectInput(session, "input_type",
+                      label = paste("Select RnBeads Results Folder", "---"),
+                      choices = list.files(path = selectedDir))
+
+    updateSelectInput(session, "select_ia",
+                      label = paste("Select RnBeads analysis Folder", "---"),
+                      choices = list.files(path = selectedDir))
+
+
+
+    updateSelectInput(session, "input_dmcomp_choices",
+                      label = paste("Select RnBeads analysis Folder", "---"),
+                      choices = list.files(path = selectedDir))
+
+
+
+    updateSelectInput(session, "input_dmcomp_files",
+                      label = paste("Select RnBeads analysis Folder", "---"),
+                      choices = list.files(path = selectedDir))
+
+    dirfolder = list.files(path = selectedDir)
+
+    if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
+      output$ErrorText1 <- renderText({ paste("You are working with the Rnbeads analysis repository:",sep="") })
+      output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
+    }
+    else{
+      output$ErrorText1 <- renderText({ paste("Not a Valid Rnbeads Repository:",sep="") })
+      output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
+      observe({
+
+        check.repo = 'FALSE'
+        session$sendCustomMessage(type = "t", check.repo)
+      })
+
+    }
+
+    selectedDir
+
+  })
+
+
+  # displaying all session values store in the clientData
+
+  # Store in a convenience variable
+  cdata <- session$clientData
+
+  # Values from cdata returned as text
+  output$clientdataText <- renderText({
+    cnames <- names(cdata)
+
+    allvalues <- lapply(cnames, function(name) {
+      paste(name, cdata[[name]], sep=" = ")
+    })
+    paste(allvalues, collapse = "\n")
+  })
+
+
+  dirfolder = reactive({list.files(path = getwd())})
+  results.dir = reactive({file.path(path = selectedRepository())})
+
+  # selected RnBeads repository folder
+  value <- reactive({as.character(input$input_type) })
+  rwaDir <- reactive({file.path(results.dir(), value()) })
+
+
+
+  # Check if file exists and working directory is correct
 
 
   output$logo <- renderText({
-    file.path(getwd(), 'images/RnBeads.png')
+
+    file.path(results.dir(), 'images/RnBeads.png')
   })
 
-  value <- reactive({as.character(input$input_type) })
-  rwaDir <- reactive({file.path(results.dir, value()) })
 
   ####################################################################################
 
-  # extrating the modules performed information##################
 
-  o <- reactive({
 
-    value.modules <- reactive({as.character(input$input_modules) })
+  # displaying folders of repository selected
 
-    wd_modules <- reactive({file.path(results.dir, value.modules()) })
 
-    #fucntion from the RnBeadsInterface package
-    modules_performed(wd_modules())
+
+  observe({
+
+
+    choices <- list.files(path = results.dir())
+
+    output$count_rfolders <- renderText({
+      paste("Total directories in this repository =", length(choices), sep = " ")
+
+    })
+
+    output$list_folders <- renderDataTable({
+
+
+      #DT <- data.table(ID = 1:length(choices) , Rnbeads_Analysis = choices)
+      # DT
+
+
+
+      DT <- data.table( Rnbeads_Analysis = choices)
+      # DT$Rnbeads_Analysis <- sapply(DT$Rnbeads_Analysis, function(x)
+      #   toString(tags$a(href=paste0("#Individual analysis", x), x)))
+
+      #DT$link <- createLink(DT$Rnbeads_Analysis)
+
+
+      return(DT)
+
+    },selection = 'single', escape = FALSE)
+
 
   })
 
-  observe(
+  # if the list folder row is selected
+  observeEvent(input$list_folders_rows_selected, {
+    row <- input$list_folders_rows_selected
 
-    lapply(1:length(o()), function(i) {
+    updateTabsetPanel(session, "repository", selected = "DatasetList")
+  })
 
-      output[[paste0('output_modules', i)]] <- renderUI({
-        paste0(o()[i])
-      })
+
+  observeEvent(input$select_ia,{
+
+    value.modules <- reactive({as.character(input$select_ia) })
+
+
+    wd_modules <- reactive({file.path(results.dir(), value.modules()) })
+
+
+    #fucntion from the RnBeadsInterface package
+
+
+    Performed_Modules <-  modules_performed(wd_modules())
+
+
+
+    modules <- unlist(Performed_Modules)
+
+
+    output$list_module <- renderTable({
+      DT <- data.table(ID = 1:length(modules) , Performed_Modules = modules)
+      DT
+
     })
-  )
+
+  })
+
 
 
   ###############################################################
 
   # analysis options
 
-  value.options <- reactive({as.character(input$input_options) })
+  observe({
 
-  wd_options <- reactive({file.path(results.dir, value.options()) })
+      value.options <- reactive({as.character(input$select_ia) })
 
-  rwaDirUpdated <- reactive({file.path(wd_options(), "analysis_options.RData")})
+      wd_options <- reactive({file.path(results.dir(), value.options()) })
 
-  # function to read analysis_options.RData file
+      rwaDirUpdated <- reactive({file.path(wd_options(), "analysis_options.RData")})
 
-  LoadToEnvironment <- function(rwaDir, env = new.env()){
-    load(rwaDir, env)
-    return(env)
-  }
+      # function to read analysis_options.RData file
+
+      LoadToEnvironment <- function(rwaDir, env = new.env()){
+        load(rwaDir, env)
+        return(env)
+      }
 
 
 
-  lapply(1:100, function(i) {
-    output[[paste0('b', i)]] <- renderUI({
-      rdata.env <- LoadToEnvironment(rwaDirUpdated())
+      lapply(1:114, function(i) {
+        output[[paste0('b', i)]] <- renderUI({
+          rdata.env <- LoadToEnvironment(rwaDirUpdated())
 
-      rdata.fit <- rdata.env$analysis.options
+          rdata.fit <- rdata.env$analysis.options
 
-      names.rdata.fit <- names(rdata.fit)
+          names.rdata.fit <- names(rdata.fit)
 
-      paste0(names.rdata.fit[i]," = ", rdata.fit[i])
-    })
+          paste0(names.rdata.fit[i]," = ", rdata.fit[i])
+        })
+      })
+
+      # code is working but only problem is that we have some values which are also list so we need to handle that
+
+      # output$list_options <- renderTable({
+      #
+      #   rdata.env <- LoadToEnvironment(rwaDirUpdated())
+      #   rdata.fit <- rdata.env$analysis.options
+      #
+      #   options_values <- list()
+      #
+      #   for (i in 1:length(rdata.fit)) {
+      #
+      #     options_values[i] <- rdata.fit[i]
+      #
+      #   }
+      #
+      #
+      #   print(options_values)
+      #
+      #   options_values <- unlist(options_values)
+      #   print(options_values)
+      #
+      #   #options_values <- as.data.table(options_values)
+      #   #print(options_values)
+      #   names.rdata.fit <- names(rdata.fit)
+      #
+      #   DT = data.table( Analysis_Options = names.rdata.fit, Values = options_values)
+      #
+      #   DT
+      #   #names(rdata.fit)
+      # })
+
   })
+
   ################################################################
+
+
+
 
 
   # displaying plots in plots tab
@@ -107,7 +286,7 @@ shinyServer(function(input, output, session) {
   output$qq1plot1 <- renderImage({
     # When input$n is 3, filename is ./images/image3.jpeg
     filename <- normalizePath(file.path(rwaDir(),
-                                        paste('preprocessing_images/summary1_betas_qq', '.png', sep='')))
+                                        paste('preprocessing_images/summary1_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
 
     # Return a list containing the filename and alt text
     list(src = filename,alt = paste("No record found."))
@@ -118,7 +297,7 @@ shinyServer(function(input, output, session) {
   output$qq1plot2 <- renderImage({
     # When input$n is 3, filename is ./images/image3.jpeg
     filename <- normalizePath(file.path(rwaDir(),
-                                        paste('preprocessing_images/summary2_betas_qq', '.png', sep='')))
+                                        paste('preprocessing_images/summary2_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
 
     # Return a list containing the filename and alt text
     list(src = filename,alt = paste("No record found."))
@@ -133,7 +312,7 @@ shinyServer(function(input, output, session) {
     if (input$qqplots == "summary1_betas_qq") {
 
       filename <- normalizePath(file.path(rwaDir(),
-                                          paste('preprocessing_images/summary1_betas_qq', '.png', sep='')))
+                                          paste('preprocessing_images/summary1_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
 
       return(list(
         src = filename,
@@ -143,7 +322,7 @@ shinyServer(function(input, output, session) {
     } else if (input$qqplots == "summary2_betas_qq") {
 
       filename <- normalizePath(file.path(rwaDir(),
-                                          paste('preprocessing_images/summary2_betas_qq', '.png', sep='')))
+                                          paste('preprocessing_images/summary2_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
 
       return(list(
         src = filename,
@@ -156,113 +335,205 @@ shinyServer(function(input, output, session) {
   #######################################################################
 
   # check and return the results folder that have the same sample annotation file.###############
-  # uses the functions from the rnbeadsinterface package
 
-  # common.datasets <- reactive({
-  #
-  #
-  #   datasets_groups(results.dir)
-  #
-  # })
-  #
-  # observe(
-  #
-  #   lapply(1:length(common.datasets()), function(i) {
-  #
-  #     lapply(1:length(common.datasets()[i]), function(j) {
-  #       output[[paste0('c',i)]] <- renderUI({
-  #
-  #
-  #         paste0(common.datasets()[i][j])
-  #       })
-  #     })
-  #   })
-  # )
 
-  common.datasets = datasets_groups(results.dir)
-  #datasets_files = datasets_list(results.dir)
+  observe({
+
+    cd_list <- list()
+    cd_list_counter <- 1
+    common.datasets = datasets_groups(results.dir())
 
 
 
-  lapply(1:length(common.datasets), function(i) {
+    #if ( file.exists( isolate({ paste(dirfolder()[1],'index.html',sep="/") }) ) ){
 
-    lapply(1:length(common.datasets[i]), function(j) {
-      output[[paste0('c',i)]] <- renderUI({
+    # lapply(1:length(common.datasets), function(i) {
+    #
+    #   lapply(1:length(common.datasets[i]), function(j) {
+    #     output[[paste0('list_common_dataset_',i)]] <- renderTable({
+    #
+    #
+    #       Common_Datasets <- unlist(common.datasets[i][j])
+    #       DT <- data.table(ID = 1:length(Common_Datasets) , Common_Datasets = Common_Datasets)
+    #       DT
+    #
+    #     })
+    #   })
+    # })
 
 
-        paste0(common.datasets[i][j])
-      })
+
+    cd_list <- lapply(1:length(common.datasets), function(i) {
+          cd_list[cd_list_counter] <- paste("Dataset",i,sep = "_")
+          cd_list_counter = cd_list_counter + 1
+
+
+          cd_list
+
+        })
+
+
+
+    output$total_datasets <- renderText({
+        paste("Total datasets used in this repository =", length(cd_list), sep = " ")
+
     })
+
+    output$list_datasets <- renderDataTable({
+      cd_list <- unlist(cd_list)
+      DT <- data.table( Datasets_Used = cd_list)
+
+      DT
+
+    },selection = 'single', escape = FALSE)
+
+
+
+    # datasets_files = datasets_list(results.dir())
+    #
+    #
+    # lapply(1:length(datasets_files), function(i) {
+    #
+    #   a.file <- reactive({read.csv(as.character(datasets_files[i]))[ ,1:6]})
+    #
+    #   # Generate a summary of the dataset
+    #   output[[paste0('annotation',i)]] <- renderTable({
+    #     #paste0("Annotation.csv")
+    #     dataset <- a.file()
+    #     dataset
+    #
+    #
+    #   })
+    #
+    # })
+
+
+
   })
 
-  # lapply(1:length(datasets_files), function(i) {
-  #
-  #   a.file <- reactive({read.csv(as.character(datasets_files[i]))[ ,1:6]})
-  #
-  #   # Generate a summary of the dataset
-  #   output[[paste0('annotation',i)]] <- renderTable({
-  #     #paste0("Annotation.csv")
-  #     dataset <- a.file()
-  #     dataset
-  #
-  #
-  #   })
-  #
-  # })
+  # if the dataset row is selected
+  observeEvent(input$list_datasets_rows_selected, {
+    row <- input$list_datasets_rows_selected
+
+    #value_selected <- DT[row, "Datasets_Used"]
+    print(row)
+
+    datasets_files = datasets_list(results.dir())
+
+
+    a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
+
+    # Generate a summary of the dataset
+    output[[paste0('annotation')]] <- renderDataTable({
+      #paste0("Annotation.csv")
+      dataset <- a.file()
+      dataset
+
+
+
+
+    })
+
+    output$h1_datasettab <- renderText({
+      paste("Dataset_",row)
+
+    })
+
+    #print(row)
+    session$sendCustomMessage("myCallbackHandler", "2")
+    #updateTabsetPanel(session, "Individual dataset", selected = "DatasetTab")
+  })
+
 
 
   ############################################################################################
 
   # Comparisons Table from HTML files
 
-  filename <- normalizePath(file.path(results.dir, 'mesangial cell','differential_methylation.html'))
+  observe({
 
-  #filename= as.character(filename)
+    value.options <- reactive({as.character(input$input_dmcomp_choices) })
 
-  # tmp <- file.path(results.dir, paste('mesangial cell','/differential_methylation.html'),sep='')
-  # #removing space
-  # tmp <- gsub(" /", "/", tmp)
-  differential.methylation.path <- filename
-
-  webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-  pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-  # Extract table header and contents of the analysis option table of differential methylation
-  tablehead <- xpathSApply(pagetree, "//*/table[@class='tindex']/thead/tr/th", xmlValue)
-  results <- xpathSApply(pagetree, "//*/table[@class='tindex']/tbody/tr/td", xmlValue)
+    if (value.options() != "NA"){
 
 
-  # Convert character vector to dataframe
-  content <- as.data.frame(matrix(results, ncol =2, byrow = TRUE))
-
-  # Clean up the results
-  content[,1] <- gsub("Â ", "", content[,1])
-  tablehead <- gsub("Â ", "", tablehead)
-  names(content) <- tablehead
-
-  output$htmlTable = renderTable({
-    content
-  })
+      wd_options <- reactive({file.path(results.dir(), value.options()) })
 
 
+      filename <- reactive({ normalizePath(file.path(wd_options(),'differential_methylation.html'), winslash = "\\", mustWork = NA) })
 
-  # Extract table header and contents of the comparison table of differential methylation
+      #filename= as.character(filename)
 
-  head <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td[@class='header']", xmlValue)
-  results <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td", xmlValue)
-
-  # Convert character vector to dataframe
-  comparisonTable <- as.data.frame(matrix(results, ncol = 4, byrow = TRUE))
+      # tmp <- file.path(rwaDir, paste('mesangial cell','/differential_methylation.html'),sep='')
+      # #removing space
+      # tmp <- gsub(" /", "/", tmp)
 
 
-  tablehead <- c('Nr.','comparison','ajustment','covariateTable')
-  # Clean up the results
-  comparisonTable[,1] <- gsub("Â ", "", comparisonTable[,1])
-  tablehead <- gsub("Â ", "", tablehead)
-  names(comparisonTable) <- tablehead
+      if ( file.exists( isolate({ paste(filename()) }) ) ){
 
-  output$htmlcomparisonTable = renderTable({
-    comparisonTable
+        differential.methylation.path <- filename()
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+        # Extract table header and contents of the analysis option table of differential methylation
+        tablehead <- xpathSApply(pagetree, "//*/table[@class='tindex']/thead/tr/th", xmlValue)
+        results <- xpathSApply(pagetree, "//*/table[@class='tindex']/tbody/tr/td", xmlValue)
+
+
+        # Convert character vector to dataframe
+        content <- as.data.frame(matrix(results, ncol =2, byrow = TRUE))
+
+        # Clean up the results
+        content[,1] <- gsub("Â ", "", content[,1])
+        tablehead <- gsub("Â ", "", tablehead)
+        names(content) <- tablehead
+
+        output$htmlTable = renderTable({
+          content
+        })
+
+
+
+
+
+        # Extract table header and contents of the comparison table of differential methylation
+
+        head <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td[@class='header']", xmlValue)
+        results <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td", xmlValue)
+
+        # Convert character vector to dataframe
+        comparisonTable <- as.data.frame(matrix(results, ncol = 4, byrow = TRUE))
+
+
+        tablehead <- c('Nr.','comparison','ajustment','covariateTable')
+        # Clean up the results
+        comparisonTable[,1] <- gsub("Â ", "", comparisonTable[,1])
+        tablehead <- gsub("Â ", "", tablehead)
+        names(comparisonTable) <- tablehead
+
+        output$htmlcomparisonTable = renderTable({
+          comparisonTable
+        })
+
+      }
+
+      else{
+
+        output$htmlTable = renderTable({
+          paste("No data available")
+        })
+
+        output$htmlcomparisonTable = renderTable({
+          paste("No data available")
+        })
+
+
+
+      }
+    }
+
+
   })
 
 
@@ -284,7 +555,7 @@ shinyServer(function(input, output, session) {
   output[[paste0('diffMethTable')]] <- renderTable({
 
     filename <- normalizePath(file.path(rwaDir(),
-                                        paste('differential_methylation_data/diffMethTable_site_cmp1', '.csv', sep='')))
+                                        paste('differential_methylation_data/diffMethTable_site_cmp1', '.csv', sep='')), winslash = "\\", mustWork = NA)
 
     filename= as.character(filename)
     # fread function from the library data.table
@@ -309,7 +580,7 @@ shinyServer(function(input, output, session) {
 
     input_choices <- as.character(input$input_dmcomp_choices)
 
-    qq.dir <- file.path(results.dir, input_choices)
+    qq.dir <- file.path(results.dir(), input_choices)
 
     qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
 
@@ -338,8 +609,8 @@ shinyServer(function(input, output, session) {
 
       updateCheckboxGroupInput(session, "check_comp",
 
-                         label = paste("Select csv files", ""),
-                         choices = choices.list
+                               label = paste("Select csv files", ""),
+                               choices = choices.list
       )
 
     }
@@ -362,9 +633,9 @@ shinyServer(function(input, output, session) {
 
   list.pvalues <- reactive({
 
-    qq.value <- as.character(input$input_modules)
+    qq.value <- as.character(input$select_ia)
 
-    qq.dir <- file.path(results.dir, qq.value)
+    qq.dir <- file.path(results.dir(), qq.value)
 
     qq.value <- as.character(input$input_dmcomp_files)
 
@@ -412,9 +683,9 @@ shinyServer(function(input, output, session) {
 
   observeEvent(input$insertBtn, {
 
-    qq.value <- as.character(input$input_modules)
+    qq.value <- as.character(input$select_ia)
 
-    qq.dir <- file.path(results.dir, qq.value)
+    qq.dir <- file.path(results.dir(), qq.value)
 
 
     vec <- as.list(input$check_comp)
@@ -505,7 +776,7 @@ shinyServer(function(input, output, session) {
   # output for the about section
 
   output$text <- renderText({
-    paste("You have selected:",rwaDir())
+    paste("You have selected:",results.dir())
   })
 
   output$results.directory <- renderText({
@@ -524,22 +795,19 @@ shinyServer(function(input, output, session) {
 
   output$workingDirText <- renderText({getwd() })
 
-  #select working directory
-  observeEvent(input$workingDirButton,{
-    updatedDir =  choose.dir(getwd(), "Choose a suitable folder")
 
-    workDir = gsub("\\\\", "/", updatedDir)
-
-    output$workingDirText <-  renderText({workDir})
-
-
-
-    updateSelectInput(session, "input_type",
-                      label = paste("Select RnBeads Results Folder", "---"),
-                      choices = list.files(path = workDir))
-
-  })
   ####################################################################################
+
+
+  output$table1 <- renderDataTable({
+
+    # my_table <- cbind(rownames(mtcars), mtcars)
+    # colnames(my_table)[1] <- 'car'
+    # my_table$link <- createLink(my_table$car)
+    # return(my_table)
+
+  }, escape = FALSE)
+
 
 
 })

@@ -1,72 +1,134 @@
 library(shiny)
 library(DT)
+library(shinyjs)
+library(V8)
 #library(shinyFiles)
 
 
-results.dir = file.path(getwd(), 'results')
-image.dir = file.path(getwd(), 'images')
 
-choices = list.files(path = results.dir)
+
+choices = "NA"
 
 
 check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPLETED Preprocessing', 'COMPLETED Tracks and Tables','COMPLETED Covariate Inference','COMPLETED Exploratory Analysis','COMPLETED Differential Methylation')
 
 
 
-shinyUI(navbarPage(
+shinyUI(
+
+  navbarPage(
+
 
   #title=div(img(src=textOutput("logo")), "RnBeads"),
   title= "RnBeads"  ,
 
-  # Repository nav menu
 
+  # Home nav menu
+  tabPanel("Home",
+
+           br(),
+
+           fluidRow(
+             column(width = 12,
+                    shinyjs::useShinyjs(),
+                    shinyjs::extendShinyjs(text = "shinyjs.workingDirButton = function() { location.reload(); }"),
+
+                    tags$strong("Choose RnBeads analysis Repository:"),
+                    br(),br(),
+                    actionButton("workingDirButton",label= "Choose",class="btn btn-primary"),
+                    br(),br(),
+
+                    textOutput("ErrorText1"),
+                    br(),
+                    verbatimTextOutput ("ErrorText2")
+             )
+
+           ),
+
+           # commented is the script to change the tab
+
+           tags$head(tags$script('
+                                 Shiny.addCustomMessageHandler("myCallbackHandler",
+                                 function(typeMessage) {
+                                     console.log(typeMessage)
+                                     if(typeMessage == 1){
+
+                                        $("a:contains(Repository)").click();
+                                     }
+                                     if(typeMessage == 2){
+                                        $("a:contains(Individual data set)").click();
+                                     }
+                                     if(typeMessage == 3){
+                                        $("a:contains(Integrative Visualization)").click();
+                                     }
+                                     if(typeMessage == 4){
+                                        $("a:contains(DatasetList)").click();
+                                     }
+                                 });
+                                 ')
+           ),
+
+           br(),
+           actionButton("action", label = "Continue", class="btn btn-primary")
+
+  ),
+
+
+
+  # Repository nav menu
   tabPanel("Repository",
 
+           tabsetPanel(id = "repository",
 
-           tabsetPanel("Repository 1",
-                       tabPanel("List of analysis",
+
+                       tabPanel("AnalysisList",
                                 br(),
+                                verbatimTextOutput("count_rfolders"),
+
                                 tags$strong("Below are the list of analysis directories created by RnBeads"),
 
-                                tags$p(""),
+                                br(),
+                                br(),
+                                dataTableOutput("list_folders"),
 
-                                # UI output
-                                lapply(1:10, function(i) {
-                                  uiOutput(paste0('choices', i))
-                                })
+                                # # UI output
+                                # lapply(1:10, function(i) {
+                                #   uiOutput(paste0('choices', i))
+                                # })
+
+                                dataTableOutput('table1'),
+                                br(),
+                                actionButton("view_datasets", label = "View Datasets", class="btn btn-primary")
+
+
 
                        ),
 
-                       tabPanel("List of data sets",
+                       tabPanel("DatasetList",
                                 br(),
-                                tags$strong("List of RnBeads analysis performed on the same data sets:"),
+                                tags$strong("List of different data sets used in the analysis:"),
                                 tags$p(""),
 
-
+                                verbatimTextOutput("total_datasets"),
+                                br(),
+                                dataTableOutput("list_datasets")
 
                                 # UI output
-                                lapply(1:10, function(i) {
-                                  uiOutput(paste0('c',i))
-                                }),
-
-                                br()
-
-
-
-                                # tags$strong("List of different data sets used in RnBeads analysis:"),
-                                # tags$p(""),
-                                #
                                 # lapply(1:10, function(i) {
-                                #   tableOutput(paste0('annotation',i))
-                                #
+                                #   uiOutput(paste0('c',i))
+                                # }),
+
+                                # lapply(1:5, function(i) {
+                                #   tableOutput(paste ("list_common_dataset",i, sep = "_"))
                                 # })
 
 
 
                        ),
 
-                       tabPanel(".......")
+                       tabPanel("Others")
            )
+
   ),
 
 
@@ -74,195 +136,192 @@ shinyUI(navbarPage(
 
   tabPanel("Individual analysis",
 
-           tabsetPanel("Analysis options",
-                       tabPanel("Analysis options",
+           br(),
 
-                                br(),
-
-                                sidebarPanel(
-                                  selectInput("input_options", "Select individual analysis directory:", choices)
+           sidebarPanel(
+             selectInput("select_ia", "Select individual analysis directory:", choices)
 
 
-                                ),
+           ),
 
-                                mainPanel(
-
-                                  tags$strong("Displaying First 100 options from the analysis_options.RData file:"),
-
-                                  tags$p(""),
-                                  # UI output
-                                  lapply(1:100, function(i) {
-                                    uiOutput(paste0('b', i))
-                                  })
-                                )
-
-                       ),
-
-                       tabPanel("Modules performed",
-                                br(),
-                                sidebarPanel(
-                                  selectInput("input_modules", "Select individual analysis directory:", choices)
+           mainPanel(
 
 
-                                ),
+             tabsetPanel(id = "analysis_option",
+                         tabPanel("Analysis options",
 
-                                mainPanel(
+                            tags$strong("Lisitng all the options of Rnbeads from the analysis_options.RData file:"),
 
-                                  tags$strong("List of modules performed are:"),
+                            tags$p(""),
+                            # UI output
+                            lapply(1:114, function(i) {
+                              uiOutput(paste0('b', i))
+                            })
 
-                                  tags$p(""),
-                                  # UI output
-                                  tags$script('
-                                              Shiny.addCustomMessageHandler("myperformedmodulesno",
-                                              function(color) {
-                                              return color
-                                              });
-                                              '),
-
-                                  lapply(1:7, function(i) {
-
-                                    uiOutput(paste0("output_modules",i))
-
-                                  })
+                            #tableOutput("list_options")
 
 
+                         ),
 
-                                  )# end of main panel
+                         tabPanel("Modules performed",
+
+                              #tags$strong("List of modules performed are:"),
+
+                              tags$p(""),
 
 
-                       ),
-                       tabPanel("Link to report"),
-                       tabPanel(".......")
-  )
-),
+                              tableOutput("list_module")
+
+                         ),
+                         tabPanel("Link to report"),
+                         tabPanel(".......")
+              )#end of tabsetpanel
+
+           )#end of mainpanel
+
+),#end of individual analysis nav menu
 
 
 # individual analysis nav menu
 
 tabPanel("Individual data set",
 
-         tabsetPanel("Analysis options",
-                     tabPanel("Analysis options",
+         tabsetPanel(id= "DatasetTab",
+                     tabPanel("Dataset",
 
-                              tags$strong("Displaying:"),
+                              br(),br(),
 
-                              tags$p("")
+                              # tags$strong("List of different data sets used in RnBeads analysis:"),
+                              # tags$p(""),
 
+                              # lapply(1:10, function(i) {
+                              #   tableOutput(paste0('annotation',i))
+                              #
+                              # }),
+
+
+                              h3(span( "Selected Dataset", class="label label-default"), class= "text-info"),
+                              h3(verbatimTextOutput("h1_datasettab"), class= "text-info"),
+                              br(),br(),
+                              dataTableOutput(paste0('annotation'))
                      ),
 
-                     tabPanel("Modules performed"),
+                     tabPanel("..."),
 
                      tabPanel(".......")
          )
-),
+
+),# end of individual dataset nav menu
 
 # individual analysis nav menu
 
 tabPanel("Integrative Visualization",
 
-         tabsetPanel("visualization",
-                     tabPanel("QQ-Plots",
+         br(),
+         sidebarPanel(
+           selectInput("input_dmcomp_choices", "Repository:", choices)
 
-                              br(),
-                              sidebarPanel(
-                                selectInput("input_dmcomp_choices", "Repository:", choices)
+         ),
 
-                              ),
+         mainPanel(
 
-                              mainPanel(
+           tabsetPanel("visualization",
+                       tabPanel("QQ-Plots",
 
+                                  tabsetPanel(
+                                    tabPanel("Single File Comparison",
+                                             br(), br(),
 
-
-                                tabsetPanel(
-                                  tabPanel("Single File Comparison",
-                                           br(), br(),
-
-                                           selectInput("input_dmcomp_files", "differential_methylation_data folder:", ""),
+                                             selectInput("input_dmcomp_files", "differential_methylation_data folder:", ""),
 
 
 
-                                           tags$p("The qqplot of diffmethy p values from the above selected csv is shown below:"),
-                                           radioButtons("dist", "Distribution type:",
-                                                        c("Normal" = "norm",
-                                                          "Uniform" = "unif",
-                                                          "Log-normal" = "lnorm",
-                                                          "Exponential" = "exp")),
-                                           plotOutput('compqqplot')
+                                             tags$p("The qqplot of diffmethy p values from the above selected csv is shown below:"),
+                                             radioButtons("dist", "Distribution type:",
+                                                          c("Normal" = "norm",
+                                                            "Uniform" = "unif",
+                                                            "Log-normal" = "lnorm",
+                                                            "Exponential" = "exp")),
+                                             plotOutput('compqqplot')
 
 
-                                  ),# tab panel end
+                                    ),# tab panel end
 
-                                  tabPanel("Multiple File Comparison",
-                                           br(), br(),
-                                           # radioButtons("radio_comp", label = h3("Select comparison file"),
-                                           #              choices = list("",1),
-                                           #              selected = 1),
-                                           #
-                                           #
-                                           # plotOutput('compqqplot2'),
-
-
-                                           checkboxGroupInput("check_comp", label = h3("Select comparison file"),
-                                                              choices = list("",1),
-                                                              selected = 1),
-
-                                           actionButton('insertBtn', 'Show'),
+                                    tabPanel("Multiple File Comparison",
+                                             br(), br(),
+                                             # radioButtons("radio_comp", label = h3("Select comparison file"),
+                                             #              choices = list("",1),
+                                             #              selected = 1),
+                                             #
+                                             #
+                                             # plotOutput('compqqplot2'),
 
 
-                                           plotOutput('compqqplot3')
+                                             checkboxGroupInput("check_comp", label = h3("Select comparison file"),
+                                                                choices = list("",1),
+                                                                selected = 1),
+
+                                             actionButton('insertBtn', 'Show'),
 
 
-
-                                  )
-
-                                )# end tabset panel
-
-                              )# end  of  main panel
-
-                     ),
-
-                     tabPanel("Table Browser",
-                              br(), br(),
-
-                              tabsetPanel("Browser",
-                                          tabPanel("Parameter Overview",
-
-                                                   br(), br(),
-
-                                                   tags$p("The table below lists the options of the executed module.")
-
-                                                   ,
-
-                                                   tableOutput("htmlTable")
-
-                                          ),
-
-                                          tabPanel("Comparisons",
-                                                   br(), br(),
-
-                                                   tags$p("The following comparisons were made:")
-
-                                                   ,
-
-                                                   tableOutput("htmlcomparisonTable")
+                                             plotOutput('compqqplot3')
 
 
 
-                                          ),
-                                          tabPanel("Comparisons CSV"
+                                    )
+
+                                  )# end tabset panel
 
 
 
-                                          ),
-                                          tabPanel(".......")
-                              )
+                       ),
+
+                       tabPanel("Table Browser",
+                                br(), br(),
+
+                                tabsetPanel("Browser",
+                                            tabPanel("Parameter Overview",
+
+                                                     br(), br(),
+
+                                                     tags$p("The table below lists the options of the executed module.")
+
+                                                     ,
+
+                                                     tableOutput("htmlTable")
+
+                                            ),
+
+                                            tabPanel("Comparisons",
+                                                     br(), br(),
+
+                                                     tags$p("The following comparisons were made:")
+
+                                                     ,
+
+                                                     tableOutput("htmlcomparisonTable")
 
 
-                      ),
 
-                     tabPanel("Top-scorer list stability")
-         )
-),
+                                            ),
+                                            tabPanel("Comparisons CSV"
+
+
+
+                                            ),
+                                            tabPanel(".......")
+                                )
+
+
+                        ),
+
+                       tabPanel("Top-scorer list stability")
+
+           )# end of tabsetpanel("visualization")
+
+         )# end  of  main panel
+
+),#end of integrative visualization nav menu
 
 tabPanel("About",
 
@@ -284,13 +343,17 @@ tabPanel("About",
 
          mainPanel(
 
-           tags$strong("Choose RnBeads Repository:"),
-           actionButton("workingDirButton", "Choose"),
-           br(), br(),
+
+
 
 
            tabsetPanel(
              tabPanel("Summary",
+                      br(), br(),
+
+                      h3("clientData values"),
+                      verbatimTextOutput("clientdataText"),
+
                       br(), br(),
                       tags$strong("Working Directory:"),
                       verbatimTextOutput("workingDirText"),
@@ -397,6 +460,10 @@ tabPanel("About",
              )# tab panel end
                       )# end tabset panel
 
-                      )
-         )# end of tab panel nav bar
+        )#end of mainbar
+
+
+  )# end of about nav menu
+
+
 ))
