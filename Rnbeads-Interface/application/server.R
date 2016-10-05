@@ -39,10 +39,9 @@ shinyServer(function(input, output, session) {
   #select working directory
   selectedRepository <- eventReactive(input$workingDirButton,{
 
-    setwd('~')
-    getwd()
 
-    updatedDir <- tclvalue(tkchooseDirectory())
+
+    updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
