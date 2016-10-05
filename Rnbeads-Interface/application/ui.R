@@ -1,7 +1,7 @@
 library(shiny)
 library(DT)
 library(shinyjs)
-library(V8)
+#library(V8)
 #library(shinyFiles)
 
 
