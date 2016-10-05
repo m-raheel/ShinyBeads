@@ -5,6 +5,8 @@ library(XML)
 library(compare)
 library(data.table) # using the function fread for reading large csv files
 
+library(tcltk)# OS independent file dir selection
+
 
 
 #library(shinyFiles)
@@ -36,11 +38,15 @@ shinyServer(function(input, output, session) {
 
   #select working directory
   selectedRepository <- eventReactive(input$workingDirButton,{
-    updatedDir =  choose.dir(getwd(), "Choose a Rnbeads analysis folder")
 
-    workDir = gsub("\\\\", "/", updatedDir)
+    setwd('~')
+    getwd()
 
-    selectedDir <-  as.character(workDir)
+    updatedDir <- tclvalue(tkchooseDirectory())
+
+    #workDir = gsub("\\\\", "/", updatedDir)
+
+    selectedDir <-  as.character(updatedDir)
 
     # return the Rnbeads directories
     #setwd(selectedDir)
