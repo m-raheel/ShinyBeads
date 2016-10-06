@@ -45,9 +45,35 @@ datasets_groups <- function(rd) {
       counter <- 1
       for (i in 1:length(folders)) {
 
+
+        # removing the last character from the path '/' cause error in the server
+
+        tmp = toString(path.lists[i])
+        len = nchar(tmp)
+        last_character = substr(tmp,len,len)
+
+        if (last_character == '/'){
+
+          tmp = substr(tmp,len,len - 1)
+          path.lists[i] = tmp
+        }
+
         A <- read.csv((toString(path.lists[i])))[ ,2:3]
 
         for (j in i:length(folders)) {
+
+
+          # removing the last character from the path '/' cause error in the server
+          tmp = toString(path.lists[j])
+          len = nchar(tmp)
+          last_character = substr(tmp,len,len)
+
+          if (last_character == '/'){
+
+            tmp = substr(tmp,len,len - 1)
+            path.lists[j] = tmp
+          }
+
 
           B <- read.csv((toString(path.lists[j])))[ ,2:3]
 
@@ -106,6 +132,7 @@ datasets_groups <- function(rd) {
         filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
         filepath= as.character(filepath)
+
         #filename <- paste(filepath, 'annotation.csv', sep="/")
 
         if (file.exists( isolate({ paste(filepath) }) ) ){
