@@ -21,6 +21,8 @@ datasets_groups <- function(rd) {
 
       filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
+      filepath= as.character(filepath)
+
       if (file.exists( isolate({ paste(filepath) }) ) ){
         filename <- as.character(filepath)
 
@@ -103,6 +105,7 @@ datasets_groups <- function(rd) {
 
         filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
+        filepath= as.character(filepath)
         #filename <- paste(filepath, 'annotation.csv', sep="/")
 
         if (file.exists( isolate({ paste(filepath) }) ) ){

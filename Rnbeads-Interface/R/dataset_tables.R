@@ -17,10 +17,12 @@ datasets_list <- function(rd) {
 
       if ( file.exists( isolate({ paste(rd, folders[i],'data_import_data','annotation.csv',sep="/") }) ) ){
 
-        tmp <- file.path(rd,folders[i],'data_import_data','annotation.csv')
-        #removing space
-        tmp <- gsub(" /", "/", tmp)
-        path.lists[i] <- tmp
+        filepath <- file.path(rd,folders[i],'data_import_data','annotation.csv')
+
+        filepath= as.character(filepath)
+        # #removing space
+        # tmp <- gsub(" /", "/", tmp)
+        path.lists[i] <- filepath
 
       }
 
@@ -91,10 +93,13 @@ datasets_list <- function(rd) {
         temp.list <- append(temp.list, temp.variable)
 
         # storing the path of annotation.csv file
-        tmp <- file.path(rd, temp.variable,'data_import_data','annotation.csv')
-        #removing space
-        tmp <- gsub(" /", "/", tmp)
-        apath.lists[apath.counter] <- tmp
+        filepath <- file.path(rd, temp.variable,'data_import_data','annotation.csv')
+
+        filepath= as.character(filepath)
+
+        # #removing space
+        # tmp <- gsub(" /", "/", tmp)
+        apath.lists[apath.counter] <- filepath
         apath.counter <- apath.counter + 1
 
 
