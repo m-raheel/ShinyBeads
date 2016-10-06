@@ -31,11 +31,13 @@ datasets_groups <- function(rd) {
 
       if (last_character == '/'){
 
+        print ('inside')
+        print (filepath)
         tmp = substr(tmp,len,len - 1)
         filepath = tmp
       }
-
-
+      print ('outside')
+      print (filepath)
       if (file.exists( isolate({ paste(filepath) }) ) ){
         filename <- as.character(filepath)
 
