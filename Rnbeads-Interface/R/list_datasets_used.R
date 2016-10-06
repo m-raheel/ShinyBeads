@@ -12,6 +12,7 @@ datasets_groups <- function(rd) {
   folders <- list.files(rd,full.names = FALSE)
   folders
 
+  cat('outside folder')
   if ( length(folders) != 0 ){
 
     path.lists <- list()
@@ -20,7 +21,7 @@ datasets_groups <- function(rd) {
 
       if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) ){
 
-        print ('inside before the filepath')
+        cat('inside before the filepath')
 
         #filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
@@ -30,8 +31,8 @@ datasets_groups <- function(rd) {
 
         if (last_character == '/'){
 
-          print ('inside')
-          print (tmp)
+          cat ('inside')
+          cat (tmp)
           tmp = substr(tmp,len,len - 1)
 
         }
@@ -43,8 +44,8 @@ datasets_groups <- function(rd) {
         # removing the last character from the path '/' cause error in the server
 
 
-        print ('outside')
-        print (filepath)
+        cat ('outside')
+        cat (filepath)
         if (file.exists( isolate({ paste(filepath) }) ) ){
           filename <- as.character(filepath)
 
