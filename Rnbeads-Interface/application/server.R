@@ -68,12 +68,6 @@ shinyServer(function(input, output, session) {
                       label = paste("Select RnBeads analysis Folder", "---"),
                       choices = list.files(path = selectedDir))
 
-
-
-    updateSelectInput(session, "input_dmcomp_files",
-                      label = paste("Select RnBeads analysis Folder", "---"),
-                      choices = list.files(path = selectedDir))
-
     dirfolder = list.files(path = selectedDir)
 
     if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
@@ -266,7 +260,7 @@ shinyServer(function(input, output, session) {
         #   })
         # })
 
-        # code is working but only problem is that we have some values which are also list so we need to handle that
+
 
         output$list_options <- renderDataTable({
 
@@ -282,7 +276,7 @@ shinyServer(function(input, output, session) {
           }
 
           options_values <- unlist(options_values)
-          print(options_values)
+
 
           #options_values <- as.data.table(options_values)
           #print(options_values)
@@ -299,7 +293,7 @@ shinyServer(function(input, output, session) {
 
         output$list_options <- renderDataTable({
 
-          DT = data.table( warning = "No infomation available.")
+          DT = data.table( data = "No infomation available.")
 
           DT
 
@@ -404,50 +398,53 @@ shinyServer(function(input, output, session) {
 
 
 
-    cd_list <- lapply(1:length(common.datasets), function(i) {
-          cd_list[cd_list_counter] <- paste("Dataset",i,sep = "_")
-          cd_list_counter = cd_list_counter + 1
-
-
-          cd_list
-
-        })
+    if (length(common.datasets) != 0){
 
 
 
-    output$total_datasets <- renderText({
+      cd_list <- lapply(1:length(common.datasets), function(i) {
+            cd_list[cd_list_counter] <- paste("Dataset",i,sep = "_")
+            cd_list_counter = cd_list_counter + 1
+
+
+            cd_list
+
+          })
+
+
+
+      output$total_datasets <- renderText({
+          paste("Total datasets used in this repository =", length(cd_list), sep = " ")
+
+      })
+
+      output$list_datasets <- renderDataTable({
+        cd_list <- unlist(cd_list)
+        DT <- data.table( Datasets_Used = cd_list)
+
+        DT
+
+      },selection = 'single', escape = FALSE)
+
+
+    }
+    else{
+
+
+      output$total_datasets <- renderText({
         paste("Total datasets used in this repository =", length(cd_list), sep = " ")
 
-    })
+      })
 
-    output$list_datasets <- renderDataTable({
-      cd_list <- unlist(cd_list)
-      DT <- data.table( Datasets_Used = cd_list)
+      output$list_datasets <- renderDataTable({
 
-      DT
+        DT <- data.table( Datasets_Used = 'No information available.')
 
-    },selection = 'single', escape = FALSE)
+        DT
 
+      },selection = 'single', escape = FALSE)
 
-
-    # datasets_files = datasets_list(results.dir())
-    #
-    #
-    # lapply(1:length(datasets_files), function(i) {
-    #
-    #   a.file <- reactive({read.csv(as.character(datasets_files[i]))[ ,1:6]})
-    #
-    #   # Generate a summary of the dataset
-    #   output[[paste0('annotation',i)]] <- renderTable({
-    #     #paste0("Annotation.csv")
-    #     dataset <- a.file()
-    #     dataset
-    #
-    #
-    #   })
-    #
-    # })
-
+    }
 
 
   })
@@ -586,31 +583,31 @@ shinyServer(function(input, output, session) {
   # comparison tab code
 
 
-  comp.csv.path <- reactive({file.path(rwaDir(), "differential_methylation_data/diffMethTable_site_cmp1.csv")})
-
-
-
-  output$compcsv1 <- renderText({
-    return(paste('<iframe style="height:600px; width:100%" src="', comp.csv.path , '"></iframe>', sep = ""))
-  })
-
-
-  # Generate a summary of the dataset
-  output[[paste0('diffMethTable')]] <- renderTable({
-
-    filename <- normalizePath(file.path(rwaDir(),
-                                        paste('differential_methylation_data/diffMethTable_site_cmp1', '.csv', sep='')), winslash = "\\", mustWork = NA)
-
-    filename= as.character(filename)
-    # fread function from the library data.table
-    list.diff.p.values <- fread(filename,sep = ",", select = c("diffmeth.p.val"), nrows = 10)
-
-    dataset <- list.diff.p.values
-    dataset
-
-
-
-  })
+  # comp.csv.path <- reactive({file.path(rwaDir(), "differential_methylation_data/diffMethTable_site_cmp1.csv")})
+  #
+  #
+  #
+  # output$compcsv1 <- renderText({
+  #   return(paste('<iframe style="height:600px; width:100%" src="', comp.csv.path , '"></iframe>', sep = ""))
+  # })
+  #
+  #
+  # # Generate a summary of the dataset
+  # output[[paste0('diffMethTable')]] <- renderTable({
+  #
+  #   filename <- normalizePath(file.path(rwaDir(),
+  #                                       paste('differential_methylation_data/diffMethTable_site_cmp1', '.csv', sep='')), winslash = "\\", mustWork = NA)
+  #
+  #   filename= as.character(filename)
+  #   # fread function from the library data.table
+  #   list.diff.p.values <- fread(filename,sep = ",", select = c("diffmeth.p.val"), nrows = 10)
+  #
+  #   dataset <- list.diff.p.values
+  #   dataset
+  #
+  #
+  #
+  # })
 
   ####################################################################################
 
@@ -677,7 +674,7 @@ shinyServer(function(input, output, session) {
 
   list.pvalues <- reactive({
 
-    qq.value <- as.character(input$select_ia)
+    qq.value <- as.character(input$input_dmcomp_choices)
 
     qq.dir <- file.path(results.dir(), qq.value)
 
@@ -727,7 +724,7 @@ shinyServer(function(input, output, session) {
 
   observeEvent(input$insertBtn, {
 
-    qq.value <- as.character(input$select_ia)
+    qq.value <- as.character(input$input_dmcomp_choices)
 
     qq.dir <- file.path(results.dir(), qq.value)
 
