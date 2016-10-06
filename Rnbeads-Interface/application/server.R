@@ -148,26 +148,39 @@ shinyServer(function(input, output, session) {
 
     })
 
-    output$list_folders <- renderDataTable({
+    if ( length(choices) != 0 ){
+
+      output$list_folders <- renderDataTable({
 
 
-      #DT <- data.table(ID = 1:length(choices) , Rnbeads_Analysis = choices)
-      # DT
+        #DT <- data.table(ID = 1:length(choices) , Rnbeads_Analysis = choices)
+        # DT
 
 
 
-      DT <- data.table( Rnbeads_Analysis = choices)
-      # DT$Rnbeads_Analysis <- sapply(DT$Rnbeads_Analysis, function(x)
-      #   toString(tags$a(href=paste0("#Individual analysis", x), x)))
+        DT <- data.table( Rnbeads_Analysis = choices)
+        # DT$Rnbeads_Analysis <- sapply(DT$Rnbeads_Analysis, function(x)
+        #   toString(tags$a(href=paste0("#Individual analysis", x), x)))
 
-      #DT$link <- createLink(DT$Rnbeads_Analysis)
-
-
-      return(DT)
-
-    },selection = 'single', escape = FALSE)
+        #DT$link <- createLink(DT$Rnbeads_Analysis)
 
 
+        return(DT)
+
+      },selection = 'single', escape = FALSE)
+
+    }
+
+    else{
+
+      output$list_folders <- renderDataTable({
+
+        DT <- data.table( Rnbeads_Analysis = 'No directory in this repository.')
+        return(DT)
+
+      },selection = 'single', escape = FALSE)
+
+    }
   })
 
   # if the list folder row is selected
@@ -186,21 +199,32 @@ shinyServer(function(input, output, session) {
     wd_modules <- reactive({file.path(results.dir(), value.modules()) })
 
 
-    #fucntion from the RnBeadsInterface package
+    if ( file.exists( isolate({ paste(wd_modules(),'analysis.log',sep="/") }) ) ){
+      #fucntion from the RnBeadsInterface package
 
 
-    Performed_Modules <-  modules_performed(wd_modules())
+      Performed_Modules <-  modules_performed(wd_modules())
 
 
 
-    modules <- unlist(Performed_Modules)
+      modules <- unlist(Performed_Modules)
 
 
-    output$list_module <- renderTable({
-      DT <- data.table(ID = 1:length(modules) , Performed_Modules = modules)
-      DT
+      output$list_module <- renderTable({
+        DT <- data.table(ID = 1:length(modules) , Performed_Modules = modules)
+        DT
 
-    })
+      })
+
+    }
+    else{
+
+      output$list_module <- renderTable({
+        DT <- data.table(Performed_Modules = 'No file exist or no data available.')
+        DT
+
+      })
+    }
 
   })
 
@@ -210,65 +234,77 @@ shinyServer(function(input, output, session) {
 
   # analysis options
 
-  observe({
+  observeEvent(input$select_ia,{
 
       value.options <- reactive({as.character(input$select_ia) })
 
       wd_options <- reactive({file.path(results.dir(), value.options()) })
 
-      rwaDirUpdated <- reactive({file.path(wd_options(), "analysis_options.RData")})
 
-      # function to read analysis_options.RData file
+      if ( file.exists( isolate({ paste(wd_options(),'analysis_options.RData',sep="/") }) ) ){
 
-      LoadToEnvironment <- function(rwaDir, env = new.env()){
-        load(rwaDir, env)
-        return(env)
-      }
+        rwaDirUpdated <- reactive({file.path(wd_options(), "analysis_options.RData")})
+
+        # function to read analysis_options.RData file
+
+        LoadToEnvironment <- function(rwaDir, env = new.env()){
+          load(rwaDir, env)
+          return(env)
+        }
 
 
 
-      lapply(1:114, function(i) {
-        output[[paste0('b', i)]] <- renderUI({
+        # lapply(1:114, function(i) {
+        #   output[[paste0('b', i)]] <- renderUI({
+        #     rdata.env <- LoadToEnvironment(rwaDirUpdated())
+        #
+        #     rdata.fit <- rdata.env$analysis.options
+        #
+        #     names.rdata.fit <- names(rdata.fit)
+        #
+        #     paste0(names.rdata.fit[i]," = ", rdata.fit[i])
+        #   })
+        # })
+
+        # code is working but only problem is that we have some values which are also list so we need to handle that
+
+        output$list_options <- renderDataTable({
+
           rdata.env <- LoadToEnvironment(rwaDirUpdated())
-
           rdata.fit <- rdata.env$analysis.options
 
+          options_values <- list()
+
+          for (i in 1:length(rdata.fit)) {
+
+             options_values[i] <- toString(rdata.fit[i])
+
+          }
+
+          options_values <- unlist(options_values)
+          print(options_values)
+
+          #options_values <- as.data.table(options_values)
+          #print(options_values)
           names.rdata.fit <- names(rdata.fit)
 
-          paste0(names.rdata.fit[i]," = ", rdata.fit[i])
+          DT = data.table( Analysis_Options = names.rdata.fit, Values = options_values)
+
+          DT
+          #names(rdata.fit)
         })
-      })
+      }
+      else{
 
-      # code is working but only problem is that we have some values which are also list so we need to handle that
 
-      # output$list_options <- renderTable({
-      #
-      #   rdata.env <- LoadToEnvironment(rwaDirUpdated())
-      #   rdata.fit <- rdata.env$analysis.options
-      #
-      #   options_values <- list()
-      #
-      #   for (i in 1:length(rdata.fit)) {
-      #
-      #     options_values[i] <- rdata.fit[i]
-      #
-      #   }
-      #
-      #
-      #   print(options_values)
-      #
-      #   options_values <- unlist(options_values)
-      #   print(options_values)
-      #
-      #   #options_values <- as.data.table(options_values)
-      #   #print(options_values)
-      #   names.rdata.fit <- names(rdata.fit)
-      #
-      #   DT = data.table( Analysis_Options = names.rdata.fit, Values = options_values)
-      #
-      #   DT
-      #   #names(rdata.fit)
-      # })
+        output$list_options <- renderDataTable({
+
+          DT = data.table( warning = "No infomation available.")
+
+          DT
+
+        })
+      }
 
   })
 
@@ -465,16 +501,18 @@ shinyServer(function(input, output, session) {
       wd_options <- reactive({file.path(results.dir(), value.options()) })
 
 
-      filename <- reactive({ normalizePath(file.path(wd_options(),'differential_methylation.html'), winslash = "\\", mustWork = NA) })
+      if ( file.exists( isolate({ paste(wd_options(),'differential_methylation.html',sep="/") }) ) ){
 
-      #filename= as.character(filename)
+        filename <- reactive({ normalizePath(file.path(wd_options(),'differential_methylation.html'), winslash = "\\", mustWork = NA) })
 
-      # tmp <- file.path(rwaDir, paste('mesangial cell','/differential_methylation.html'),sep='')
-      # #removing space
-      # tmp <- gsub(" /", "/", tmp)
+        #filename= as.character(filename)
+
+        # tmp <- file.path(rwaDir, paste('mesangial cell','/differential_methylation.html'),sep='')
+        # #removing space
+        # tmp <- gsub(" /", "/", tmp)
 
 
-      if ( file.exists( isolate({ paste(filename()) }) ) ){
+
 
         differential.methylation.path <- filename()
 
@@ -533,9 +571,10 @@ shinyServer(function(input, output, session) {
           paste("No data available")
         })
 
-
-
       }
+
+
+
     }
 
 

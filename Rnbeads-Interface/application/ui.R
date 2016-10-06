@@ -154,11 +154,11 @@ shinyUI(
 
                             tags$p(""),
                             # UI output
-                            lapply(1:114, function(i) {
-                              uiOutput(paste0('b', i))
-                            })
+                            # lapply(1:114, function(i) {
+                            #   uiOutput(paste0('b', i))
+                            # })
 
-                            #tableOutput("list_options")
+                            dataTableOutput("list_options")
 
 
                          ),
