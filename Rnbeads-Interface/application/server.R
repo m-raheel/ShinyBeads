@@ -701,9 +701,9 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), input_choices)
 
-    qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
-
-    input_c = list.files(path = qq.dmd.dir)
+    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+    #
+    # input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
@@ -875,9 +875,9 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), input_choices)
 
-    qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+    #qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
 
-    input_c = list.files(path = qq.dmd.dir)
+    #input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
@@ -961,9 +961,9 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), input_choices)
 
-    qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
-
-    input_c = list.files(path = qq.dmd.dir)
+    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+    #
+    # input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
