@@ -6,7 +6,7 @@
 #' @export
 
 
-comparison_plot <- function(wd,f) {
+comparison_plot <- function(wd) {
 
   if ( file.exists( isolate({ paste(wd,'differential_methylation_data','diffMethTable_site_cmp1.csv',sep="/") }) ) ){
     filename <- file.path(wd, 'differential_methylation_data','diffMethTable_site_cmp1.csv')

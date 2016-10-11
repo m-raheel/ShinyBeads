@@ -819,7 +819,7 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), qq.value)
 
-    qq.value <- as.character(input$input_dmcomp_files)
+    #qq.value <- as.character(input$input_dmcomp_files)
 
 
     if (qq.value == "" || qq.value == "NA"){
@@ -828,7 +828,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      comparison_plot(qq.dir , qq.value)
+      comparison_plot(qq.dir)
     }
 
 
@@ -937,7 +937,7 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), qq.value)
 
-    qq.value <- as.character(input$input_dmcomp_files_1)
+    #qq.value <- as.character(input$input_dmcomp_files_1)
 
 
     if (qq.value == "" || qq.value == "NA"){
@@ -946,7 +946,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      comparison_plot(qq.dir , qq.value)
+      comparison_plot(qq.dir)
     }
 
 
@@ -1023,7 +1023,7 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), qq.value)
 
-    qq.value <- as.character(input$input_dmcomp_files_2)
+    #qq.value <- as.character(input$input_dmcomp_files_2)
 
 
     if (qq.value == "" || qq.value == "NA"){
@@ -1032,7 +1032,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      comparison_plot(qq.dir , qq.value)
+      comparison_plot(qq.dir)
     }
 
 
@@ -1120,7 +1120,7 @@ shinyServer(function(input, output, session) {
         #fucntion from the RnBeadsInterface package
 
         qq.value <- as.character(unlist(vec[i][1]) )
-        check.choices.list[i] <- list(comparison_plot(qq.dir , qq.value))
+        check.choices.list[i] <- list(comparison_plot(qq.dir))
 
 
       }
