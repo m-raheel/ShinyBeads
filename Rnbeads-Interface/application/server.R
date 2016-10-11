@@ -722,39 +722,40 @@ shinyServer(function(input, output, session) {
         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
 
 
-        #query = "//*/table[@class='tabdata']/tr/td[@class='header']"
-        # dates = xpathSApply(pagetree, query, xmlValue)
-        # dates
-        # comp_names <- list()
-        # comp_names_counter <- 1
-        # for (i in 1:length(dates)) {
-        #
-        #
-        #   if ((i>5)){
-        #
-        #
-        #     if(dates[i] == ""){
-        #       break
-        #     }
-        #
-        #     comp_names[comp_names_counter] <- dates[i]
-        #     comp_names_counter = comp_names_counter + 1
-        #
-        #   }
-        # }
-
-        query = "//*/div[@id='section3']/ul/li"
+        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
         dates = xpathSApply(pagetree, query, xmlValue)
         dates
         comp_names <- list()
         comp_names_counter <- 1
         for (i in 1:length(dates)) {
 
+
+          if ((i>5)){
+
+
+            if(dates[i] == ""){
+              break
+            }
+
             comp_names[comp_names_counter] <- dates[i]
             comp_names_counter = comp_names_counter + 1
 
-
+          }
         }
+
+        # query = "//*/div[@id='section3']/ul/li"
+        # dates = xpathSApply(pagetree, query, xmlValue)
+        # dates
+        # comp_names <- list()
+        # comp_names_counter <- 1
+        # for (i in 1:length(dates)) {
+        #
+        #     comp_names[comp_names_counter] <- dates[i]
+        #     comp_names_counter = comp_names_counter + 1
+        #
+        #
+        # }
+        #
 
         choices.list <- comp_names
       }
