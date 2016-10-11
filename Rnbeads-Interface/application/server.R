@@ -1032,7 +1032,8 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      comparison_plot(qq.dir)
+      f = ""
+      comparison_plot(qq.dir,f)
     }
 
 
