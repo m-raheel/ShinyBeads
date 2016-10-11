@@ -23,31 +23,34 @@ datasets_groups <- function(rd) {
 
 
 
-        #filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
+        filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
-        tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
-        len = nchar(tmp)
-        last_character = substr(tmp,len,len)
-
-        if (last_character == '/'){
-
-
-
-          tmp = substr(tmp,len,len - 1)
-
-        }
-
-        filepath <- tmp
-
-
-
+        filename <- as.character(filepath)
         # removing the last character from the path '/' cause error in the server
 
+        # tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
+        # len = nchar(tmp)
+        # last_character = substr(tmp,len,len)
+        #
+        # if (last_character == '/'){
+        #
+        #
+        #
+        #   tmp = substr(tmp,len,len - 1)
+        #
+        # }
+        #
+        # filepath <- tmp
 
 
 
-        if (file.exists( isolate({ paste(filepath) }) ) ){
-          filename <- as.character(filepath)
+
+
+
+
+
+        if (file.exists( isolate({ paste(filename) }) ) ){
+
 
           path.lists[i] <- filename
 
