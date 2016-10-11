@@ -19,6 +19,24 @@ library(tcltk)# OS independent file dir selection
 
 shinyServer(function(input, output, session) {
 
+
+  # logo of the app
+
+  output$preImage <- renderImage({
+
+    filename <- normalizePath(file.path(getwd(),'images',
+                                        paste('Rnbeads', '.png', sep='')))
+
+    # Return a list containing the filename and alt text
+    list(src = filename,
+         contentType = 'image/png',
+         width = 100,
+         height = 50,
+         alt = paste("Image number", 'logo'))
+
+  }, deleteFile = FALSE)
+
+
   # commented is the script to change the tab
 
   observe({
@@ -41,7 +59,9 @@ shinyServer(function(input, output, session) {
 
 
 
-    updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
+    #updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
+
+    updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
@@ -66,6 +86,14 @@ shinyServer(function(input, output, session) {
 
     updateSelectInput(session, "input_dmcomp_choices",
                       label = paste("Select RnBeads analysis Folder", "---"),
+                      choices = list.files(path = selectedDir))
+
+    updateSelectInput(session, "input_dmcomp_choices_1",
+                      label = paste("Repository 1", "---"),
+                      choices = list.files(path = selectedDir))
+
+    updateSelectInput(session, "input_dmcomp_choices_2",
+                      label = paste("Repository 2", "---"),
                       choices = list.files(path = selectedDir))
 
     dirfolder = list.files(path = selectedDir)
@@ -412,11 +440,20 @@ shinyServer(function(input, output, session) {
           })
 
 
+     dataset_choices <- unlist(cd_list)
+      # update the datalist dropdown in the individual data sets tab
+      updateSelectInput(session, "dd_ids_datasets",
+                        label = "Datasets",
+                        choices = dataset_choices)
 
       output$total_datasets <- renderText({
           paste("Total datasets used in this repository =", length(cd_list), sep = " ")
 
       })
+
+
+
+
 
       output$list_datasets <- renderDataTable({
         cd_list <- unlist(cd_list)
@@ -486,6 +523,47 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
+  # individual data sets tab
+
+  observeEvent(input$dd_ids_datasets,{
+
+    dd_datasets <- as.character(input$dd_ids_datasets)
+
+    tmp = toString(dd_datasets)
+    len = nchar(tmp)
+    last_character = substr(tmp,len,len)
+
+
+
+
+    if (dd_datasets != "NA"){
+
+      last_character = as.integer(last_character)
+
+      datasets_files = datasets_list(results.dir())
+
+
+      a.file <- reactive({read.csv(as.character(datasets_files[last_character]))[ ,1:6]})
+
+      # Generate a summary of the dataset
+      output[[paste0('annotation')]] <- renderDataTable({
+        #paste0("Annotation.csv")
+        dataset <- a.file()
+        dataset
+
+
+
+
+      })
+
+      output$h1_datasettab <- renderText({
+        paste("Dataset_",last_character)
+
+      })
+
+    }
+  })
+  ###############################################################################################
   # Comparisons Table from HTML files
 
   observe({
@@ -539,21 +617,21 @@ shinyServer(function(input, output, session) {
 
         # Extract table header and contents of the comparison table of differential methylation
 
-        head <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td[@class='header']", xmlValue)
-        results <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td", xmlValue)
-
-        # Convert character vector to dataframe
-        comparisonTable <- as.data.frame(matrix(results, ncol = 4, byrow = TRUE))
-
-
-        tablehead <- c('Nr.','comparison','ajustment','covariateTable')
-        # Clean up the results
-        comparisonTable[,1] <- gsub("Â ", "", comparisonTable[,1])
-        tablehead <- gsub("Â ", "", tablehead)
-        names(comparisonTable) <- tablehead
+        # head <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td[@class='header']", xmlValue)
+        # results <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td", xmlValue)
+        #
+        # # Convert character vector to dataframe
+        # comparisonTable <- as.data.frame(matrix(results, ncol = 4, byrow = TRUE))
+        #
+        #
+        # tablehead <- c('Nr.','comparison','ajustment','covariateTable')
+        # # Clean up the results
+        # comparisonTable[,1] <- gsub("Â ", "", comparisonTable[,1])
+        # tablehead <- gsub("Â ", "", tablehead)
+        # names(comparisonTable) <- tablehead
 
         output$htmlcomparisonTable = renderTable({
-          comparisonTable
+          "comparisonTable No data avaialbe"
         })
 
       }
@@ -611,7 +689,7 @@ shinyServer(function(input, output, session) {
 
   ####################################################################################
 
-  # qqplots of diff methylation p- values
+  # qqplots 1 of diff methylation p- values
 
   #selected index change event of comparison tab selection panel
 
@@ -627,30 +705,81 @@ shinyServer(function(input, output, session) {
 
     input_c = list.files(path = qq.dmd.dir)
 
-    choices.list <- list()
-    choices.list.counter <- 1
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
-    for (i in 1:length(input_c)) {
+    if (input_choices != "NA"){
 
-      if(length(grep("diffMethTable_site_cmp",input_c[i]))>0){
 
-        choices.list[choices.list.counter] <- input_c[i]
-        choices.list.counter = choices.list.counter+1
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
+        dates = xpathSApply(pagetree, query, xmlValue)
+        dates
+        comp_names <- list()
+        comp_names_counter <- 1
+        for (i in 1:length(dates)) {
+
+
+          if ((i>5)){
+
+
+            if(dates[i] == ""){
+              break
+            }
+
+            comp_names[comp_names_counter] <- dates[i]
+            comp_names_counter = comp_names_counter + 1
+
+          }
+        }
+
+        choices.list <- comp_names
       }
-
+      else{
+        choices.list <- 'NA'
+      }
+    }
+    else{
+      choices.list <- 'NA'
 
     }
 
+    # list of all the comparison file to populate in the dropdown
+
+    # choices.list <- list()
+    # choices.list.counter <- 1
+    #
+    # for (i in 1:length(input_c)) {
+    #
+    #   if(length(grep("diffMethTable_site_cmp",input_c[i]))>0){
+    #
+    #     choices.list[choices.list.counter] <- input_c[i]
+    #     choices.list.counter = choices.list.counter+1
+    #   }
+    #
+    #
+    # }
+
 
     updateSelectInput(session, "input_dmcomp_files",
-                      label = paste("differential_methylation_data folder", ""),
+                      label = paste("Comparison", ""),
                       choices = choices.list)
 
     if (length(choices.list) > 0){
 
       updateCheckboxGroupInput(session, "check_comp",
 
-                               label = paste("Select csv files", ""),
+                               label = paste("Select comparison", ""),
                                choices = choices.list
       )
 
@@ -660,7 +789,7 @@ shinyServer(function(input, output, session) {
 
       updateCheckboxGroupInput(session, "check_comp",
 
-                               label = paste("Select csv files", ""),
+                               label = paste("Select comparison", ""),
                                choices = ""
       )
 
@@ -668,8 +797,6 @@ shinyServer(function(input, output, session) {
 
 
   })
-
-
 
 
   list.pvalues <- reactive({
@@ -681,7 +808,7 @@ shinyServer(function(input, output, session) {
     qq.value <- as.character(input$input_dmcomp_files)
 
 
-    if (qq.value == ""){
+    if (qq.value == "" || qq.value == "NA"){
       x <- list()
       x
     }
@@ -692,6 +819,8 @@ shinyServer(function(input, output, session) {
 
 
   })
+
+
 
   output$compqqplot <- renderPlot({
 
@@ -718,6 +847,235 @@ shinyServer(function(input, output, session) {
   }, height = 400, width = 500)
 
   #######################################################################
+
+
+  ####################################################################################
+
+  # qqplots 2 of diff methylation p- values in which two comarprisons qqplots is displayed
+
+
+  # for Repository 1
+  observeEvent(input$input_dmcomp_choices_1,{
+
+    input_choices <- as.character(input$input_dmcomp_choices_1)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+    qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+
+    input_c = list.files(path = qq.dmd.dir)
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    if (input_choices != "NA"){
+
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
+        dates = xpathSApply(pagetree, query, xmlValue)
+        dates
+        comp_names <- list()
+        comp_names_counter <- 1
+        for (i in 1:length(dates)) {
+
+
+          if ((i>5)){
+
+
+            if(dates[i] == ""){
+              break
+            }
+
+            comp_names[comp_names_counter] <- dates[i]
+            comp_names_counter = comp_names_counter + 1
+
+          }
+        }
+
+        choices.list <- comp_names
+      }
+      else{
+        choices.list <- 'NA'
+      }
+    }
+    else{
+      choices.list <- 'NA'
+
+    }
+
+
+    updateSelectInput(session, "input_dmcomp_files_1",
+                      label = paste("Comparison 1", ""),
+                      choices = choices.list)
+
+
+
+
+  })
+
+
+  list.pvalues_1 <- reactive({
+
+    qq.value <- as.character(input$input_dmcomp_choices_1)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+    qq.value <- as.character(input$input_dmcomp_files_1)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      x <- list()
+      x
+    }
+    else{
+      #fucntion from the RnBeadsInterface package
+      comparison_plot(qq.dir , qq.value)
+    }
+
+
+  })
+
+  ################################################
+
+  # for Repository 2
+  observeEvent(input$input_dmcomp_choices_2,{
+
+    input_choices <- as.character(input$input_dmcomp_choices_2)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+    qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+
+    input_c = list.files(path = qq.dmd.dir)
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    if (input_choices != "NA"){
+
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
+        dates = xpathSApply(pagetree, query, xmlValue)
+        dates
+        comp_names <- list()
+        comp_names_counter <- 1
+        for (i in 1:length(dates)) {
+
+
+          if ((i>5)){
+
+
+            if(dates[i] == ""){
+              break
+            }
+
+            comp_names[comp_names_counter] <- dates[i]
+            comp_names_counter = comp_names_counter + 1
+
+          }
+        }
+
+        choices.list <- comp_names
+      }
+      else{
+        choices.list <- 'NA'
+      }
+    }
+    else{
+      choices.list <- 'NA'
+
+    }
+
+
+    updateSelectInput(session, "input_dmcomp_files_2",
+                      label = paste("Comparison 2", ""),
+                      choices = choices.list)
+
+
+
+
+  })
+
+
+  list.pvalues_2 <- reactive({
+
+    qq.value <- as.character(input$input_dmcomp_choices_2)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+    qq.value <- as.character(input$input_dmcomp_files_2)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      x <- list()
+      x
+    }
+    else{
+      #fucntion from the RnBeadsInterface package
+      comparison_plot(qq.dir , qq.value)
+    }
+
+
+  })
+
+
+
+
+  output$multicompqqplot <- renderPlot({
+
+    dist <- switch(input$dist,
+                   norm = rnorm,
+                   unif = runif,
+                   lnorm = rlnorm,
+                   exp = rexp,
+                   rnorm)
+
+    if(length(list.pvalues_1()) == 0) {
+
+      # print error/ warning message
+      qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+      text(1,1,"No data available or no comparison file exist from repository 1")
+
+    }
+    else if (length(list.pvalues_2()) == 0){
+      # print error/ warning message
+      qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+      text(1,1,"No data available or no comparison file exist from repository 2")
+    }
+    else{
+      x<- list.pvalues_1()
+      y<- list.pvalues_2()
+
+      qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
+
+    }
+
+  }, height = 400, width = 500)
+
+  #######################################################################
+
 
   # comparison among different files of same Rnbeads Analysis
   # observer event for checkbox input to display checked plots

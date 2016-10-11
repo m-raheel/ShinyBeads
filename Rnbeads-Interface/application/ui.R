@@ -16,15 +16,21 @@ check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPL
 
 shinyUI(
 
+
+
   navbarPage(
 
 
-  #title=div(img(src=textOutput("logo")), "RnBeads"),
+
+
+  #title=div(imageOutput("preImage"), "RnBeads"),
   title= "RnBeads"  ,
 
 
   # Home nav menu
   tabPanel("Home",
+
+
 
            br(),
 
@@ -32,6 +38,11 @@ shinyUI(
              column(width = 12,
                     shinyjs::useShinyjs(),
                     #shinyjs::extendShinyjs(text = "shinyjs.workingDirButton = function() { location.reload(); }"),
+
+
+                    # Use imageOutput to place the image on the page
+                    #imageOutput("preImage"),
+
 
                     tags$strong("Choose RnBeads analysis Repository:"),
                     br(),br(),
@@ -189,7 +200,7 @@ tabPanel("Individual data set",
          tabsetPanel(id= "DatasetTab",
                      tabPanel("Dataset",
 
-                              br(),br(),
+                              br(),
 
                               # tags$strong("List of different data sets used in RnBeads analysis:"),
                               # tags$p(""),
@@ -199,7 +210,7 @@ tabPanel("Individual data set",
                               #
                               # }),
 
-
+                              selectInput("dd_ids_datasets", "Datasets:", choices),
                               h3(span( "Selected Dataset", class="label label-default"), class= "text-info"),
                               h3(verbatimTextOutput("h1_datasettab"), class= "text-info"),
                               br(),br(),
@@ -223,56 +234,82 @@ tabPanel("Integrative Visualization",
 
          ),
 
+
          mainPanel(
 
            tabsetPanel("visualization",
                        tabPanel("QQ-Plots",
+                                br(),
+                                tabsetPanel("sub_visuallization",
 
-                                  tabsetPanel(
-                                    tabPanel("Single File Comparison",
-                                             br(), br(),
+                                    tabPanel("QQ-Plots 1",
 
-                                             selectInput("input_dmcomp_files", "differential_methylation_data folder:", ""),
+                                           br(),
 
-
-
-                                             tags$p("The qqplot of diffmethy p values from the above selected csv is shown below:"),
-                                             radioButtons("dist", "Distribution type:",
-                                                          c("Normal" = "norm",
-                                                            "Uniform" = "unif",
-                                                            "Log-normal" = "lnorm",
-                                                            "Exponential" = "exp")),
-                                             plotOutput('compqqplot')
-
-
-                                    ),# tab panel end
-
-                                    tabPanel("Multiple File Comparison",
-                                             br(), br(),
-                                             # radioButtons("radio_comp", label = h3("Select comparison file"),
-                                             #              choices = list("",1),
-                                             #              selected = 1),
-                                             #
-                                             #
-                                             # plotOutput('compqqplot2'),
-
-
-                                             checkboxGroupInput("check_comp", label = h3("Select comparison file"),
-                                                                choices = list("",1),
-                                                                selected = 1),
-
-                                             actionButton('insertBtn', 'Show'),
-
-
-                                             plotOutput('compqqplot3')
+                                           selectInput("input_dmcomp_files", "comparisons:", ""),
 
 
 
-                                    )
+                                           tags$p("The qqplot of diffmethy p values from the above selected csv is shown below:"),
+                                           radioButtons("dist", "Distribution type:",
+                                                        c("Normal" = "norm",
+                                                          "Uniform" = "unif",
+                                                          "Log-normal" = "lnorm",
+                                                          "Exponential" = "exp")),
+                                           plotOutput('compqqplot')
 
-                                  )# end tabset panel
+
+                                           # radioButtons("radio_comp", label = h3("Select comparison file"),
+                                           #              choices = list("",1),
+                                           #              selected = 1),
+                                           #
+                                           #
+                                           # plotOutput('compqqplot2'),
+
+                                    ),
+
+                                   tabPanel("QQ-Plots 2",
+
+                                            br(),
+                                            h3("Select comparison among two rnbeads analysis"),
+                                            fluidRow(
+                                              column(width = 6,
+                                                     selectInput("input_dmcomp_choices_1", "Rnbeads analysis 1:", choices),
+                                                     br(),
+
+                                                     selectInput("input_dmcomp_files_1", "Comaprisons 1:", "")
+
+                                              ),
+                                              column(width = 6,
+                                                     selectInput("input_dmcomp_choices_2", "Rnbeads analysis 2:", choices),
+                                                     br(),
+                                                     selectInput("input_dmcomp_files_2", "Comparisons 2:", "")
+
+                                              )
+                                            ),
 
 
+
+                                            plotOutput('multicompqqplot')
+
+
+                                  ),
+
+                                  tabPanel("QQ-Plots 3",
+
+                                           br(), br(),
+
+                                           checkboxGroupInput("check_comp", label = h3("Select comparison file"),
+                                                              choices = list("",1),
+                                                              selected = 1),
+
+                                           actionButton('insertBtn', 'Show'),
+
+
+                                           plotOutput('compqqplot3')
+
+                                  )#tab panel
+                                )# tab set panel
 
                        ),
 

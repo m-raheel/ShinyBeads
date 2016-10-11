@@ -8,8 +8,8 @@
 
 comparison_plot <- function(wd,f) {
 
-  if ( file.exists( isolate({ paste(wd,'differential_methylation_data',f,sep="/") }) ) ){
-    filename <- file.path(wd, 'differential_methylation_data',f)
+  if ( file.exists( isolate({ paste(wd,'differential_methylation_data','diffMethTable_site_cmp1.csv',sep="/") }) ) ){
+    filename <- file.path(wd, 'differential_methylation_data','diffMethTable_site_cmp1.csv')
 
 
     filename= as.character(filename)

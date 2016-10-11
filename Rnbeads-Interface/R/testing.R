@@ -122,4 +122,39 @@
 
 
 
-
+# tmp <- file.path(getwd(), paste('application','results','mesangial cell','differential_methylation.html',sep='/'))
+# # #removing space
+# # tmp <- gsub(" /", "/", tmp)
+#
+# filename= as.character(tmp)
+# filename
+#
+# differential.methylation.path <- filename
+#
+# webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+# pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+# pagetree
+#
+# # Extract table header and contents of the comparison table of differential methylation
+#
+# query = "//*/table[@class='tabdata']/tr/td[@class='header']"
+# dates = xpathSApply(pagetree, query, xmlValue)
+# dates
+# comp_names <- list()
+# comp_names_counter <- 1
+# for (i in 1:length(dates)) {
+#
+#
+#   if ((i>5)){
+#
+#
+#     if(dates[i] == ""){
+#       break
+#     }
+#
+#     comp_names[comp_names_counter] <- dates[i]
+#     comp_names_counter = comp_names_counter + 1
+#
+#   }
+# }
+# comp_names
