@@ -59,9 +59,9 @@ shinyServer(function(input, output, session) {
 
 
 
-    #updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
+    updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
 
-    updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
+    #updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
@@ -404,8 +404,8 @@ shinyServer(function(input, output, session) {
 
     cd_list <- list()
     cd_list_counter <- 1
-    common.datasets = datasets_groups(results.dir())
-    #common.datasets <- list()
+    #common.datasets = datasets_groups(results.dir())
+    common.datasets <- list()
 
 
     #if ( file.exists( isolate({ paste(dirfolder()[1],'index.html',sep="/") }) ) ){
