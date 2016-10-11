@@ -8,7 +8,7 @@
 
 comparison_plot <- function(wd) {
 
-  if ( file.exists( isolate({ paste(wd,'differential_methylation_data','diffMethTable_site_cmp1.csv',sep="/") }) ) ){
+  #if ( file.exists( isolate({ paste(wd,'differential_methylation_data','diffMethTable_site_cmp1.csv',sep="/") }) ) ){
     filename <- file.path(wd, 'differential_methylation_data','diffMethTable_site_cmp1.csv')
 
 
@@ -28,14 +28,14 @@ comparison_plot <- function(wd) {
     list.diff.p.values <- unlist(list.diff.p.values)
 
     return(list.diff.p.values)
-  }
-
-  else{
-
-    empty_list <- list()
-
-    return(empty_list)
-  }
+  # }
+  #
+  # else{
+  #
+  #   empty_list <- list()
+  #
+  #   return(empty_list)
+  # }
 
 
 }
