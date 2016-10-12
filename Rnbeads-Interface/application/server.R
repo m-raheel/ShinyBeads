@@ -258,75 +258,75 @@ shinyServer(function(input, output, session) {
 
   observeEvent(input$select_ia,{
 
-      value.options <- reactive({as.character(input$select_ia) })
+    value.options <- reactive({as.character(input$select_ia) })
 
-      wd_options <- reactive({file.path(results.dir(), value.options()) })
+    wd_options <- reactive({file.path(results.dir(), value.options()) })
 
 
-      if ( file.exists( isolate({ paste(wd_options(),'analysis_options.RData',sep="/") }) ) ){
+    if ( file.exists( isolate({ paste(wd_options(),'analysis_options.RData',sep="/") }) ) ){
 
-        rwaDirUpdated <- reactive({file.path(wd_options(), "analysis_options.RData")})
+      rwaDirUpdated <- reactive({file.path(wd_options(), "analysis_options.RData")})
 
-        # function to read analysis_options.RData file
+      # function to read analysis_options.RData file
 
-        LoadToEnvironment <- function(rwaDir, env = new.env()){
-          load(rwaDir, env)
-          return(env)
+      LoadToEnvironment <- function(rwaDir, env = new.env()){
+        load(rwaDir, env)
+        return(env)
+      }
+
+
+
+      # lapply(1:114, function(i) {
+      #   output[[paste0('b', i)]] <- renderUI({
+      #     rdata.env <- LoadToEnvironment(rwaDirUpdated())
+      #
+      #     rdata.fit <- rdata.env$analysis.options
+      #
+      #     names.rdata.fit <- names(rdata.fit)
+      #
+      #     paste0(names.rdata.fit[i]," = ", rdata.fit[i])
+      #   })
+      # })
+
+
+
+      output$list_options <- renderDataTable({
+
+        rdata.env <- LoadToEnvironment(rwaDirUpdated())
+        rdata.fit <- rdata.env$analysis.options
+
+        options_values <- list()
+
+        for (i in 1:length(rdata.fit)) {
+
+          options_values[i] <- toString(rdata.fit[i])
+
         }
 
+        options_values <- unlist(options_values)
 
 
-        # lapply(1:114, function(i) {
-        #   output[[paste0('b', i)]] <- renderUI({
-        #     rdata.env <- LoadToEnvironment(rwaDirUpdated())
-        #
-        #     rdata.fit <- rdata.env$analysis.options
-        #
-        #     names.rdata.fit <- names(rdata.fit)
-        #
-        #     paste0(names.rdata.fit[i]," = ", rdata.fit[i])
-        #   })
-        # })
+        #options_values <- as.data.table(options_values)
+        #print(options_values)
+        names.rdata.fit <- names(rdata.fit)
+
+        DT = data.table( Analysis_Options = names.rdata.fit, Values = options_values)
+
+        DT
+        #names(rdata.fit)
+      })
+    }
+    else{
 
 
+      output$list_options <- renderDataTable({
 
-        output$list_options <- renderDataTable({
+        DT = data.table( data = "No infomation available.")
 
-          rdata.env <- LoadToEnvironment(rwaDirUpdated())
-          rdata.fit <- rdata.env$analysis.options
+        DT
 
-          options_values <- list()
-
-          for (i in 1:length(rdata.fit)) {
-
-             options_values[i] <- toString(rdata.fit[i])
-
-          }
-
-          options_values <- unlist(options_values)
-
-
-          #options_values <- as.data.table(options_values)
-          #print(options_values)
-          names.rdata.fit <- names(rdata.fit)
-
-          DT = data.table( Analysis_Options = names.rdata.fit, Values = options_values)
-
-          DT
-          #names(rdata.fit)
-        })
-      }
-      else{
-
-
-        output$list_options <- renderDataTable({
-
-          DT = data.table( data = "No infomation available.")
-
-          DT
-
-        })
-      }
+      })
+    }
 
   })
 
@@ -431,23 +431,23 @@ shinyServer(function(input, output, session) {
 
 
       cd_list <- lapply(1:length(common.datasets), function(i) {
-            cd_list[cd_list_counter] <- paste("Dataset",i,sep = "_")
-            cd_list_counter = cd_list_counter + 1
+        cd_list[cd_list_counter] <- paste("Dataset",i,sep = "_")
+        cd_list_counter = cd_list_counter + 1
 
 
-            cd_list
+        cd_list
 
-          })
+      })
 
 
-     dataset_choices <- unlist(cd_list)
+      dataset_choices <- unlist(cd_list)
       # update the datalist dropdown in the individual data sets tab
       updateSelectInput(session, "dd_ids_datasets",
                         label = "Datasets",
                         choices = dataset_choices)
 
       output$total_datasets <- renderText({
-          paste("Total datasets used in this repository =", length(cd_list), sep = " ")
+        paste("Total datasets used in this repository =", length(cd_list), sep = " ")
 
       })
 
@@ -722,25 +722,38 @@ shinyServer(function(input, output, session) {
         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
 
 
-        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
+        #query = "//*/table[@class='tabdata']/tr/td[@class='header']"
+        # dates = xpathSApply(pagetree, query, xmlValue)
+        # dates
+        # comp_names <- list()
+        # comp_names_counter <- 1
+        # for (i in 1:length(dates)) {
+        #
+        #
+        #   if ((i>5)){
+        #
+        #
+        #     if(dates[i] == ""){
+        #       break
+        #     }
+        #
+        #     comp_names[comp_names_counter] <- dates[i]
+        #     comp_names_counter = comp_names_counter + 1
+        #
+        #   }
+        # }
+
+        query = "//*/div[@id='section3']/ul/li"
         dates = xpathSApply(pagetree, query, xmlValue)
         dates
         comp_names <- list()
         comp_names_counter <- 1
         for (i in 1:length(dates)) {
 
+          comp_names[comp_names_counter] <- dates[i]
+          comp_names_counter = comp_names_counter + 1
 
-          if ((i>5)){
 
-
-            if(dates[i] == ""){
-              break
-            }
-
-            comp_names[comp_names_counter] <- dates[i]
-            comp_names_counter = comp_names_counter + 1
-
-          }
         }
 
         choices.list <- comp_names
@@ -882,25 +895,17 @@ shinyServer(function(input, output, session) {
         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
 
 
-        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
+        query = "//*/div[@id='section3']/ul/li"
         dates = xpathSApply(pagetree, query, xmlValue)
         dates
         comp_names <- list()
         comp_names_counter <- 1
         for (i in 1:length(dates)) {
 
+          comp_names[comp_names_counter] <- dates[i]
+          comp_names_counter = comp_names_counter + 1
 
-          if ((i>5)){
 
-
-            if(dates[i] == ""){
-              break
-            }
-
-            comp_names[comp_names_counter] <- dates[i]
-            comp_names_counter = comp_names_counter + 1
-
-          }
         }
 
         choices.list <- comp_names
@@ -976,25 +981,17 @@ shinyServer(function(input, output, session) {
         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
 
 
-        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
+        query = "//*/div[@id='section3']/ul/li"
         dates = xpathSApply(pagetree, query, xmlValue)
         dates
         comp_names <- list()
         comp_names_counter <- 1
         for (i in 1:length(dates)) {
 
+          comp_names[comp_names_counter] <- dates[i]
+          comp_names_counter = comp_names_counter + 1
 
-          if ((i>5)){
 
-
-            if(dates[i] == ""){
-              break
-            }
-
-            comp_names[comp_names_counter] <- dates[i]
-            comp_names_counter = comp_names_counter + 1
-
-          }
         }
 
         choices.list <- comp_names
