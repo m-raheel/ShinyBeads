@@ -23,34 +23,31 @@ datasets_groups <- function(rd) {
 
 
 
-        filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
+        #filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
-        #filename <- as.character(filepath)
+        tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
+        len = nchar(tmp)
+        last_character = substr(tmp,len,len)
+
+        if (last_character == '/'){
+
+
+
+          tmp = substr(tmp,len,len - 1)
+
+        }
+
+        filepath <- tmp
+
+
+
         # removing the last character from the path '/' cause error in the server
 
-        # tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
-        # len = nchar(tmp)
-        # last_character = substr(tmp,len,len)
-        #
-        # if (last_character == '/'){
-        #
-        #
-        #
-        #   tmp = substr(tmp,len,len - 1)
-        #
-        # }
-        #
-        # filepath <- tmp
 
 
 
-
-
-
-
-
-        if (file.exists( isolate({ paste(filename) }) ) ){
-
+        if (file.exists( isolate({ paste(filepath) }) ) ){
+          filename <- as.character(filepath)
 
           path.lists[i] <- filename
 
@@ -85,7 +82,7 @@ datasets_groups <- function(rd) {
         #   path.lists[i] = tmp
         # }
 
-        A <- read.csv(toString(path.lists[i]))[ ,2:3]
+        A <- read.csv((toString(path.lists[i])))[ ,2:3]
 
         for (j in i:length(folders)) {
 
@@ -102,7 +99,7 @@ datasets_groups <- function(rd) {
           # }
 
 
-          B <- read.csv(path.lists[j])[ ,2:3]
+          B <- read.csv((toString(path.lists[j])))[ ,2:3]
 
           if (length(A) == length(B) && j != i){
             comparison <- identical(A,B)
@@ -162,7 +159,7 @@ datasets_groups <- function(rd) {
 
         #filename <- paste(filepath, 'annotation.csv', sep="/")
 
-        if (file.exists( isolate({ filepath }) ) ){
+        if (file.exists( isolate({ paste(filepath) }) ) ){
 
           filename <- filepath
           #removing space

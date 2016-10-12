@@ -701,9 +701,9 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), input_choices)
 
-    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
-    #
-    # input_c = list.files(path = qq.dmd.dir)
+    qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+
+    input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
@@ -722,40 +722,26 @@ shinyServer(function(input, output, session) {
         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
 
 
-        # query = "//*/table[@class='tabdata']/tr/td[@class='header']"
-        # dates = xpathSApply(pagetree, query, xmlValue)
-        # dates
-        # comp_names <- list()
-        # comp_names_counter <- 1
-        # for (i in 1:length(dates)) {
-        #
-        #
-        #   if ((i>5)){
-        #
-        #
-        #     if(dates[i] == ""){
-        #       break
-        #     }
-        #
-        #     comp_names[comp_names_counter] <- dates[i]
-        #     comp_names_counter = comp_names_counter + 1
-        #
-        #   }
-        # }
-
-        query = "//*/div[@id='section3']/ul/li"
+        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
         dates = xpathSApply(pagetree, query, xmlValue)
         dates
         comp_names <- list()
         comp_names_counter <- 1
         for (i in 1:length(dates)) {
 
+
+          if ((i>5)){
+
+
+            if(dates[i] == ""){
+              break
+            }
+
             comp_names[comp_names_counter] <- dates[i]
             comp_names_counter = comp_names_counter + 1
 
-
+          }
         }
-
 
         choices.list <- comp_names
       }
@@ -819,7 +805,7 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), qq.value)
 
-    #qq.value <- as.character(input$input_dmcomp_files)
+    qq.value <- as.character(input$input_dmcomp_files)
 
 
     if (qq.value == "" || qq.value == "NA"){
@@ -828,8 +814,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      f = ""
-      comparison_plot(qq.dir,f)
+      comparison_plot(qq.dir , qq.value)
     }
 
 
@@ -876,9 +861,9 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), input_choices)
 
-    #qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+    qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
 
-    #input_c = list.files(path = qq.dmd.dir)
+    input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
@@ -897,17 +882,25 @@ shinyServer(function(input, output, session) {
         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
 
 
-        query = "//*/div[@id='section3']/ul/li"
+        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
         dates = xpathSApply(pagetree, query, xmlValue)
         dates
         comp_names <- list()
         comp_names_counter <- 1
         for (i in 1:length(dates)) {
 
-          comp_names[comp_names_counter] <- dates[i]
-          comp_names_counter = comp_names_counter + 1
+
+          if ((i>5)){
 
 
+            if(dates[i] == ""){
+              break
+            }
+
+            comp_names[comp_names_counter] <- dates[i]
+            comp_names_counter = comp_names_counter + 1
+
+          }
         }
 
         choices.list <- comp_names
@@ -938,7 +931,7 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), qq.value)
 
-    #qq.value <- as.character(input$input_dmcomp_files_1)
+    qq.value <- as.character(input$input_dmcomp_files_1)
 
 
     if (qq.value == "" || qq.value == "NA"){
@@ -947,8 +940,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      f = ""
-      comparison_plot(qq.dir,f)
+      comparison_plot(qq.dir , qq.value)
     }
 
 
@@ -963,9 +955,9 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), input_choices)
 
-    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
-    #
-    # input_c = list.files(path = qq.dmd.dir)
+    qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+
+    input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
@@ -984,17 +976,25 @@ shinyServer(function(input, output, session) {
         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
 
 
-        query = "//*/div[@id='section3']/ul/li"
+        query = "//*/table[@class='tabdata']/tr/td[@class='header']"
         dates = xpathSApply(pagetree, query, xmlValue)
         dates
         comp_names <- list()
         comp_names_counter <- 1
         for (i in 1:length(dates)) {
 
-          comp_names[comp_names_counter] <- dates[i]
-          comp_names_counter = comp_names_counter + 1
+
+          if ((i>5)){
 
 
+            if(dates[i] == ""){
+              break
+            }
+
+            comp_names[comp_names_counter] <- dates[i]
+            comp_names_counter = comp_names_counter + 1
+
+          }
         }
 
         choices.list <- comp_names
@@ -1025,7 +1025,7 @@ shinyServer(function(input, output, session) {
 
     qq.dir <- file.path(results.dir(), qq.value)
 
-    #qq.value <- as.character(input$input_dmcomp_files_2)
+    qq.value <- as.character(input$input_dmcomp_files_2)
 
 
     if (qq.value == "" || qq.value == "NA"){
@@ -1034,8 +1034,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      f = ""
-      comparison_plot(qq.dir,f)
+      comparison_plot(qq.dir , qq.value)
     }
 
 
@@ -1123,7 +1122,7 @@ shinyServer(function(input, output, session) {
         #fucntion from the RnBeadsInterface package
 
         qq.value <- as.character(unlist(vec[i][1]) )
-        check.choices.list[i] <- list(comparison_plot(qq.dir))
+        check.choices.list[i] <- list(comparison_plot(qq.dir , qq.value))
 
 
       }

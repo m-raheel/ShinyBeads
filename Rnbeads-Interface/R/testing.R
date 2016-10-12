@@ -122,7 +122,7 @@
 
 
 
-# tmp <- file.path(getwd(), paste('application','results','embryonic stem cell','differential_methylation.html',sep='/'))
+# tmp <- file.path(getwd(), paste('application','results','mesangial cell','differential_methylation.html',sep='/'))
 # # #removing space
 # # tmp <- gsub(" /", "/", tmp)
 #
@@ -137,7 +137,7 @@
 #
 # # Extract table header and contents of the comparison table of differential methylation
 #
-# query = "//*/div[@id='section3']/ul/li"
+# query = "//*/table[@class='tabdata']/tr/td[@class='header']"
 # dates = xpathSApply(pagetree, query, xmlValue)
 # dates
 # comp_names <- list()
