@@ -827,7 +827,8 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      comparison_plot(qq.dir , qq.value)
+      f = ""
+      comparison_plot(qq.dir , f)
     }
 
 
@@ -945,7 +946,8 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      comparison_plot(qq.dir , qq.value)
+      f = ""
+      comparison_plot(qq.dir , f)
     }
 
 
@@ -1031,7 +1033,8 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      comparison_plot(qq.dir , qq.value)
+      f = ""
+      comparison_plot(qq.dir , f)
     }
 
 
@@ -1119,7 +1122,8 @@ shinyServer(function(input, output, session) {
         #fucntion from the RnBeadsInterface package
 
         #qq.value <- as.character(unlist(vec[i][1]) )
-        check.choices.list[i] <- list(comparison_plot(qq.dir , qq.value))
+        f = ""
+        check.choices.list[i] <- list(comparison_plot(qq.dir , f))
 
 
       }
