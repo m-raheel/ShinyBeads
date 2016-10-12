@@ -827,7 +827,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      f = ""
+      f = "diffMethTable_site_cmp1.csv"
       comparison_plot(qq.dir , f)
     }
 
@@ -946,7 +946,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      f = ""
+      f = "diffMethTable_site_cmp1.csv"
       comparison_plot(qq.dir , f)
     }
 
@@ -1033,7 +1033,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      f = ""
+      f = "diffMethTable_site_cmp1.csv"
       comparison_plot(qq.dir , f)
     }
 
@@ -1122,7 +1122,7 @@ shinyServer(function(input, output, session) {
         #fucntion from the RnBeadsInterface package
 
         #qq.value <- as.character(unlist(vec[i][1]) )
-        f = ""
+        f = "diffMethTable_site_cmp1.csv"
         check.choices.list[i] <- list(comparison_plot(qq.dir , f))
 
 
