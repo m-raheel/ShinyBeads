@@ -8,12 +8,12 @@ library(data.table) # using the function fread for reading large csv files
 library(tcltk)# OS independent file dir selection
 
 
-
 #library(shinyFiles)
 
 # createLink <- function(val) {
 #   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
 # }
+
 
 
 
@@ -221,7 +221,9 @@ shinyServer(function(input, output, session) {
 
     cd_list <- list()
     cd_list_counter <- 1
-    common.datasets = datasets_groups(results.dir())
+
+
+    common.datasets = datasets_common(results.dir())
     #common.datasets <- list()
 
     if (length(common.datasets) != 0){
@@ -292,13 +294,13 @@ shinyServer(function(input, output, session) {
     datasets_files = datasets_list(results.dir())
 
 
-    #a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
+    a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
 
     # Generate a summary of the dataset
     output[[paste0('annotation')]] <- renderDataTable({
-      #paste0("Annotation.csv")
-      # dataset <- a.file()
-      # dataset
+
+      dataset <- a.file()
+      dataset
 
 
 
