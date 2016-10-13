@@ -59,9 +59,9 @@ shinyServer(function(input, output, session) {
 
 
 
-    updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
+    #updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
 
-    #updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
+    updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
@@ -695,6 +695,8 @@ shinyServer(function(input, output, session) {
 
 
 
+
+
   observeEvent(input$input_dmcomp_choices,{
 
     input_choices <- as.character(input$input_dmcomp_choices)
@@ -710,7 +712,6 @@ shinyServer(function(input, output, session) {
     if (input_choices != "NA"){
 
 
-
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
 
         filename <- file.path(qq.dir,'differential_methylation.html')
@@ -720,28 +721,6 @@ shinyServer(function(input, output, session) {
 
         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-
-        #query = "//*/table[@class='tabdata']/tr/td[@class='header']"
-        # dates = xpathSApply(pagetree, query, xmlValue)
-        # dates
-        # comp_names <- list()
-        # comp_names_counter <- 1
-        # for (i in 1:length(dates)) {
-        #
-        #
-        #   if ((i>5)){
-        #
-        #
-        #     if(dates[i] == ""){
-        #       break
-        #     }
-        #
-        #     comp_names[comp_names_counter] <- dates[i]
-        #     comp_names_counter = comp_names_counter + 1
-        #
-        #   }
-        # }
 
         query = "//*/div[@id='section3']/ul/li"
         dates = xpathSApply(pagetree, query, xmlValue)
@@ -753,10 +732,12 @@ shinyServer(function(input, output, session) {
           comp_names[comp_names_counter] <- dates[i]
           comp_names_counter = comp_names_counter + 1
 
-
         }
 
+
         choices.list <- comp_names
+
+
       }
       else{
         choices.list <- 'NA'
@@ -796,6 +777,8 @@ shinyServer(function(input, output, session) {
                                choices = choices.list
       )
 
+
+
     }
     else{
 
@@ -808,6 +791,69 @@ shinyServer(function(input, output, session) {
 
     }
 
+  })
+
+
+
+  # returns the index of selected comparison file in QQplot 1
+  index_list <- reactive({
+
+    input_choices <- as.character(input$input_dmcomp_choices)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    if (input_choices != "NA"){
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+
+
+        for (i in 1:length(dates)) {
+
+          if (input$input_dmcomp_files == dates[i]){
+
+
+            choice.index <- as.character(i)
+
+
+
+            return(choice.index)
+
+          }
+          else{
+
+            choice.index <- '1'
+            return(choice.index)
+
+          }
+
+        }
+
+      }
+      else{
+        choice.index <- '1'
+        return(choice.index)
+      }
+    }
+    else{
+      choice.index <- '1'
+      return(choice.index)
+
+    }
 
   })
 
@@ -821,13 +867,19 @@ shinyServer(function(input, output, session) {
     #qq.value <- as.character(input$input_dmcomp_files)
 
 
+
     if (qq.value == "" || qq.value == "NA"){
       x <- list()
       x
     }
     else{
+
       #fucntion from the RnBeadsInterface package
-      f = "diffMethTable_site_cmp1.csv"
+
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+
+      print(f)
       comparison_plot(qq.dir , f)
     }
 
@@ -839,10 +891,11 @@ shinyServer(function(input, output, session) {
   output$compqqplot <- renderPlot({
 
     dist <- switch(input$dist,
-                   norm = rnorm,
                    unif = runif,
-                   lnorm = rlnorm,
-                   exp = rexp,
+                   norm = rnorm,
+
+                   # lnorm = rlnorm,
+                   # exp = rexp,
                    rnorm)
 
     if(length(list.pvalues()) == 0) {
@@ -854,7 +907,8 @@ shinyServer(function(input, output, session) {
     }
     else{
       y <- dist(ppoints(length(list.pvalues())))
-      qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
+      qqline(y,list.pvalues())
+      #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
 
     }
 
@@ -931,6 +985,70 @@ shinyServer(function(input, output, session) {
   })
 
 
+  # returns the index of selected comparison file in QQplot 1
+  index_list_1 <- reactive({
+
+    input_choices <- as.character(input$input_dmcomp_choices_1)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    if (input_choices != "NA"){
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+
+
+        for (i in 1:length(dates)) {
+
+          if (input$input_dmcomp_files_1 == dates[i]){
+
+
+            choice.index <- as.character(i)
+
+
+
+            return(choice.index)
+
+          }
+          else{
+
+            choice.index <- '1'
+            return(choice.index)
+
+          }
+
+        }
+
+      }
+      else{
+        choice.index <- '1'
+        return(choice.index)
+      }
+    }
+    else{
+      choice.index <- '1'
+      return(choice.index)
+
+    }
+
+  })
+
+
+
   list.pvalues_1 <- reactive({
 
     qq.value <- as.character(input$input_dmcomp_choices_1)
@@ -946,7 +1064,10 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      f = "diffMethTable_site_cmp1.csv"
+
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
+
       comparison_plot(qq.dir , f)
     }
 
@@ -1018,6 +1139,70 @@ shinyServer(function(input, output, session) {
   })
 
 
+  # returns the index of selected comparison file in QQplot 1
+  index_list_2 <- reactive({
+
+    input_choices <- as.character(input$input_dmcomp_choices_2)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    if (input_choices != "NA"){
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+
+
+        for (i in 1:length(dates)) {
+
+          if (input$input_dmcomp_files_2 == dates[i]){
+
+
+            choice.index <- as.character(i)
+
+
+
+            return(choice.index)
+
+          }
+          else{
+
+            choice.index <- '1'
+            return(choice.index)
+
+          }
+
+        }
+
+      }
+      else{
+        choice.index <- '1'
+        return(choice.index)
+      }
+    }
+    else{
+      choice.index <- '1'
+      return(choice.index)
+
+    }
+
+  })
+
+
+
   list.pvalues_2 <- reactive({
 
     qq.value <- as.character(input$input_dmcomp_choices_2)
@@ -1033,7 +1218,10 @@ shinyServer(function(input, output, session) {
     }
     else{
       #fucntion from the RnBeadsInterface package
-      f = "diffMethTable_site_cmp1.csv"
+
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
+
       comparison_plot(qq.dir , f)
     }
 
@@ -1046,10 +1234,11 @@ shinyServer(function(input, output, session) {
   output$multicompqqplot <- renderPlot({
 
     dist <- switch(input$dist,
-                   norm = rnorm,
                    unif = runif,
-                   lnorm = rlnorm,
-                   exp = rexp,
+                   norm = rnorm,
+
+                   # lnorm = rlnorm,
+                   # exp = rexp,
                    rnorm)
 
     if(length(list.pvalues_1()) == 0) {

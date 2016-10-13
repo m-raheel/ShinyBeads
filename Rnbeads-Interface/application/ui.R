@@ -249,13 +249,22 @@ tabPanel("Integrative Visualization",
                                            selectInput("input_dmcomp_files", "comparisons:", ""),
 
 
+                                           # shinyjs::hidden(
+                                           #   div(id = "hide_input",
+                                           #       selectInput("input_dmcomp_files_index", "comparisons:", "")
+                                           #
+                                           #   )
+                                           # ),
+
 
                                            tags$p("The qqplot of diffmethy p values from the above selected csv is shown below:"),
                                            radioButtons("dist", "Distribution type:",
-                                                        c("Normal" = "norm",
+                                                        c(
                                                           "Uniform" = "unif",
-                                                          "Log-normal" = "lnorm",
-                                                          "Exponential" = "exp")),
+                                                          "Normal" = "norm")
+                                                          # "Log-normal" = "lnorm",
+                                                          # "Exponential" = "exp")
+                                                          ),
                                            plotOutput('compqqplot')
 
 
