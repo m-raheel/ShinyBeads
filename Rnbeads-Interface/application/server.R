@@ -292,13 +292,13 @@ shinyServer(function(input, output, session) {
     datasets_files = datasets_list(results.dir())
 
 
-    a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
+    #a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
 
     # Generate a summary of the dataset
     output[[paste0('annotation')]] <- renderDataTable({
       #paste0("Annotation.csv")
-      dataset <- a.file()
-      dataset
+      # dataset <- a.file()
+      # dataset
 
 
 
