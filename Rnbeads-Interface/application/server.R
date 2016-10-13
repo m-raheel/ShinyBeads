@@ -906,7 +906,7 @@ shinyServer(function(input, output, session) {
     }
     else{
       y <- dist(ppoints(length(list.pvalues())))
-      qqline(y,list.pvalues())
+      #qqline(y,list.pvalues())
       qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
 
     }
