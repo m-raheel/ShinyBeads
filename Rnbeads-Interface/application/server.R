@@ -877,9 +877,15 @@ shinyServer(function(input, output, session) {
 
       #index_list() contains the index of the selected file ffrom the dropdown
       f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
-
       print(f)
-      comparison_plot(qq.dir , f)
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+        comparison_plot(qq.dir , f)
+      }
+      else{
+        x <- list()
+        x
+      }
     }
 
 
