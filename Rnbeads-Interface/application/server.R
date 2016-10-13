@@ -693,10 +693,6 @@ shinyServer(function(input, output, session) {
 
   #selected index change event of comparison tab selection panel
 
-
-
-
-
   observeEvent(input$input_dmcomp_choices,{
 
     input_choices <- as.character(input$input_dmcomp_choices)
@@ -796,7 +792,7 @@ shinyServer(function(input, output, session) {
 
 
   # returns the index of selected comparison file in QQplot 1
-  index_list <- reactive({
+  index_list <- eventReactive(input$input_dmcomp_files, {
 
     input_choices <- as.character(input$input_dmcomp_choices)
 
@@ -804,6 +800,8 @@ shinyServer(function(input, output, session) {
 
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    choice.index <- '1'
 
     if (input_choices != "NA"){
 
@@ -824,37 +822,38 @@ shinyServer(function(input, output, session) {
 
         for (i in 1:length(dates)) {
 
-          if (input$input_dmcomp_files == dates[i]){
+          #if statement is not vectorized. For vectorized if statements you should use ifelse
+          #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
+
+          if (identical(input$input_dmcomp_files, dates[i])){
 
 
             choice.index <- as.character(i)
 
+            print (choice.index)
 
 
-            return(choice.index)
+            break
+
 
           }
-          else{
 
-            choice.index <- '1'
-            return(choice.index)
-
-          }
 
         }
 
       }
       else{
         choice.index <- '1'
-        return(choice.index)
+
       }
     }
     else{
       choice.index <- '1'
-      return(choice.index)
+
 
     }
 
+    return(choice.index)
   })
 
 
@@ -908,7 +907,7 @@ shinyServer(function(input, output, session) {
     else{
       y <- dist(ppoints(length(list.pvalues())))
       qqline(y,list.pvalues())
-      #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
+      qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
 
     }
 
@@ -986,7 +985,7 @@ shinyServer(function(input, output, session) {
 
 
   # returns the index of selected comparison file in QQplot 1
-  index_list_1 <- reactive({
+  index_list_1 <- eventReactive(input$input_dmcomp_files_1, {
 
     input_choices <- as.character(input$input_dmcomp_choices_1)
 
@@ -994,6 +993,8 @@ shinyServer(function(input, output, session) {
 
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    choice.index <- '1'
 
     if (input_choices != "NA"){
 
@@ -1014,37 +1015,38 @@ shinyServer(function(input, output, session) {
 
         for (i in 1:length(dates)) {
 
-          if (input$input_dmcomp_files_1 == dates[i]){
+          #if statement is not vectorized. For vectorized if statements you should use ifelse
+          #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
+
+          if (identical(input$input_dmcomp_files_1, dates[i])){
 
 
             choice.index <- as.character(i)
 
+            print (choice.index)
 
 
-            return(choice.index)
+            break
+
 
           }
-          else{
 
-            choice.index <- '1'
-            return(choice.index)
-
-          }
 
         }
 
       }
       else{
         choice.index <- '1'
-        return(choice.index)
+
       }
     }
     else{
       choice.index <- '1'
-      return(choice.index)
+
 
     }
 
+    return(choice.index)
   })
 
 
@@ -1140,7 +1142,7 @@ shinyServer(function(input, output, session) {
 
 
   # returns the index of selected comparison file in QQplot 1
-  index_list_2 <- reactive({
+  index_list_2 <- eventReactive(input$input_dmcomp_files_2, {
 
     input_choices <- as.character(input$input_dmcomp_choices_2)
 
@@ -1148,6 +1150,8 @@ shinyServer(function(input, output, session) {
 
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    choice.index <- '1'
 
     if (input_choices != "NA"){
 
@@ -1168,40 +1172,39 @@ shinyServer(function(input, output, session) {
 
         for (i in 1:length(dates)) {
 
-          if (input$input_dmcomp_files_2 == dates[i]){
+          #if statement is not vectorized. For vectorized if statements you should use ifelse
+          #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
+
+          if (identical(input$input_dmcomp_files_2, dates[i])){
 
 
             choice.index <- as.character(i)
 
+            print (choice.index)
 
 
-            return(choice.index)
+            break
+
 
           }
-          else{
 
-            choice.index <- '1'
-            return(choice.index)
-
-          }
 
         }
 
       }
       else{
         choice.index <- '1'
-        return(choice.index)
+
       }
     }
     else{
       choice.index <- '1'
-      return(choice.index)
+
 
     }
 
+    return(choice.index)
   })
-
-
 
   list.pvalues_2 <- reactive({
 
