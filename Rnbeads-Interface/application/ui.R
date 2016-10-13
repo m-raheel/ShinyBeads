@@ -257,7 +257,7 @@ tabPanel("Integrative Visualization",
                                            # ),
 
 
-                                           tags$p("The qqplot of diffmethy p values from the above selected csv is shown below:"),
+                                           tags$p("The qqplot of diffmethy p values from the above selected comparison is shown below:"),
                                            radioButtons("dist", "Distribution type:",
                                                         c(
                                                           "Uniform" = "unif",
@@ -267,13 +267,6 @@ tabPanel("Integrative Visualization",
                                                           ),
                                            plotOutput('compqqplot')
 
-
-                                           # radioButtons("radio_comp", label = h3("Select comparison file"),
-                                           #              choices = list("",1),
-                                           #              selected = 1),
-                                           #
-                                           #
-                                           # plotOutput('compqqplot2'),
 
                                     ),
 

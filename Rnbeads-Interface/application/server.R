@@ -157,9 +157,7 @@ shinyServer(function(input, output, session) {
 
 
   # displaying folders of repository selected
-
-
-
+  ##################################################################################
   observe({
 
 
@@ -213,192 +211,11 @@ shinyServer(function(input, output, session) {
   })
 
 
-  observeEvent(input$select_ia,{
-
-    value.modules <- reactive({as.character(input$select_ia) })
-
-
-    wd_modules <- reactive({file.path(results.dir(), value.modules()) })
-
-
-    if ( file.exists( isolate({ paste(wd_modules(),'analysis.log',sep="/") }) ) ){
-      #fucntion from the RnBeadsInterface package
-
-
-      Performed_Modules <-  modules_performed(wd_modules())
-
-
-
-      modules <- unlist(Performed_Modules)
-
-
-      output$list_module <- renderTable({
-        DT <- data.table(ID = 1:length(modules) , Performed_Modules = modules)
-        DT
-
-      })
-
-    }
-    else{
-
-      output$list_module <- renderTable({
-        DT <- data.table(Performed_Modules = 'No file exist or no data available.')
-        DT
-
-      })
-    }
-
-  })
-
-
 
   ###############################################################
 
-  # analysis options
-
-  observeEvent(input$select_ia,{
-
-    value.options <- reactive({as.character(input$select_ia) })
-
-    wd_options <- reactive({file.path(results.dir(), value.options()) })
-
-
-    if ( file.exists( isolate({ paste(wd_options(),'analysis_options.RData',sep="/") }) ) ){
-
-      rwaDirUpdated <- reactive({file.path(wd_options(), "analysis_options.RData")})
-
-      # function to read analysis_options.RData file
-
-      LoadToEnvironment <- function(rwaDir, env = new.env()){
-        load(rwaDir, env)
-        return(env)
-      }
-
-
-
-      # lapply(1:114, function(i) {
-      #   output[[paste0('b', i)]] <- renderUI({
-      #     rdata.env <- LoadToEnvironment(rwaDirUpdated())
-      #
-      #     rdata.fit <- rdata.env$analysis.options
-      #
-      #     names.rdata.fit <- names(rdata.fit)
-      #
-      #     paste0(names.rdata.fit[i]," = ", rdata.fit[i])
-      #   })
-      # })
-
-
-
-      output$list_options <- renderDataTable({
-
-        rdata.env <- LoadToEnvironment(rwaDirUpdated())
-        rdata.fit <- rdata.env$analysis.options
-
-        options_values <- list()
-
-        for (i in 1:length(rdata.fit)) {
-
-          options_values[i] <- toString(rdata.fit[i])
-
-        }
-
-        options_values <- unlist(options_values)
-
-
-        #options_values <- as.data.table(options_values)
-        #print(options_values)
-        names.rdata.fit <- names(rdata.fit)
-
-        DT = data.table( Analysis_Options = names.rdata.fit, Values = options_values)
-
-        DT
-        #names(rdata.fit)
-      })
-    }
-    else{
-
-
-      output$list_options <- renderDataTable({
-
-        DT = data.table( data = "No infomation available.")
-
-        DT
-
-      })
-    }
-
-  })
-
-  ################################################################
-
-
-
-
-
-  # displaying plots in plots tab
-
-  qqplot1.path <- reactive({file.path(rwaDir(), "preprocessing_pdfs/summary1_betas_qq.pdf")})
-  qqplot2.path <- reactive({file.path(rwaDir(), "preprocessing_pdfs/summary2_betas_qq.pdf")})
-
-  output$qqplot1 <- renderText({
-    return(paste('<iframe style="height:600px; width:100%" src="', qqplot1.path , '"></iframe>', sep = ""))
-  })
-
-  # Send a qq1 image, and don't delete the image after sending it
-  output$qq1plot1 <- renderImage({
-    # When input$n is 3, filename is ./images/image3.jpeg
-    filename <- normalizePath(file.path(rwaDir(),
-                                        paste('preprocessing_images/summary1_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
-
-    # Return a list containing the filename and alt text
-    list(src = filename,alt = paste("No record found."))
-
-  }, deleteFile = FALSE)
-
-  # Send a qq2 image, and don't delete the image after sending it
-  output$qq1plot2 <- renderImage({
-    # When input$n is 3, filename is ./images/image3.jpeg
-    filename <- normalizePath(file.path(rwaDir(),
-                                        paste('preprocessing_images/summary2_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
-
-    # Return a list containing the filename and alt text
-    list(src = filename,alt = paste("No record found."))
-
-  }, deleteFile = FALSE)
-
-  #  sends pre-rendered images according to the radio button selection
-  output$qqimage <- renderImage({
-    if (is.null(input$qqplots))
-      return(NULL)
-
-    if (input$qqplots == "summary1_betas_qq") {
-
-      filename <- normalizePath(file.path(rwaDir(),
-                                          paste('preprocessing_images/summary1_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
-
-      return(list(
-        src = filename,
-        contentType = "image/png",
-        alt = "No record found."
-      ))
-    } else if (input$qqplots == "summary2_betas_qq") {
-
-      filename <- normalizePath(file.path(rwaDir(),
-                                          paste('preprocessing_images/summary2_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
-
-      return(list(
-        src = filename,
-        filetype = "image/png",
-        alt = "No record found."
-      ))
-    }
-
-  }, deleteFile = FALSE)
-  #######################################################################
-
   # check and return the results folder that have the same sample annotation file.###############
-
+  ############################################################################################
 
   observe({
 
@@ -407,28 +224,7 @@ shinyServer(function(input, output, session) {
     #common.datasets = datasets_groups(results.dir())
     common.datasets <- list()
 
-
-    #if ( file.exists( isolate({ paste(dirfolder()[1],'index.html',sep="/") }) ) ){
-
-    # lapply(1:length(common.datasets), function(i) {
-    #
-    #   lapply(1:length(common.datasets[i]), function(j) {
-    #     output[[paste0('list_common_dataset_',i)]] <- renderTable({
-    #
-    #
-    #       Common_Datasets <- unlist(common.datasets[i][j])
-    #       DT <- data.table(ID = 1:length(Common_Datasets) , Common_Datasets = Common_Datasets)
-    #       DT
-    #
-    #     })
-    #   })
-    # })
-
-
-
     if (length(common.datasets) != 0){
-
-
 
       cd_list <- lapply(1:length(common.datasets), function(i) {
         cd_list[cd_list_counter] <- paste("Dataset",i,sep = "_")
@@ -491,7 +287,7 @@ shinyServer(function(input, output, session) {
     row <- input$list_datasets_rows_selected
 
     #value_selected <- DT[row, "Datasets_Used"]
-    print(row)
+
 
     datasets_files = datasets_list(results.dir())
 
@@ -523,7 +319,110 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
+
+  # analysis options
+  ##################################################################################
+
+
+  observeEvent(input$select_ia,{
+
+    value.options <- reactive({as.character(input$select_ia) })
+
+    wd_options <- reactive({file.path(results.dir(), value.options()) })
+
+
+    if ( file.exists( isolate({ paste(wd_options(),'analysis_options.RData',sep="/") }) ) ){
+
+      rwaDirUpdated <- reactive({file.path(wd_options(), "analysis_options.RData")})
+
+      # function to read analysis_options.RData file
+
+      LoadToEnvironment <- function(rwaDir, env = new.env()){
+        load(rwaDir, env)
+        return(env)
+      }
+
+      output$list_options <- renderDataTable({
+
+        rdata.env <- LoadToEnvironment(rwaDirUpdated())
+        rdata.fit <- rdata.env$analysis.options
+
+        options_values <- list()
+
+        for (i in 1:length(rdata.fit)) {
+
+          options_values[i] <- toString(rdata.fit[i])
+
+        }
+
+        options_values <- unlist(options_values)
+
+        names.rdata.fit <- names(rdata.fit)
+
+        DT = data.table( Analysis_Options = names.rdata.fit, Values = options_values)
+
+        DT
+
+      })
+    }
+    else{
+
+
+      output$list_options <- renderDataTable({
+
+        DT = data.table( data = "No infomation available.")
+
+        DT
+
+      })
+    }
+
+  })
+
+  ################################################################
+
+  # list of modules performed
+  ############################################################################################
+
+  observeEvent(input$select_ia,{
+
+    value.modules <- reactive({as.character(input$select_ia) })
+
+
+    wd_modules <- reactive({file.path(results.dir(), value.modules()) })
+
+
+    if ( file.exists( isolate({ paste(wd_modules(),'analysis.log',sep="/") }) ) ){
+      #fucntion from the RnBeadsInterface package
+
+
+      Performed_Modules <-  modules_performed(wd_modules())
+
+      modules <- unlist(Performed_Modules)
+
+      output$list_module <- renderTable({
+        DT <- data.table(ID = 1:length(modules) , Performed_Modules = modules)
+        DT
+
+      })
+
+    }
+    else{
+
+      output$list_module <- renderTable({
+        DT <- data.table(Performed_Modules = 'No file exist or no data available.')
+        DT
+
+      })
+    }
+
+  })
+  ############################################################################################
+
+
+
   # individual data sets tab
+  ############################################################################################
 
   observeEvent(input$dd_ids_datasets,{
 
@@ -550,9 +449,6 @@ shinyServer(function(input, output, session) {
         #paste0("Annotation.csv")
         dataset <- a.file()
         dataset
-
-
-
 
       })
 
@@ -582,13 +478,6 @@ shinyServer(function(input, output, session) {
 
         #filename= as.character(filename)
 
-        # tmp <- file.path(rwaDir, paste('mesangial cell','/differential_methylation.html'),sep='')
-        # #removing space
-        # tmp <- gsub(" /", "/", tmp)
-
-
-
-
         differential.methylation.path <- filename()
 
         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
@@ -610,25 +499,6 @@ shinyServer(function(input, output, session) {
         output$htmlTable = renderTable({
           content
         })
-
-
-
-
-
-        # Extract table header and contents of the comparison table of differential methylation
-
-        # head <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td[@class='header']", xmlValue)
-        # results <- xpathSApply(pagetree, "//*/table[@class='tabdata']/tr/td", xmlValue)
-        #
-        # # Convert character vector to dataframe
-        # comparisonTable <- as.data.frame(matrix(results, ncol = 4, byrow = TRUE))
-        #
-        #
-        # tablehead <- c('Nr.','comparison','ajustment','covariateTable')
-        # # Clean up the results
-        # comparisonTable[,1] <- gsub("Â ", "", comparisonTable[,1])
-        # tablehead <- gsub("Â ", "", tablehead)
-        # names(comparisonTable) <- tablehead
 
         output$htmlcomparisonTable = renderTable({
           "comparisonTable No data avaialbe"
@@ -658,40 +528,9 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
-  # comparison tab code
-
-
-  # comp.csv.path <- reactive({file.path(rwaDir(), "differential_methylation_data/diffMethTable_site_cmp1.csv")})
-  #
-  #
-  #
-  # output$compcsv1 <- renderText({
-  #   return(paste('<iframe style="height:600px; width:100%" src="', comp.csv.path , '"></iframe>', sep = ""))
-  # })
-  #
-  #
-  # # Generate a summary of the dataset
-  # output[[paste0('diffMethTable')]] <- renderTable({
-  #
-  #   filename <- normalizePath(file.path(rwaDir(),
-  #                                       paste('differential_methylation_data/diffMethTable_site_cmp1', '.csv', sep='')), winslash = "\\", mustWork = NA)
-  #
-  #   filename= as.character(filename)
-  #   # fread function from the library data.table
-  #   list.diff.p.values <- fread(filename,sep = ",", select = c("diffmeth.p.val"), nrows = 10)
-  #
-  #   dataset <- list.diff.p.values
-  #   dataset
-  #
-  #
-  #
-  # })
-
-  ####################################################################################
 
   # qqplots 1 of diff methylation p- values
-
-  #selected index change event of comparison tab selection panel
+  ####################################################################################
 
   observeEvent(input$input_dmcomp_choices,{
 
@@ -744,21 +583,6 @@ shinyServer(function(input, output, session) {
 
     }
 
-    # list of all the comparison file to populate in the dropdown
-
-    # choices.list <- list()
-    # choices.list.counter <- 1
-    #
-    # for (i in 1:length(input_c)) {
-    #
-    #   if(length(grep("diffMethTable_site_cmp",input_c[i]))>0){
-    #
-    #     choices.list[choices.list.counter] <- input_c[i]
-    #     choices.list.counter = choices.list.counter+1
-    #   }
-    #
-    #
-    # }
 
 
     updateSelectInput(session, "input_dmcomp_files",
@@ -830,7 +654,7 @@ shinyServer(function(input, output, session) {
 
             choice.index <- as.character(i)
 
-            print (choice.index)
+
 
 
             break
@@ -877,7 +701,7 @@ shinyServer(function(input, output, session) {
 
       #index_list() contains the index of the selected file ffrom the dropdown
       f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
-      print(f)
+
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
         comparison_plot(qq.dir , f)
@@ -922,9 +746,9 @@ shinyServer(function(input, output, session) {
   #######################################################################
 
 
-  ####################################################################################
 
   # qqplots 2 of diff methylation p- values in which two comarprisons qqplots is displayed
+  ####################################################################################
 
 
   # for Repository 1
@@ -1029,7 +853,7 @@ shinyServer(function(input, output, session) {
 
             choice.index <- as.character(i)
 
-            print (choice.index)
+
 
 
             break
@@ -1076,7 +900,14 @@ shinyServer(function(input, output, session) {
       #index_list() contains the index of the selected file ffrom the dropdown
       f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
 
-      comparison_plot(qq.dir , f)
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+        comparison_plot(qq.dir , f)
+      }
+      else{
+        x <- list()
+        x
+      }
     }
 
 
@@ -1186,7 +1017,7 @@ shinyServer(function(input, output, session) {
 
             choice.index <- as.character(i)
 
-            print (choice.index)
+
 
 
             break
@@ -1231,7 +1062,14 @@ shinyServer(function(input, output, session) {
       #index_list() contains the index of the selected file ffrom the dropdown
       f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
 
-      comparison_plot(qq.dir , f)
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+        comparison_plot(qq.dir , f)
+      }
+      else{
+        x <- list()
+        x
+      }
     }
 
 
@@ -1275,8 +1113,8 @@ shinyServer(function(input, output, session) {
   #######################################################################
 
 
-  # comparison among different files of same Rnbeads Analysis
-  # observer event for checkbox input to display checked plots
+  # QQ Plot 3  comparison among different files of same Rnbeads Analysis
+  ####################################################################################
 
   observeEvent(input$insertBtn, {
 
@@ -1319,9 +1157,19 @@ shinyServer(function(input, output, session) {
 
         #fucntion from the RnBeadsInterface package
 
-        #qq.value <- as.character(unlist(vec[i][1]) )
         f = "diffMethTable_site_cmp1.csv"
-        check.choices.list[i] <- list(comparison_plot(qq.dir , f))
+
+
+
+        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+          check.choices.list[i] <- list(comparison_plot(qq.dir , f))
+        }
+
+
+        #qq.value <- as.character(unlist(vec[i][1]) )
+        #f = "diffMethTable_site_cmp1.csv"
+        #check.choices.list[i] <- list(comparison_plot(qq.dir , f))
 
 
       }
@@ -1406,6 +1254,68 @@ shinyServer(function(input, output, session) {
 
   }, escape = FALSE)
 
+
+  # displaying plots in plots tab
+  ###################################################################################3
+
+  qqplot1.path <- reactive({file.path(rwaDir(), "preprocessing_pdfs/summary1_betas_qq.pdf")})
+  qqplot2.path <- reactive({file.path(rwaDir(), "preprocessing_pdfs/summary2_betas_qq.pdf")})
+
+  output$qqplot1 <- renderText({
+    return(paste('<iframe style="height:600px; width:100%" src="', qqplot1.path , '"></iframe>', sep = ""))
+  })
+
+  # Send a qq1 image, and don't delete the image after sending it
+  output$qq1plot1 <- renderImage({
+    # When input$n is 3, filename is ./images/image3.jpeg
+    filename <- normalizePath(file.path(rwaDir(),
+                                        paste('preprocessing_images/summary1_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
+
+    # Return a list containing the filename and alt text
+    list(src = filename,alt = paste("No record found."))
+
+  }, deleteFile = FALSE)
+
+  # Send a qq2 image, and don't delete the image after sending it
+  output$qq1plot2 <- renderImage({
+    # When input$n is 3, filename is ./images/image3.jpeg
+    filename <- normalizePath(file.path(rwaDir(),
+                                        paste('preprocessing_images/summary2_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
+
+    # Return a list containing the filename and alt text
+    list(src = filename,alt = paste("No record found."))
+
+  }, deleteFile = FALSE)
+
+  #  sends pre-rendered images according to the radio button selection
+  output$qqimage <- renderImage({
+    if (is.null(input$qqplots))
+      return(NULL)
+
+    if (input$qqplots == "summary1_betas_qq") {
+
+      filename <- normalizePath(file.path(rwaDir(),
+                                          paste('preprocessing_images/summary1_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
+
+      return(list(
+        src = filename,
+        contentType = "image/png",
+        alt = "No record found."
+      ))
+    } else if (input$qqplots == "summary2_betas_qq") {
+
+      filename <- normalizePath(file.path(rwaDir(),
+                                          paste('preprocessing_images/summary2_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
+
+      return(list(
+        src = filename,
+        filetype = "image/png",
+        alt = "No record found."
+      ))
+    }
+
+  }, deleteFile = FALSE)
+  #######################################################################
 
 
 })
