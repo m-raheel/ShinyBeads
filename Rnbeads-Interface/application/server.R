@@ -295,6 +295,10 @@ shinyServer(function(input, output, session) {
 
     print(datasets_files)
 
+    row <- as.integer(row)
+
+    print(row)
+
     a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
 
     # Generate a summary of the dataset
