@@ -310,7 +310,7 @@ shinyServer(function(input, output, session) {
 
 
 
-    })
+    },selection = 'single', escape = FALSE)
 
     output$h1_datasettab <- renderText({
       paste("Dataset_",row)
