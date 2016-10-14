@@ -293,6 +293,7 @@ shinyServer(function(input, output, session) {
 
     datasets_files = datasets_list(results.dir())
 
+    print(datasets_files)
 
     a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
 
