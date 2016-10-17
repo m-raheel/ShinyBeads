@@ -56,7 +56,7 @@ shinyUI(
            fluidRow(
              column(width = 12,
                     shinyjs::useShinyjs(),
-                    #shinyjs::extendShinyjs(text = "shinyjs.workingDirButton = function() { location.reload(); }"),
+                    #shinyjs::extendShinyjs(text = "shinyjs.clearDirButton = function() { location.reload(); }"),
 
 
                     # Use imageOutput to place the image on the page
@@ -66,11 +66,17 @@ shinyUI(
                     tags$strong("Choose RnBeads analysis repository:"),
                     br(),br(),
                     actionButton("workingDirButton",label= "Choose",class="btn btn-primary"),
-                    br(),br(),
+                    br(),
 
                     textOutput("ErrorText1"),
+
                     br(),
-                    verbatimTextOutput ("ErrorText2")
+                    verbatimTextOutput ("ErrorText2"),
+
+                    actionButton("action", label = "Continue", class="btn btn-primary"),
+
+                    actionButton("clearDirButton",label= "Clear",class="btn btn-primary")
+
              )
 
            ),
@@ -96,10 +102,7 @@ shinyUI(
                                      }
                                  });
                                  ')
-           ),
-
-           br(),
-           actionButton("action", label = "Continue", class="btn btn-primary")
+           )
 
   ),
 

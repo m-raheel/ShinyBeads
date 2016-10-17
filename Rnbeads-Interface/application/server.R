@@ -53,6 +53,11 @@ shinyServer(function(input, output, session) {
     }
   })
 
+  #Remove working directory
+  observeEvent(input$clearDirButton,{
+    session$reload()
+
+  })
 
   #select working directory
   selectedRepository <- eventReactive(input$workingDirButton,{
