@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
 
   output$preImage <- renderImage({
 
-    filename <- normalizePath(file.path(getwd(),'images',
+    filename <- normalizePath(file.path(getwd(),'includes','images',
                                         paste('Rnbeads', '.png', sep='')))
 
     # Return a list containing the filename and alt text
@@ -75,25 +75,25 @@ shinyServer(function(input, output, session) {
     # updating all the selectInput dropdowns
 
     updateSelectInput(session, "input_type",
-                      label = paste("Select RnBeads Results Folder", "---"),
+                      label = paste("Select analysis folder"),
                       choices = list.files(path = selectedDir))
 
     updateSelectInput(session, "select_ia",
-                      label = paste("Select RnBeads analysis Folder", "---"),
+                      label = paste("Select analysis folder"),
                       choices = list.files(path = selectedDir))
 
 
 
     updateSelectInput(session, "input_dmcomp_choices",
-                      label = paste("Select RnBeads analysis Folder", "---"),
+                      label = paste("Select analysis folder"),
                       choices = list.files(path = selectedDir))
 
     updateSelectInput(session, "input_dmcomp_choices_1",
-                      label = paste("Repository 1", "---"),
+                      label = paste("Analysis 1"),
                       choices = list.files(path = selectedDir))
 
     updateSelectInput(session, "input_dmcomp_choices_2",
-                      label = paste("Repository 2", "---"),
+                      label = paste("Analysis 2"),
                       choices = list.files(path = selectedDir))
 
     dirfolder = list.files(path = selectedDir)
@@ -310,7 +310,7 @@ shinyServer(function(input, output, session) {
 
 
 
-    },selection = 'single', escape = FALSE)
+    },selection = 'single', escape = TRUE)
 
     output$h1_datasettab <- renderText({
       paste("Dataset_",row)

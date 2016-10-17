@@ -1,6 +1,8 @@
 library(shiny)
+library(RnBeadsInterface)
 library(DT)
 library(shinyjs)
+library(shinythemes)
 #library(V8) # package for extended shinyJS
 #library(shinyFiles)
 
@@ -18,18 +20,35 @@ shinyUI(
 
 
 
-  navbarPage(
+  navbarobject <- navbarPage('idnavBarTop', theme = shinytheme("cerulean"),
 
 
 
-
-  #title=div(imageOutput("preImage"), "RnBeads"),
-  title= "RnBeads"  ,
+  #title= div(id= "id_div_title" ,tags$a(href = '.', tags$img(src = 'RnBeads.png', width = 100, height = 20)),"Rnbeads Interface"),
+  title= "Rnbeads Interface",
 
 
   # Home nav menu
   tabPanel("Home",
 
+
+           #tags$style(type="text/css", "body {padding-top: 70px;}"),
+
+
+           fluidRow(
+             column(width = 1,
+                    tags$a(href = '.', tags$img(src = 'RnBeads.png'))
+
+             ),
+             column(width = 11,
+                    headerPanel("Interface")
+             )
+           ),
+
+           includeCSS("includes/styles.css"),
+
+
+           #shinythemes::themeSelector(),
 
 
            br(),
@@ -44,7 +63,7 @@ shinyUI(
                     #imageOutput("preImage"),
 
 
-                    tags$strong("Choose RnBeads analysis Repository:"),
+                    tags$strong("Choose RnBeads analysis repository:"),
                     br(),br(),
                     actionButton("workingDirButton",label= "Choose",class="btn btn-primary"),
                     br(),br(),
@@ -150,7 +169,7 @@ shinyUI(
            br(),
 
            sidebarPanel(
-             selectInput("select_ia", "Select individual analysis directory:", choices)
+             selectInput("select_ia", "Select analysis folder:", choices)
 
 
            ),
@@ -230,7 +249,7 @@ tabPanel("Integrative Visualization",
 
          br(),
          sidebarPanel(
-           selectInput("input_dmcomp_choices", "Repository:", choices)
+           selectInput("input_dmcomp_choices", "Select analysis folder:", choices)
 
          ),
 
@@ -276,14 +295,14 @@ tabPanel("Integrative Visualization",
                                             h3("Select comparison among two rnbeads analysis"),
                                             fluidRow(
                                               column(width = 6,
-                                                     selectInput("input_dmcomp_choices_1", "Rnbeads analysis 1:", choices),
+                                                     selectInput("input_dmcomp_choices_1", "Analysis 1:", choices),
                                                      br(),
 
                                                      selectInput("input_dmcomp_files_1", "Comaprisons 1:", "")
 
                                               ),
                                               column(width = 6,
-                                                     selectInput("input_dmcomp_choices_2", "Rnbeads analysis 2:", choices),
+                                                     selectInput("input_dmcomp_choices_2", "Analysis 2:", choices),
                                                      br(),
                                                      selectInput("input_dmcomp_files_2", "Comparisons 2:", "")
 
@@ -373,7 +392,7 @@ tabPanel("About",
          # Sidebar with controls to select the variable to plot against xyz
          # and to specify whether outliers should be included
          sidebarPanel(
-           selectInput("input_type", "Select RnBeads Results Folder:", choices)
+           selectInput("input_type", "Select analysis folder:", choices)
 
            #checkboxInput("outliers", "Show outliers", FALSE)
 
@@ -407,9 +426,9 @@ tabPanel("About",
 
                       # a div named mydiv
 
-                      #tags$div("click to change color" , id="mydiv", style="width: 50px; height :60px;
-                      #left: 550px; top: 000px;
-                      #background-color: gray; position: absolute"),
+                      tags$div("click to change color" , id="mydiv", style="width: 50px; height :60px;
+                      left: 550px; top: 000px;
+                      background-color: gray; position: absolute"),
 
                       # javascript code to send data to shiny server
 
@@ -438,39 +457,12 @@ tabPanel("About",
 
              tabPanel("Analysis Options",
                       br(), br()
-                      #
-                      #
-                      # tags$strong("Displaying First 10 options from the analysis_options.RData file:"),
-                      #
-                      # tags$p(""),
-                      # # UI output
-                      # lapply(1:10, function(i) {
-                      #   uiOutput(paste0('b', i))
-                      # })
-                      #
+
              ),# tab panel end
 
              tabPanel("Annotation.csv",
                       br(), br()
-                      # tags$strong("These are the list of RnBeads Results folder that was performed on the same samples:"),
-                      # tags$p(""),
-                      # #verbatimTextOutput("same_sample"),
-                      #
-                      # # UI output
-                      # lapply(1:10, function(i) {
-                      #      uiOutput(paste0('c',i))
-                      # }),
-                      #
-                      #
-                      # lapply(1:10, function(i) {
-                      #   tableOutput(paste0('annotation',i))
-                      #
-                      # })
 
-
-                      #tags$strong("Below are the samples information used to generate above mentioned analysis folder(s):"),
-                      #tags$p(""),
-                      #tableOutput("summary")
 
 
              ),# tab panel end
@@ -502,7 +494,12 @@ tabPanel("About",
         )#end of mainbar
 
 
-  )# end of about nav menu
+  )# end of about tab  menu
 
 
-))
+
+  )# end of nav bar page
+
+
+
+)
