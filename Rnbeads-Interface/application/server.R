@@ -59,9 +59,9 @@ shinyServer(function(input, output, session) {
 
 
 
-    updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
+    #updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
 
-    #updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
+    updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
@@ -226,6 +226,9 @@ shinyServer(function(input, output, session) {
     common.datasets = datasets_common(results.dir())
     #common.datasets <- list()
 
+    print (length(common.datasets))
+    print (input$select_ia)
+
     if (length(common.datasets) != 0){
 
       cd_list <- lapply(1:length(common.datasets), function(i) {
@@ -263,6 +266,33 @@ shinyServer(function(input, output, session) {
 
 
     }
+
+
+    else if ( file.exists( isolate({ normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA) }) ) )
+    {
+
+
+      print ('inside commom else if')
+      # update the datalist dropdown in the individual data sets tab
+      updateSelectInput(session, "dd_ids_datasets",
+                        label = "Datasets",
+                        choices = 'Dataset_1')
+
+      output$total_datasets <- renderText({
+        paste("Total datasets used in this repository = 1", sep = " ")
+
+      })
+
+      output$list_datasets <- renderDataTable({
+
+        DT <- data.table( Datasets_Used = 'Dataset_1')
+
+        DT
+
+      },selection = 'single', escape = FALSE)
+
+    }
+
     else{
 
 
@@ -299,8 +329,15 @@ shinyServer(function(input, output, session) {
 
     print(row)
 
-    a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
+    # if no datasets returned means that we have only one analysis so in else showing it
+    if (length(datasets_files) != 0){
+      a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
 
+    }
+    else{
+
+      a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))[ ,1:6]})
+    }
     # Generate a summary of the dataset
     output[[paste0('annotation')]] <- renderDataTable({
 
