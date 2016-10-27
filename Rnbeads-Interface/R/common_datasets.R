@@ -51,6 +51,7 @@ datasets_common <- function(rd) {
 
           path.lists[i] <- filename
 
+          print (path.lists[i])
         }
       }
 

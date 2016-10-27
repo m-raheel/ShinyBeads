@@ -64,9 +64,9 @@ shinyServer(function(input, output, session) {
 
 
 
-    updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
+    #updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
 
-    #updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
+    updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
@@ -208,12 +208,12 @@ shinyServer(function(input, output, session) {
     }
   })
 
-  # if the list folder row is selected
-  observeEvent(input$list_folders_rows_selected, {
-    row <- input$list_folders_rows_selected
-
-    updateTabsetPanel(session, "repository", selected = "DatasetList")
-  })
+  # # if the list folder row is selected
+  # observeEvent(input$list_folders_rows_selected, {
+  #   row <- input$list_folders_rows_selected
+  #
+  #   updateTabsetPanel(session, "repository", selected = "DatasetList")
+  # })
 
 
 
