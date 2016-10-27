@@ -554,9 +554,9 @@ shinyServer(function(input, output, session) {
       }
       else{
 
-        if ( file.exists( isolate({ paste(results.dir(),input$dd_ids_datasets,'data_import_data','annotation.csv',sep="/") }) ) )
+        if ( file.exists( isolate({ paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/") }) ) )
         {
-          a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$dd_ids_datasets,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))})
+          a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))})
 
           # Generate a summary of the dataset
           output[[paste0('annotation')]] <- renderDataTable({
