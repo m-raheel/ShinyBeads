@@ -83,7 +83,9 @@ datasets_common <- function(rd) {
         #   path.lists[i] = tmp
         # }
 
-        A <- read.csv((toString(path.lists[i])))[ ,2:3]
+        A <- try(read.csv((toString(path.lists[i])))[ ,2:3])
+
+        #A <- read.csv((toString(path.lists[i])))[ ,2:3]
 
         for (j in i:length(folders)) {
 
@@ -100,7 +102,7 @@ datasets_common <- function(rd) {
           # }
 
 
-          B <- read.csv((toString(path.lists[j])))[ ,2:3]
+          B <- try(read.csv((toString(path.lists[j])))[ ,2:3])
 
           if (length(A) == length(B) && j != i){
             comparison <- identical(A,B)
