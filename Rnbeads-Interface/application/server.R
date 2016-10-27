@@ -383,7 +383,7 @@ shinyServer(function(input, output, session) {
         # Generate a summary of the dataset
         output[[paste0('annotation')]] <- renderDataTable({
 
-          dataset <- 'No file exist or no data available'
+          dataset <- data.table( data = "No infomation available.")
           dataset
 
 
@@ -577,7 +577,7 @@ shinyServer(function(input, output, session) {
           # Generate a summary of the dataset
           output[[paste0('annotation')]] <- renderDataTable({
             #paste0("Annotation.csv")
-            dataset <- 'No file exist or no data available.'
+            dataset <- data.table( data = "No infomation available.")
             dataset
 
           })
