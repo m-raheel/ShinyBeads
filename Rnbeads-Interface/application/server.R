@@ -842,7 +842,25 @@ shinyServer(function(input, output, session) {
 
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
+
+
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        progress$set(message = "Making plot", value = 0)
+
+
         comparison_plot(qq.dir , f)
+
+        # # Increment the progress bar, and update the detail text.
+        # progress$inc(detail = paste("Please wait..."))
+        #
+        # # Pause for 0.1 seconds to simulate a long computation.
+        # Sys.sleep(0.1)
+
+
       }
       else{
         x <- list()
