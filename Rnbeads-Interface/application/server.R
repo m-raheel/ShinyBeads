@@ -336,7 +336,7 @@ shinyServer(function(input, output, session) {
 
     # if no datasets returned means that we have only one analysis so in else showing it
     if (length(datasets_files) != 0){
-      a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
+      a.file <- reactive({read.csv(as.character(datasets_files[row]))})
 
       # Generate a summary of the dataset
       output[[paste0('annotation')]] <- renderDataTable({
@@ -360,7 +360,7 @@ shinyServer(function(input, output, session) {
       if ( file.exists( isolate({ paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/") }) ) )
       {
 
-        a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))[ ,1:6]})
+        a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))})
 
         # Generate a summary of the dataset
         output[[paste0('annotation')]] <- renderDataTable({
@@ -533,7 +533,7 @@ shinyServer(function(input, output, session) {
 
       # if no datasets returned means that we have only one analysis so in else showing it
       if (length(datasets_files) != 0){
-        a.file <- reactive({read.csv(as.character(datasets_files[last_character]))[ ,1:6]})
+        a.file <- reactive({read.csv(as.character(datasets_files[last_character]))})
 
 
         # Generate a summary of the dataset
@@ -556,7 +556,7 @@ shinyServer(function(input, output, session) {
 
         if ( file.exists( isolate({ paste(results.dir(),input$dd_ids_datasets,'data_import_data','annotation.csv',sep="/") }) ) )
         {
-          a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$dd_ids_datasets,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))[ ,1:6]})
+          a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$dd_ids_datasets,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))})
 
           # Generate a summary of the dataset
           output[[paste0('annotation')]] <- renderDataTable({
