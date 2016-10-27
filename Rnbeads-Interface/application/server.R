@@ -338,26 +338,67 @@ shinyServer(function(input, output, session) {
     if (length(datasets_files) != 0){
       a.file <- reactive({read.csv(as.character(datasets_files[row]))[ ,1:6]})
 
+      # Generate a summary of the dataset
+      output[[paste0('annotation')]] <- renderDataTable({
+
+        dataset <- a.file()
+        dataset
+
+
+
+
+      },selection = 'single', escape = TRUE)
+
+      output$h1_datasettab <- renderText({
+        paste("Dataset_",row)
+
+      })
+
     }
     else{
 
-      a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))[ ,1:6]})
+      if ( file.exists( isolate({ paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/") }) ) )
+      {
+
+        a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))[ ,1:6]})
+
+        # Generate a summary of the dataset
+        output[[paste0('annotation')]] <- renderDataTable({
+
+          dataset <- a.file()
+          dataset
+
+
+
+
+        },selection = 'single', escape = TRUE)
+
+        output$h1_datasettab <- renderText({
+          paste("Dataset_",row)
+
+        })
+      }
+      else{
+
+        # Generate a summary of the dataset
+        output[[paste0('annotation')]] <- renderDataTable({
+
+          dataset <- 'No file exist or no data available'
+          dataset
+
+
+
+
+        },selection = 'single', escape = TRUE)
+
+        output$h1_datasettab <- renderText({
+          paste("No data available")
+
+        })
+
+      }
     }
-    # Generate a summary of the dataset
-    output[[paste0('annotation')]] <- renderDataTable({
 
-      dataset <- a.file()
-      dataset
-
-
-
-
-    },selection = 'single', escape = TRUE)
-
-    output$h1_datasettab <- renderText({
-      paste("Dataset_",row)
-
-    })
 
     #print(row)
     session$sendCustomMessage("myCallbackHandler", "2")
@@ -490,21 +531,69 @@ shinyServer(function(input, output, session) {
 
       datasets_files = datasets_list(results.dir())
 
+      # if no datasets returned means that we have only one analysis so in else showing it
+      if (length(datasets_files) != 0){
+        a.file <- reactive({read.csv(as.character(datasets_files[last_character]))[ ,1:6]})
 
-      a.file <- reactive({read.csv(as.character(datasets_files[last_character]))[ ,1:6]})
 
-      # Generate a summary of the dataset
-      output[[paste0('annotation')]] <- renderDataTable({
-        #paste0("Annotation.csv")
-        dataset <- a.file()
-        dataset
+        # Generate a summary of the dataset
+        output[[paste0('annotation')]] <- renderDataTable({
+          #paste0("Annotation.csv")
+          dataset <- a.file()
+          dataset
 
-      })
+        })
 
-      output$h1_datasettab <- renderText({
-        paste("Dataset_",last_character)
+        output$h1_datasettab <- renderText({
+          paste("Dataset_",last_character)
 
-      })
+        })
+
+
+
+      }
+      else{
+
+        if ( file.exists( isolate({ paste(results.dir(),input$dd_ids_datasets,'data_import_data','annotation.csv',sep="/") }) ) )
+        {
+          a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$dd_ids_datasets,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))[ ,1:6]})
+
+          # Generate a summary of the dataset
+          output[[paste0('annotation')]] <- renderDataTable({
+            #paste0("Annotation.csv")
+            dataset <- a.file()
+            dataset
+
+          })
+
+          output$h1_datasettab <- renderText({
+            paste("Dataset_",last_character)
+
+          })
+
+
+        }
+        else{
+          # Generate a summary of the dataset
+          output[[paste0('annotation')]] <- renderDataTable({
+            #paste0("Annotation.csv")
+            dataset <- 'No file exist or no data available.'
+            dataset
+
+          })
+
+          output$h1_datasettab <- renderText({
+            paste("No Dataset Available")
+
+          })
+
+
+        }
+
+      }
+
+
+
 
     }
   })
