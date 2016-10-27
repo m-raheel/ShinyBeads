@@ -70,62 +70,51 @@ datasets_common <- function(rd) {
       counter <- 1
       for (i in 1:length(folders)) {
 
-
-        # # removing the last character from the path '/' cause error in the server
-        #
-        # tmp = toString(path.lists[i])
-        # len = nchar(tmp)
-        # last_character = substr(tmp,len,len)
-        #
-        # if (last_character == '/'){
-        #
-        #   tmp = substr(tmp,len,len - 1)
-        #   path.lists[i] = tmp
-        # }
-
         A <- try(read.csv((toString(path.lists[i])))[ ,2:3])
 
         #A <- read.csv((toString(path.lists[i])))[ ,2:3]
 
-        for (j in i:length(folders)) {
+        if(inherits(A, "try-error")){
+          print ('error occured in try block of A')
+        }
 
+        else
+        {
+          for (j in i:length(folders)) {
 
-          # # removing the last character from the path '/' cause error in the server
-          # tmp = toString(path.lists[j])
-          # len = nchar(tmp)
-          # last_character = substr(tmp,len,len)
-          #
-          # if (last_character == '/'){
-          #
-          #   tmp = substr(tmp,len,len - 1)
-          #   path.lists[j] = tmp
-          # }
+            B <- try(read.csv((toString(path.lists[j])))[ ,2:3])
 
-
-          B <- try(read.csv((toString(path.lists[j])))[ ,2:3])
-
-          if (length(A) == length(B) && j != i){
-            comparison <- identical(A,B)
-            comparison
-            if (comparison == TRUE){
-
-              temp.list[temp.counter] <- folders[j]
-              temp.counter = temp.counter+1
-
-              if ((folders[i] %in% temp.list) & (folders[j] %in% temp.list) ){
-              }
-              else{
-                same.sample.list[counter] <- list(c(folders[i],folders[j]))
-                same.sample.list2[counter] <- folders[j]
-                counter = counter+1
-
-              }
+            if(inherits(B, "try-error")){
+              print ('error occured in try block of B')
             }
+
+            else
+            {
+              if (length(A) == length(B) && j != i){
+                comparison <- identical(A,B)
+                comparison
+                if (comparison == TRUE){
+
+                  temp.list[temp.counter] <- folders[j]
+                  temp.counter = temp.counter+1
+
+                  if ((folders[i] %in% temp.list) & (folders[j] %in% temp.list) ){
+                  }
+                  else{
+                    same.sample.list[counter] <- list(c(folders[i],folders[j]))
+                    same.sample.list2[counter] <- folders[j]
+                    counter = counter+1
+
+                  }
+                }
+
+              }
+            }#end else try-error of B
+
 
           }
 
-
-        }
+        }#end else try-error of A
 
 
       }
