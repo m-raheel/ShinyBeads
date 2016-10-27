@@ -39,34 +39,50 @@ datasets_list <- function(rd) {
       counter <- 1
       for (i in 1:length(folders)) {
 
-        A <- read.csv((toString(path.lists[i])))[ ,2:3]
+        A <- try(read.csv((toString(path.lists[i])))[ ,2:3])
 
-        for (j in i:length(folders)) {
+        if(inherits(A, "try-error")){
+          print ('error occured in try block of A')
+        }
 
-          B <- read.csv((toString(path.lists[j])))[ ,2:3]
+        else
+        {
 
-          if (length(A) == length(B) && j != i){
-            comparison <- identical(A,B)
-            comparison
-            if (comparison == TRUE){
+          for (j in i:length(folders)) {
 
-              temp.list[temp.counter] <- folders[j]
-              temp.counter = temp.counter+1
+            B <- try(read.csv((toString(path.lists[j])))[ ,2:3])
 
-              if ((folders[i] %in% temp.list) & (folders[j] %in% temp.list) ){
-              }
-              else{
-                same.sample.list[counter] <- list(c(folders[i],folders[j]))
-                same.sample.list2[counter] <- folders[j]
-                counter = counter+1
-
-              }
+            if(inherits(B, "try-error")){
+              print ('error occured in try block of B')
             }
 
+            else
+            {
+
+              if (length(A) == length(B) && j != i){
+                comparison <- identical(A,B)
+                comparison
+                if (comparison == TRUE){
+
+                  temp.list[temp.counter] <- folders[j]
+                  temp.counter = temp.counter+1
+
+                  if ((folders[i] %in% temp.list) & (folders[j] %in% temp.list) ){
+                  }
+                  else{
+                    same.sample.list[counter] <- list(c(folders[i],folders[j]))
+                    same.sample.list2[counter] <- folders[j]
+                    counter = counter+1
+
+                  }
+                }
+
+              }
+            }# end of try block B
+
+
           }
-
-
-        }
+        }# end of error block A
 
 
       }
