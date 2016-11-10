@@ -232,17 +232,32 @@ tabPanel("Individual data set",
                               # }),
 
                               selectInput("dd_ids_datasets", "Datasets:", choices),
-                              h3(span( "Selected Dataset", class="label label-default"), class= "text-info"),
-                              h3(verbatimTextOutput("h1_datasettab"), class= "text-info"),
-                              br(),br(),
-                              dataTableOutput(paste0('annotation')),
 
-                              br(),
-                              tags$strong("Selected dataset is used in following analysis."),
-                              tags$p(""),
+
+
+                              wellPanel(
+                                tags$strong("Selected dataset is used in following analysis.")
+                              ),
 
                               dataTableOutput(paste0('annotation1')),
-                              dataTableOutput(paste0('annotation2'))
+
+
+                              #h3(span( "Selected Dataset", class="label label-default"), class= "text-info"),
+                              #h3(verbatimTextOutput("h1_datasettab"), class= "text-info"),
+                              #absolutePanel('absolute panel'),
+
+                              br(),
+
+                              wellPanel(
+                                tags$strong("Selected dataset file content.")
+                              ),
+
+                              dataTableOutput(paste0('annotation')),
+                              br()
+
+
+
+
                      ),
 
                      tabPanel("..."),
