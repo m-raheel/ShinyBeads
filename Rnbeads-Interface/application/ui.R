@@ -235,7 +235,14 @@ tabPanel("Individual data set",
                               h3(span( "Selected Dataset", class="label label-default"), class= "text-info"),
                               h3(verbatimTextOutput("h1_datasettab"), class= "text-info"),
                               br(),br(),
-                              dataTableOutput(paste0('annotation'))
+                              dataTableOutput(paste0('annotation')),
+
+                              br(),
+                              tags$strong("Selected dataset is used in following analysis."),
+                              tags$p(""),
+
+                              dataTableOutput(paste0('annotation1')),
+                              dataTableOutput(paste0('annotation2'))
                      ),
 
                      tabPanel("..."),

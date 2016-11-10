@@ -64,9 +64,9 @@ shinyServer(function(input, output, session) {
 
 
 
-    updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
+    #updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
 
-    #updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
+    updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
@@ -228,11 +228,9 @@ shinyServer(function(input, output, session) {
     cd_list_counter <- 1
 
 
-    common.datasets = datasets_common(results.dir())
+    common.datasets = datasets_total(results.dir())
+    common.datasets = common.datasets$path_list
     #common.datasets <- list()
-
-    print (length(common.datasets))
-    print (input$select_ia)
 
     if (length(common.datasets) != 0){
 
@@ -323,20 +321,19 @@ shinyServer(function(input, output, session) {
   observeEvent(input$list_datasets_rows_selected, {
     row <- input$list_datasets_rows_selected
 
-    #value_selected <- DT[row, "Datasets_Used"]
-
-
-    datasets_files = datasets_list(results.dir())
-
-    print(datasets_files)
-
     row <- as.integer(row)
 
-    print(row)
+    total.datasets = datasets_total(results.dir())
+
+
+
+    path_list = total.datasets$path_list
+
+
 
     # if no datasets returned means that we have only one analysis so in else showing it
-    if (length(datasets_files) != 0){
-      a.file <- reactive({read.csv(as.character(datasets_files[row]))})
+    if (length(path_list) != 0){
+      a.file <- reactive({read.csv(as.character(path_list[row]))})
 
       # Generate a summary of the dataset
       output[[paste0('annotation')]] <- renderDataTable({
@@ -350,9 +347,11 @@ shinyServer(function(input, output, session) {
       },selection = 'single', escape = TRUE)
 
       output$h1_datasettab <- renderText({
-        paste("Dataset_",row)
+        paste('Dataset_',row,sep = '')
 
       })
+      updateSelectInput(session, "dd_ids_datasets",
+                         selected = paste('Dataset_',row,sep = ''))
 
     }
     else{
@@ -400,6 +399,85 @@ shinyServer(function(input, output, session) {
     }
 
 
+    # how many analysis is the selected dataset is used in common in the analysis
+    ########################################################################################
+    analysis_list = unlist(total.datasets$analysis_list)
+
+    common.datasets = datasets_common(results.dir())
+
+    check.common = FALSE
+
+    common.index = 1
+    matrix.list = as.matrix(common.datasets)
+    for (i in 1:length(matrix.list)) {
+
+      matrix.unlist = unlist(matrix.list[i])
+
+      if (analysis_list[row]  %in% matrix.unlist){
+        #print(paste('matrix unlist inside if ',i,matrix.unlist))
+        check.common = TRUE
+        common.index = i
+      }
+    }
+
+    #print((matrix.list[1]))
+
+
+    # if no datasets returned means that we have only one analysis so in else showing it
+
+    if (check.common == TRUE){
+
+
+
+      matrix.unlist = unlist(matrix.list[common.index])
+      # Generate a summary of the dataset
+      output[[paste0('annotation1')]] <- renderDataTable({
+
+        DT <- data.table( Analysis_Dir = matrix.unlist)
+
+        DT
+
+
+      },selection = 'single', escape = TRUE)
+
+    }
+
+    else if (length(analysis_list) != 0){
+      al <- reactive({analysis_list[row]})
+
+      # Generate a summary of the dataset
+      output[[paste0('annotation1')]] <- renderDataTable({
+
+        DT <- data.table( Analysis_Dir = al())
+
+        DT
+
+
+      },selection = 'single', escape = TRUE)
+
+    }
+    else{
+
+
+
+
+        # Generate a summary of the dataset
+        output[[paste0('annotation1')]] <- renderDataTable({
+
+          dataset <- data.table( data = "No infomation available.")
+          dataset
+
+
+
+
+        },selection = 'single', escape = TRUE)
+
+
+
+
+    }
+
+    ###################################################################################
     #print(row)
     session$sendCustomMessage("myCallbackHandler", "2")
     #updateTabsetPanel(session, "Individual dataset", selected = "DatasetTab")
@@ -529,11 +607,12 @@ shinyServer(function(input, output, session) {
 
       last_character = as.integer(last_character)
 
-      datasets_files = datasets_list(results.dir())
+      datasets_files = datasets_total(results.dir())
 
+      path_list = datasets_files$path_list
       # if no datasets returned means that we have only one analysis so in else showing it
-      if (length(datasets_files) != 0){
-        a.file <- reactive({read.csv(as.character(datasets_files[last_character]))})
+      if (length(path_list) != 0){
+        a.file <- reactive({read.csv(as.character(path_list[last_character]))})
 
 
         # Generate a summary of the dataset
@@ -591,6 +670,90 @@ shinyServer(function(input, output, session) {
         }
 
       }
+
+
+      # how many analysis is the selected dataset is used in common in the analysis
+      ########################################################################################
+      analysis_list = unlist(datasets_files$analysis_list)
+      common.datasets = datasets_common(results.dir())
+
+
+      # checking if the selected datasets is used in more than one analysis then saving the index of the matrix
+      check.common = FALSE
+
+      common.index = 1
+      matrix.list = as.matrix(common.datasets)
+      for (i in 1:length(matrix.list)) {
+
+        matrix.unlist = unlist(matrix.list[i])
+
+        if (analysis_list[last_character]  %in% matrix.unlist){
+          #print(paste('matrix unlist inside if ',i,matrix.unlist))
+          check.common = TRUE
+          common.index = i
+        }
+      }
+
+      #print((matrix.list[1]))
+
+
+      # if no datasets returned means that we have only one analysis so in else showing it
+
+      if (check.common == TRUE){
+
+
+
+        matrix.unlist = unlist(matrix.list[common.index])
+
+        # Generate a summary of the dataset
+        output[[paste0('annotation1')]] <- renderDataTable({
+
+          DT <- data.table( Analysis_Dir = matrix.unlist)
+
+          DT
+
+
+        },selection = 'single', escape = TRUE)
+
+      }
+
+      else if (length(analysis_list) != 0){
+        al <- reactive({analysis_list[last_character]})
+
+        # Generate a summary of the dataset
+        output[[paste0('annotation1')]] <- renderDataTable({
+
+          DT <- data.table( Analysis_Dir = al())
+
+          DT
+
+
+        },selection = 'single', escape = TRUE)
+
+      }
+      else{
+
+
+
+
+        # Generate a summary of the dataset
+        output[[paste0('annotation1')]] <- renderDataTable({
+
+          dataset <- data.table( data = "No infomation available.")
+          dataset
+
+
+
+
+        },selection = 'single', escape = TRUE)
+
+
+
+
+      }
+
+      ###################################################################################
+
 
 
 

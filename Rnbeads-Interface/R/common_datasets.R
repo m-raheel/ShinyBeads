@@ -26,16 +26,16 @@ datasets_common <- function(rd) {
         #filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
 
         tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
-        len = nchar(tmp)
-        last_character = substr(tmp,len,len)
-
-        if (last_character == '/'){
-
-
-
-          tmp = substr(tmp,len,len - 1)
-
-        }
+        # len = nchar(tmp)
+        # last_character = substr(tmp,len,len)
+        #
+        # if (last_character == '/'){
+        #
+        #
+        #
+        #   tmp = substr(tmp,len,len - 1)
+        #
+        # }
 
         filepath <- tmp
 
@@ -51,7 +51,7 @@ datasets_common <- function(rd) {
 
           path.lists[i] <- filename
 
-          print (path.lists[i])
+
         }
       }
       else{
@@ -76,7 +76,7 @@ datasets_common <- function(rd) {
           if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) ){
 
 
-            A <- try(read.csv((toString(path.lists[i])))[ ,2:3])
+            A <- try(read.csv((toString(path.lists[i]))))
 
             #A <- read.csv((toString(path.lists[i])))[ ,2:3]
 
@@ -90,7 +90,7 @@ datasets_common <- function(rd) {
 
                 if ( file.exists( isolate({ paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/") }) ) ){
 
-                  B <- try(read.csv((toString(path.lists[j])))[ ,2:3])
+                  B <- try(read.csv((toString(path.lists[j]))))
 
                   if(inherits(B, "try-error")){
                     print ('error occured in try block of B')
@@ -111,9 +111,10 @@ datasets_common <- function(rd) {
                         else{
                           same.sample.list[counter] <- list(c(folders[i],folders[j]))
                           same.sample.list2[counter] <- folders[j]
+
                           counter = counter+1
 
-                        }
+                          }
                       }
 
                     }
@@ -153,9 +154,10 @@ datasets_common <- function(rd) {
         # full.path <- file.path(dn,'annotation.csv')
 
 
-        filepath <- file.path(rd, folders[i], 'data_import_data','annotation.csv')
+        filepath <- file.path(rd, temp.variable, 'data_import_data','annotation.csv')
 
         filepath= as.character(filepath)
+
 
         #filename <- paste(filepath, 'annotation.csv', sep="/")
 

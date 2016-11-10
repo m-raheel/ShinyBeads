@@ -1,0 +1,537 @@
+2015-10-16 14:24:32     1.0    0.0  STATUS STARTED RnBeads Pipeline
+2015-10-16 14:24:32     1.0    0.0    INFO     Analysis Title: Danone_Test
+2015-10-16 14:24:32     1.0    0.0    INFO     Initialized report index and saved to index.html
+2015-10-16 14:24:32     1.0    0.0  STATUS     STARTED Loading Data
+2015-10-16 14:24:32     1.0    0.0    INFO         Number of cores: 1
+2015-10-16 14:24:32     1.0    0.0    INFO         Loading data of type "infinium.idat.dir"
+2015-10-16 14:24:32     1.0    0.0  STATUS         STARTED Loading Data from IDAT Files
+2015-10-16 14:24:32     1.0    0.0    INFO             Added column barcode to the provided sample annotation table
+2015-10-16 14:25:21     1.3    0.3  STATUS         COMPLETED Loading Data from IDAT Files
+2015-10-16 14:25:59     1.5    0.4  STATUS         Loaded data from /home/users/Sascha/RWork/Danone/idat
+2015-10-16 14:26:00     1.6    0.4  STATUS         Added data loading section to the report
+2015-10-16 14:26:01     1.5    0.4  STATUS         Loaded 12 samples and 485577 sites
+2015-10-16 14:26:01     1.5    0.4    INFO         Output object is of type RnBeadRawSet
+2015-10-16 14:26:03     1.5    0.4  STATUS     COMPLETED Loading Data
+2015-10-16 14:26:30     1.5    0.4    INFO     Initialized report index and saved to index.html
+2015-10-16 14:26:30     1.5    0.4  STATUS     STARTED Quality Control
+2015-10-16 14:26:30     1.5    0.4    INFO         Number of cores: 1
+2015-10-16 14:26:30     1.5    0.4  STATUS         STARTED Quality Control Section
+2015-10-16 14:26:48     1.5    0.4  STATUS             Added quality control box plots
+2015-10-16 14:28:11     1.5    0.4  STATUS             Added quality control bar plots
+2015-10-16 14:28:13     1.5    0.4  STATUS             Added negative control boxplots
+2015-10-16 14:28:13     1.5    0.4  STATUS         COMPLETED Quality Control Section
+2015-10-16 14:28:13     1.5    0.4  STATUS         STARTED Visualizing Sample Mixups
+2015-10-16 14:28:13     1.5    0.4  STATUS             STARTED Mixups Visualization Section
+2015-10-16 14:28:19     1.6    0.4  STATUS                 Added SNP Heatmap
+2015-10-16 14:28:24     1.5    0.4  STATUS                 Calculated Manhattan distances between samples based on SNP probes
+2015-10-16 14:28:25     1.5    0.4  STATUS                 Add plot of SNP distances
+2015-10-16 14:28:25     1.5    0.4  STATUS                 Exported SNP-based distances to snp_distances.csv
+2015-10-16 14:28:25     1.5    0.4  STATUS                 Added SNP-based Distances
+2015-10-16 14:28:25     1.5    0.4  STATUS             COMPLETED Mixups Visualization Section
+2015-10-16 14:28:25     1.5    0.4  STATUS         COMPLETED Visualizing Sample Mixups
+2015-10-16 14:28:29     1.5    0.4  STATUS     COMPLETED Quality Control
+2015-10-16 14:28:29     1.5    0.4    INFO     Initialized report index and saved to index.html
+2015-10-16 14:28:29     1.5    0.4  STATUS     STARTED Preprocessing
+2015-10-16 14:28:29     1.5    0.4    INFO         Number of cores: 1
+2015-10-16 14:28:29     1.5    0.4  STATUS         STARTED Filtering Procedures I
+2015-10-16 14:28:31     1.5    0.4  STATUS             Loaded 118912 sites from /home/users/Sascha/RWork/Danone/commonSNPs137.txt
+2015-10-16 14:28:31     1.5    0.4  STATUS             STARTED Removal of SNP-enriched Sites
+2015-10-16 14:28:32     1.5    0.4  STATUS                 Removed 253 sites using SNP criterion "3"
+2015-10-16 14:28:32     1.5    0.4  STATUS                 Saved removed sites to /home/users/Sascha/RWork/Danone/reports/analysis1/preprocessing_data/removed_sites_snp.csv
+2015-10-16 14:28:32     1.5    0.4  STATUS                 Added a corresponding section to the report
+2015-10-16 14:28:32     1.5    0.4  STATUS             COMPLETED Removal of SNP-enriched Sites
+2015-10-16 14:28:33     1.6    0.4    INFO             Working with a p-value threshold of 0.05
+2015-10-16 14:28:34     1.6    0.4  STATUS             STARTED Greedycut
+2015-10-16 14:28:43     1.6    0.4  STATUS                 Calculated a total of 800 iterations
+2015-10-16 14:28:43     1.6    0.4    INFO                 Optimal number of iterations is 800
+2015-10-16 14:28:45     1.6    0.4  STATUS                 Created ROC plot
+2015-10-16 14:28:47     1.6    0.4  STATUS                 Created line plots for matrix dimensions and other statistics
+2015-10-16 14:28:47     1.6    0.4  STATUS                 Saved removed sites to /home/users/Sascha/RWork/Danone/reports/analysis1/preprocessing_data/removed_sites_greedycut.csv
+2015-10-16 14:28:47     1.6    0.4  STATUS             COMPLETED Greedycut
+2015-10-16 14:28:48     1.6    0.4  STATUS             Retained 12 samples and 365614 sites
+2015-10-16 14:28:48     1.6    0.4  STATUS         COMPLETED Filtering Procedures I
+2015-10-16 14:28:48     1.6    0.4  STATUS         STARTED Summary of Filtering Procedures I
+2015-10-16 14:28:52     1.6    0.4  STATUS             Added summary table of removed and retained items
+2015-10-16 14:28:54     1.7    0.4  STATUS             Constructed sequences of removed and retained methylation values
+2015-10-16 14:29:10     1.8    0.4  STATUS             Added comparison between removed and retained beta values
+2015-10-16 14:29:10     1.8    0.4  STATUS         COMPLETED Summary of Filtering Procedures I
+2015-10-16 14:29:10     1.8    0.4  STATUS         STARTED Manipulating the object
+2015-10-16 14:29:31     1.7    0.6  STATUS             Removed 119963 sites (probes)
+2015-10-16 14:29:31     1.7    0.6  STATUS         COMPLETED Manipulating the object
+2015-10-16 14:29:31     1.7    0.6  STATUS         STARTED Normalization Procedure
+2015-10-16 14:30:39     1.8    1.0  STATUS             Performed normalization with method "illumina"
+2015-10-16 14:30:54     2.2    0.9  STATUS             Added comparison between non-normalized and normalized beta values
+2015-10-16 14:30:55     2.3    0.9  STATUS             Added histogram of observed beta shifts (magnitude of correction)
+2015-10-16 14:30:56     2.3    0.9  STATUS             Added 2D histogram of observed beta values and shifts
+2015-10-16 14:30:59     2.0    0.9  STATUS             Added normalization section
+2015-10-16 14:30:59     2.0    0.9  STATUS         COMPLETED Normalization Procedure
+2015-10-16 14:30:59     2.0    0.9  STATUS         STARTED Filtering Procedures II
+2015-10-16 14:31:01     2.0    0.9  STATUS             Loaded 118912 sites from /home/users/Sascha/RWork/Danone/commonSNPs137.txt
+2015-10-16 14:31:01     2.0    0.9  STATUS             STARTED Probe Context Removal
+2015-10-16 14:31:01     2.0    0.9  STATUS                 Removed 2615 probe(s) having not acceptable context
+2015-10-16 14:31:01     2.0    0.9  STATUS                 Saved removed sites to /home/users/Sascha/RWork/Danone/reports/analysis1/preprocessing_data/removed_sites_context.csv
+2015-10-16 14:31:01     2.0    0.9  STATUS                 Added a corresponding section to the report
+2015-10-16 14:31:01     2.0    0.9  STATUS             COMPLETED Probe Context Removal
+2015-10-16 14:31:01     2.0    0.9  STATUS             STARTED Removal of Sites on Sex Chromosomes
+2015-10-16 14:31:01     2.0    0.9  STATUS                 Removed 9918 site(s) on sex chromosomes
+2015-10-16 14:31:01     2.0    0.9  STATUS                 Saved removed sites to /home/users/Sascha/RWork/Danone/reports/analysis1/preprocessing_data/removed_sites_sex.csv
+2015-10-16 14:31:01     2.0    0.9  STATUS                 Added a corresponding section to the report
+2015-10-16 14:31:01     2.0    0.9  STATUS             COMPLETED Removal of Sites on Sex Chromosomes
+2015-10-16 14:31:01     2.0    0.9  STATUS             Retained 12 samples and 353081 sites
+2015-10-16 14:31:01     2.0    0.9  STATUS         COMPLETED Filtering Procedures II
+2015-10-16 14:31:01     2.0    0.9  STATUS         STARTED Summary of Filtering Procedures II
+2015-10-16 14:31:05     2.1    0.9  STATUS             Added summary table of removed and retained items
+2015-10-16 14:31:05     2.1    0.9  STATUS             Constructed sequences of removed and retained methylation values
+2015-10-16 14:31:12     2.1    0.9  STATUS             Added comparison between removed and retained beta values
+2015-10-16 14:31:12     2.1    0.9  STATUS         COMPLETED Summary of Filtering Procedures II
+2015-10-16 14:31:12     2.1    0.9  STATUS         STARTED Manipulating the object
+2015-10-16 14:31:32     2.1    1.2  STATUS             Removed 12533 sites (probes)
+2015-10-16 14:31:32     2.1    1.2  STATUS         COMPLETED Manipulating the object
+2015-10-16 14:31:32     2.1    1.2  STATUS     COMPLETED Preprocessing
+2015-10-16 14:31:52     2.2    1.2    INFO     Initialized report index and saved to index.html
+2015-10-16 14:31:52     2.2    1.2  STATUS     STARTED Tracks and Tables
+2015-10-16 14:31:52     2.2    1.2    INFO         Number of cores: 1
+2015-10-16 14:32:03     2.1    1.2  STATUS         Exported data to CSV format
+2015-10-16 14:32:03     2.1    1.2  STATUS         Added "CSV Export" section to the report
+2015-10-16 14:32:03     2.1    1.2  STATUS         STARTED Generating Tracks and Tables
+2015-10-16 14:32:03     2.1    1.2  STATUS             STARTED Exporting sites
+2015-10-16 14:32:03     2.1    1.2  STATUS                 STARTED Creating Track Hub -- bigBed
+2015-10-16 14:32:03     2.1    1.2  STATUS                     STARTED Conversion to BED
+2015-10-16 14:32:03     2.1    1.2  STATUS                         Converting to GRangesList
+2015-10-16 14:32:09     2.1    0.3  STATUS                         Exporting sample 3231_Blut
+2015-10-16 14:32:12     2.1    0.3  STATUS                         Exporting sample 4071_Blut
+2015-10-16 14:32:16     2.1    0.3  STATUS                         Exporting sample 1601_Blut
+2015-10-16 14:32:20     2.1    0.3  STATUS                         Exporting sample 2002_Blut
+2015-10-16 14:32:23     2.1    0.3  STATUS                         Exporting sample 1932_Blut
+2015-10-16 14:32:27     2.1    0.3  STATUS                         Exporting sample 2131_Blut
+2015-10-16 14:32:31     2.1    0.3  STATUS                         Exporting sample 3231_Fett
+2015-10-16 14:32:34     2.1    0.3  STATUS                         Exporting sample 4071_Fett
+2015-10-16 14:32:38     2.1    0.3  STATUS                         Exporting sample 1601_Fett
+2015-10-16 14:32:42     2.1    0.3  STATUS                         Exporting sample 2002_Fett
+2015-10-16 14:32:46     2.1    0.3  STATUS                         Exporting sample 1932_Fett
+2015-10-16 14:32:49     2.1    0.3  STATUS                         Exporting sample 2131_Fett
+2015-10-16 14:32:54     2.1    0.3  STATUS                     COMPLETED Conversion to BED
+2015-10-16 14:32:54     2.1    0.3  STATUS                     STARTED Creating Track Hub
+2015-10-16 14:33:26     2.0    0.3  STATUS                     COMPLETED Creating Track Hub
+2015-10-16 14:33:27     2.0    0.3  STATUS                 COMPLETED Creating Track Hub -- bigBed
+2015-10-16 14:33:27     2.0    0.3  STATUS                 STARTED Creating UCSC Track Hub -- bigWig
+2015-10-16 14:33:27     2.0    0.3  STATUS                     STARTED Conversion to bedGraph
+2015-10-16 14:33:50     2.1    0.3  STATUS                     COMPLETED Conversion to bedGraph
+2015-10-16 14:33:50     2.1    0.3  STATUS                     STARTED Creating Track Hub
+2015-10-16 14:33:59     2.1    0.3  STATUS                     COMPLETED Creating Track Hub
+2015-10-16 14:33:59     2.1    0.3  STATUS                 COMPLETED Creating UCSC Track Hub -- bigWig
+2015-10-16 14:34:00     2.1    0.3  STATUS             COMPLETED Exporting sites
+2015-10-16 14:34:00     2.1    0.3  STATUS         COMPLETED Generating Tracks and Tables
+2015-10-16 14:34:00     2.1    0.3  STATUS         STARTED Writing export report
+2015-10-16 14:34:24     2.1    0.3  STATUS         COMPLETED Writing export report
+2015-10-16 14:34:24     2.1    0.3  STATUS     COMPLETED Tracks and Tables
+2015-10-16 14:34:24     2.1    0.3    INFO     Initialized report index and saved to index.html
+2015-10-16 14:34:24     2.1    0.3  STATUS     STARTED Exploratory Analysis
+2015-10-16 14:34:24     2.1    0.3    INFO         Number of cores: 1
+2015-10-16 14:34:25     2.1    0.3  STATUS         Designed color mappings for probe type and CGI status
+2015-10-16 14:34:58     2.1    0.3  STATUS         STARTED Dimension Reduction Techniques
+2015-10-16 14:34:59     2.1    0.3  STATUS             STARTED MDS
+2015-10-16 14:34:59     2.1    0.3  STATUS                 Calculated MDS coordinates using manhattan distance
+2015-10-16 14:34:59     2.1    0.3  STATUS                 Calculated MDS coordinates using euclidean distance
+2015-10-16 14:34:59     2.1    0.3  STATUS             COMPLETED MDS
+2015-10-16 14:35:00     2.1    0.3  STATUS             STARTED PCA
+2015-10-16 14:35:00     2.1    0.3  STATUS             COMPLETED PCA
+2015-10-16 14:35:00     2.1    0.3  STATUS             STARTED MDS
+2015-10-16 14:35:01     2.1    0.3  STATUS                 Calculated MDS coordinates using manhattan distance
+2015-10-16 14:35:01     2.1    0.3  STATUS                 Calculated MDS coordinates using euclidean distance
+2015-10-16 14:35:01     2.1    0.3  STATUS             COMPLETED MDS
+2015-10-16 14:35:01     2.1    0.3  STATUS             STARTED PCA
+2015-10-16 14:35:01     2.1    0.3  STATUS             COMPLETED PCA
+2015-10-16 14:35:01     2.1    0.3  STATUS             STARTED MDS
+2015-10-16 14:35:01     2.1    0.3  STATUS                 Calculated MDS coordinates using manhattan distance
+2015-10-16 14:35:01     2.1    0.3  STATUS                 Calculated MDS coordinates using euclidean distance
+2015-10-16 14:35:01     2.1    0.3  STATUS             COMPLETED MDS
+2015-10-16 14:35:01     2.1    0.3  STATUS             STARTED PCA
+2015-10-16 14:35:01     2.1    0.3  STATUS             COMPLETED PCA
+2015-10-16 14:35:01     2.1    0.3  STATUS             STARTED MDS
+2015-10-16 14:35:01     2.1    0.3  STATUS                 Calculated MDS coordinates using manhattan distance
+2015-10-16 14:35:02     2.1    0.3  STATUS                 Calculated MDS coordinates using euclidean distance
+2015-10-16 14:35:02     2.1    0.3  STATUS             COMPLETED MDS
+2015-10-16 14:35:02     2.1    0.3  STATUS             STARTED PCA
+2015-10-16 14:35:02     2.1    0.3  STATUS             COMPLETED PCA
+2015-10-16 14:35:02     2.1    0.3  STATUS             STARTED MDS
+2015-10-16 14:35:02     2.1    0.3  STATUS                 Calculated MDS coordinates using manhattan distance
+2015-10-16 14:35:02     2.1    0.3  STATUS                 Calculated MDS coordinates using euclidean distance
+2015-10-16 14:35:02     2.1    0.3  STATUS             COMPLETED MDS
+2015-10-16 14:35:02     2.1    0.3  STATUS             STARTED PCA
+2015-10-16 14:35:02     2.1    0.3  STATUS             COMPLETED PCA
+2015-10-16 14:35:02     2.1    0.3    INFO             Mapping 3 traits to point colors and types
+2015-10-16 14:40:27     2.1    0.3    INFO             Principal components that explain at least 95 % of the total variance: 7
+2015-10-16 14:40:27     2.1    0.3    INFO             Saved percentage of total variance to pca_variance_explained_1.csv
+2015-10-16 14:40:28     2.1    0.3    INFO             Principal components that explain at least 95 % of the total variance: 6
+2015-10-16 14:40:28     2.1    0.3    INFO             Saved percentage of total variance to pca_variance_explained_2.csv
+2015-10-16 14:40:29     2.1    0.3    INFO             Principal components that explain at least 95 % of the total variance: 6
+2015-10-16 14:40:29     2.1    0.3    INFO             Saved percentage of total variance to pca_variance_explained_3.csv
+2015-10-16 14:40:30     2.1    0.3    INFO             Principal components that explain at least 95 % of the total variance: 6
+2015-10-16 14:40:30     2.1    0.3    INFO             Saved percentage of total variance to pca_variance_explained_4.csv
+2015-10-16 14:40:30     2.1    0.3    INFO             Principal components that explain at least 95 % of the total variance: 7
+2015-10-16 14:40:30     2.1    0.3    INFO             Saved percentage of total variance to pca_variance_explained_5.csv
+2015-10-16 14:40:31     2.1    0.3  STATUS             Created scatter plots and CDFs summarizing the reduced dimensional representations
+2015-10-16 14:40:31     2.1    0.3  STATUS         COMPLETED Dimension Reduction Techniques
+2015-10-16 14:40:31     2.1    0.3  STATUS         STARTED Tests for Associations
+2015-10-16 14:40:31     2.1    0.3    INFO             Testing the following traits for associations: A; B; Predicted Male Probability; Predicted Gender
+2015-10-16 14:40:32     2.1    0.3  STATUS             Computed correlations between principal components and traits.
+2015-10-16 14:40:32     2.1    0.3  STATUS             Computed pairwise correlations between traits.
+2015-10-16 14:40:32     2.1    0.3  STATUS         COMPLETED Tests for Associations
+2015-10-16 14:40:41     2.1    0.3  STATUS         STARTED Quality-associated Batch Effects
+2015-10-16 14:40:41     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for sites
+2015-10-16 14:40:41     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for sites
+2015-10-16 14:40:41     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and extension for sites
+2015-10-16 14:40:41     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and hybridization for sites
+2015-10-16 14:40:41     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for sites
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity I for sites
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity II for sites
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and staining for sites
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and target removal for sites
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and extension for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and hybridization for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity I for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity II for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and staining for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and target removal for tiling
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for genes
+2015-10-16 14:40:42     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for genes
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and extension for genes
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and hybridization for genes
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for genes
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity I for genes
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity II for genes
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and staining for genes
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and target removal for genes
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for promoters
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for promoters
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and extension for promoters
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and hybridization for promoters
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for promoters
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity I for promoters
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity II for promoters
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and staining for promoters
+2015-10-16 14:40:43     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and target removal for promoters
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion I for cpgislands
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and bisulfite conversion II for cpgislands
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and extension for cpgislands
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and hybridization for cpgislands
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and non-polymorphic for cpgislands
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity I for cpgislands
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and specificity II for cpgislands
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and staining for cpgislands
+2015-10-16 14:40:44     2.1    0.3  STATUS             Computed associations between 8 principal component(s) and target removal for cpgislands
+2015-10-16 14:41:53     2.1    0.3  STATUS             Added heatmaps of correlation between principal components and signal levels of Q probes
+2015-10-16 14:41:53     2.1    0.3  STATUS         COMPLETED Quality-associated Batch Effects
+2015-10-16 14:41:57     2.1    0.3  STATUS         STARTED Methylation Value Distributions - Sample Groups
+2015-10-16 14:41:57     2.1    0.3    INFO             processing beta_density_samples_1_1
+2015-10-16 14:41:57     2.1    0.3    INFO             Density estimation ( all samples--sites ): Groupwise retained observations after missing value removal: all:4236972/4236972
+2015-10-16 14:41:58     2.1    0.3    INFO             Density estimation ( all samples--sites ): Groupwise retained observations after subsampling: all:1000000/4236972
+2015-10-16 14:42:04     2.1    0.3    INFO             processing beta_density_samples_1_2
+2015-10-16 14:42:04     2.1    0.3    INFO             Density estimation ( all samples--tiling ): Groupwise retained observations after missing value removal: all:1358964/1358964
+2015-10-16 14:42:04     2.1    0.3    INFO             Density estimation ( all samples--tiling ): Groupwise retained observations after subsampling: all:1000000/1358964
+2015-10-16 14:42:11     2.1    0.3    INFO             processing beta_density_samples_1_3
+2015-10-16 14:42:11     2.1    0.3    INFO             Density estimation ( all samples--genes ): Groupwise retained observations after missing value removal: all:336024/336024
+2015-10-16 14:42:13     2.1    0.3    INFO             processing beta_density_samples_1_4
+2015-10-16 14:42:13     2.1    0.3    INFO             Density estimation ( all samples--promoters ): Groupwise retained observations after missing value removal: all:335856/335856
+2015-10-16 14:42:15     2.1    0.3    INFO             processing beta_density_samples_1_5
+2015-10-16 14:42:15     2.1    0.3    INFO             Density estimation ( all samples--cpgislands ): Groupwise retained observations after missing value removal: all:295140/295140
+2015-10-16 14:42:17     2.1    0.3    INFO             processing beta_density_samples_2_1
+2015-10-16 14:42:18     2.1    0.3    INFO             Density estimation ( A--sites ): Groupwise retained observations after missing value removal: B_high:1059243/1059243; B_low:1059243/1059243
+2015-10-16 14:42:18     2.1    0.3    INFO             Density estimation ( A--sites ): Groupwise retained observations after subsampling: B_high:1000000/1059243; B_low:1000000/1059243
+2015-10-16 14:42:31     2.1    0.3    INFO             processing beta_density_samples_2_2
+2015-10-16 14:42:31     2.1    0.3    INFO             Density estimation ( A--tiling ): Groupwise retained observations after missing value removal: B_high:339741/339741; B_low:339741/339741
+2015-10-16 14:42:35     2.1    0.3    INFO             processing beta_density_samples_2_3
+2015-10-16 14:42:35     2.1    0.3    INFO             Density estimation ( A--genes ): Groupwise retained observations after missing value removal: B_high:84006/84006; B_low:84006/84006
+2015-10-16 14:42:37     2.1    0.3    INFO             processing beta_density_samples_2_4
+2015-10-16 14:42:37     2.1    0.3    INFO             Density estimation ( A--promoters ): Groupwise retained observations after missing value removal: B_high:83964/83964; B_low:83964/83964
+2015-10-16 14:42:39     2.1    0.3    INFO             processing beta_density_samples_2_5
+2015-10-16 14:42:39     2.1    0.3    INFO             Density estimation ( A--cpgislands ): Groupwise retained observations after missing value removal: B_high:73785/73785; B_low:73785/73785
+2015-10-16 14:42:41     2.1    0.3    INFO             processing beta_density_samples_3_1
+2015-10-16 14:42:41     2.1    0.3    INFO             Density estimation ( B--sites ): Groupwise retained observations after missing value removal: F_high:1059243/1059243; F_low:1059243/1059243
+2015-10-16 14:42:41     2.1    0.3    INFO             Density estimation ( B--sites ): Groupwise retained observations after subsampling: F_high:1000000/1059243; F_low:1000000/1059243
+2015-10-16 14:42:54     2.1    0.3    INFO             processing beta_density_samples_3_2
+2015-10-16 14:42:54     2.1    0.3    INFO             Density estimation ( B--tiling ): Groupwise retained observations after missing value removal: F_high:339741/339741; F_low:339741/339741
+2015-10-16 14:42:58     2.1    0.3    INFO             processing beta_density_samples_3_3
+2015-10-16 14:42:58     2.1    0.3    INFO             Density estimation ( B--genes ): Groupwise retained observations after missing value removal: F_high:84006/84006; F_low:84006/84006
+2015-10-16 14:42:59     2.1    0.3    INFO             processing beta_density_samples_3_4
+2015-10-16 14:42:59     2.1    0.3    INFO             Density estimation ( B--promoters ): Groupwise retained observations after missing value removal: F_high:83964/83964; F_low:83964/83964
+2015-10-16 14:43:01     2.1    0.3    INFO             processing beta_density_samples_3_5
+2015-10-16 14:43:01     2.1    0.3    INFO             Density estimation ( B--cpgislands ): Groupwise retained observations after missing value removal: F_high:73785/73785; F_low:73785/73785
+2015-10-16 14:43:03     2.1    0.3    INFO             processing beta_density_samples_4_1
+2015-10-16 14:43:03     2.1    0.3    INFO             Density estimation ( Predicted Gender--sites ): Groupwise retained observations after missing value removal: female:2824648/2824648; male:1412324/1412324
+2015-10-16 14:43:03     2.1    0.3    INFO             Density estimation ( Predicted Gender--sites ): Groupwise retained observations after subsampling: female:1333333/2824648; male:666667/1412324
+2015-10-16 14:43:14     2.1    0.3    INFO             processing beta_density_samples_4_2
+2015-10-16 14:43:14     2.1    0.3    INFO             Density estimation ( Predicted Gender--tiling ): Groupwise retained observations after missing value removal: female:905976/905976; male:452988/452988
+2015-10-16 14:43:21     2.1    0.3    INFO             processing beta_density_samples_4_3
+2015-10-16 14:43:21     2.1    0.3    INFO             Density estimation ( Predicted Gender--genes ): Groupwise retained observations after missing value removal: female:224016/224016; male:112008/112008
+2015-10-16 14:43:23     2.1    0.3    INFO             processing beta_density_samples_4_4
+2015-10-16 14:43:23     2.1    0.3    INFO             Density estimation ( Predicted Gender--promoters ): Groupwise retained observations after missing value removal: female:223904/223904; male:111952/111952
+2015-10-16 14:43:25     2.1    0.3    INFO             processing beta_density_samples_4_5
+2015-10-16 14:43:25     2.1    0.3    INFO             Density estimation ( Predicted Gender--cpgislands ): Groupwise retained observations after missing value removal: female:196760/196760; male:98380/98380
+2015-10-16 14:43:28     2.1    0.3  STATUS         COMPLETED Methylation Value Distributions - Sample Groups
+2015-10-16 14:43:28     2.1    0.3  STATUS         STARTED Methylation Value Distributions - Probe Categories
+2015-10-16 14:43:28     2.1    0.3    INFO             Density estimation ( CGI Relation--all samples ): Groupwise retained observations after missing value removal: Open Sea:1492812/1492812; Shelf:406248/406248; Shore:1008552/1008552; Island:1329360/1329360
+2015-10-16 14:43:29     2.1    0.3    INFO             Density estimation ( CGI Relation--all samples ): Groupwise retained observations after subsampling: Open Sea:1409320/1492812; Shelf:383527/406248; Shore:952144/1008552; Island:1255009/1329360
+2015-10-16 14:43:54     2.2    0.3    INFO             Density estimation ( Design--all samples ): Groupwise retained observations after missing value removal: I:1143684/1143684; II:3093288/3093288
+2015-10-16 14:43:55     2.2    0.3    INFO             Density estimation ( Design--all samples ): Groupwise retained observations after subsampling: I:539859/1143684; II:1460141/3093288
+2015-10-16 14:44:05     2.1    0.3    INFO             Density estimation ( CGI Relation--B_high (based on A) ): Groupwise retained observations after missing value removal: Open Sea:373203/373203; Shelf:101562/101562; Shore:252138/252138; Island:332340/332340
+2015-10-16 14:44:10     2.1    0.3    INFO             Density estimation ( Design--B_high (based on A) ): Groupwise retained observations after missing value removal: I:285921/285921; II:773322/773322
+2015-10-16 14:44:15     2.1    0.3    INFO             Density estimation ( CGI Relation--B_low (based on A) ): Groupwise retained observations after missing value removal: Open Sea:373203/373203; Shelf:101562/101562; Shore:252138/252138; Island:332340/332340
+2015-10-16 14:44:20     2.1    0.3    INFO             Density estimation ( Design--B_low (based on A) ): Groupwise retained observations after missing value removal: I:285921/285921; II:773322/773322
+2015-10-16 14:44:25     2.1    0.3    INFO             Density estimation ( CGI Relation--F_high (based on B) ): Groupwise retained observations after missing value removal: Open Sea:373203/373203; Shelf:101562/101562; Shore:252138/252138; Island:332340/332340
+2015-10-16 14:44:30     2.1    0.3    INFO             Density estimation ( Design--F_high (based on B) ): Groupwise retained observations after missing value removal: I:285921/285921; II:773322/773322
+2015-10-16 14:44:35     2.1    0.3    INFO             Density estimation ( CGI Relation--F_low (based on B) ): Groupwise retained observations after missing value removal: Open Sea:373203/373203; Shelf:101562/101562; Shore:252138/252138; Island:332340/332340
+2015-10-16 14:44:41     2.1    0.3    INFO             Density estimation ( Design--F_low (based on B) ): Groupwise retained observations after missing value removal: I:285921/285921; II:773322/773322
+2015-10-16 14:44:46     2.1    0.3    INFO             Density estimation ( CGI Relation--female (based on Predicted Gender) ): Groupwise retained observations after missing value removal: Open Sea:995208/995208; Shelf:270832/270832; Shore:672368/672368; Island:886240/886240
+2015-10-16 14:45:01     2.2    0.3    INFO             Density estimation ( Design--female (based on Predicted Gender) ): Groupwise retained observations after missing value removal: I:762456/762456; II:2062192/2062192
+2015-10-16 14:45:01     2.2    0.3    INFO             Density estimation ( Design--female (based on Predicted Gender) ): Groupwise retained observations after subsampling: I:539859/762456; II:1460141/2062192
+2015-10-16 14:45:10     2.2    0.3    INFO             Density estimation ( CGI Relation--male (based on Predicted Gender) ): Groupwise retained observations after missing value removal: Open Sea:497604/497604; Shelf:135416/135416; Shore:336184/336184; Island:443120/443120
+2015-10-16 14:45:16     2.2    0.3    INFO             Density estimation ( Design--male (based on Predicted Gender) ): Groupwise retained observations after missing value removal: I:381228/381228; II:1031096/1031096
+2015-10-16 14:45:23     2.1    0.3  STATUS         COMPLETED Methylation Value Distributions - Probe Categories
+2015-10-16 14:45:23     2.2    0.3  STATUS         STARTED Scatter Plots of Mean Beta vs Variance
+2015-10-16 14:45:23     2.2    0.3    INFO             Sample subgroups are defined by: A; B; Predicted Gender
+2015-10-16 14:57:19     2.2    0.3  STATUS             Created 28 scatter plots of methylation variance on the site level
+2015-10-16 15:01:27     2.2    0.3  STATUS             Created 56 scatter plots of methylation variance on the region level
+2015-10-16 15:01:27     2.2    0.3  STATUS         COMPLETED Scatter Plots of Mean Beta vs Variance
+2015-10-16 15:01:27     2.2    0.3  STATUS         STARTED Deviation Plots
+2015-10-16 15:05:05     2.2    0.3  STATUS             Created 21 deviation plots on the site level
+2015-10-16 15:07:16     2.2    0.3  STATUS             Created 28 deviation plots on the region level
+2015-10-16 15:07:17     2.2    0.3  STATUS             Added summary table of variabilities
+2015-10-16 15:07:17     2.2    0.3  STATUS         COMPLETED Deviation Plots
+2015-10-16 15:07:17     2.2    0.3  STATUS         STARTED Sample Clustering
+2015-10-16 15:07:17     2.2    0.3  STATUS             STARTED Agglomerative Hierarchical Clustering
+2015-10-16 15:07:18     2.2    0.3  STATUS                 Performed clustering on sites using correlation as a distance metric
+2015-10-16 15:07:18     2.2    0.3  STATUS                 Performed clustering on sites using manhattan as a distance metric
+2015-10-16 15:07:18     2.2    0.3  STATUS                 Performed clustering on sites using euclidean as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on tiling using correlation as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on tiling using manhattan as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on tiling using euclidean as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on genes using correlation as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on genes using manhattan as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on genes using euclidean as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on promoters using correlation as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on promoters using manhattan as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on promoters using euclidean as a distance metric
+2015-10-16 15:07:19     2.2    0.3  STATUS                 Performed clustering on cpgislands using correlation as a distance metric
+2015-10-16 15:07:20     2.2    0.3  STATUS                 Performed clustering on cpgislands using manhattan as a distance metric
+2015-10-16 15:07:20     2.2    0.3  STATUS                 Performed clustering on cpgislands using euclidean as a distance metric
+2015-10-16 15:07:20     2.2    0.3  STATUS             COMPLETED Agglomerative Hierarchical Clustering
+2015-10-16 15:07:20     2.2    0.3  STATUS             STARTED Clustering Section
+2015-10-16 15:07:20     2.2    0.3  STATUS                 STARTED Generating Heatmaps
+2015-10-16 15:07:20     2.2    0.3  STATUS                     STARTED Region type: sites
+2015-10-16 15:11:25     2.1    0.3  STATUS                     COMPLETED Region type: sites
+2015-10-16 15:11:25     2.1    0.3  STATUS                     STARTED Region type: tiling
+2015-10-16 15:15:28     2.1    0.3  STATUS                     COMPLETED Region type: tiling
+2015-10-16 15:15:28     2.1    0.3  STATUS                     STARTED Region type: genes
+2015-10-16 15:19:29     2.1    0.3  STATUS                     COMPLETED Region type: genes
+2015-10-16 15:19:29     2.1    0.3  STATUS                     STARTED Region type: promoters
+2015-10-16 15:23:32     2.1    0.3  STATUS                     COMPLETED Region type: promoters
+2015-10-16 15:23:32     2.1    0.3  STATUS                     STARTED Region type: cpgislands
+2015-10-16 15:27:25     2.1    0.3  STATUS                     COMPLETED Region type: cpgislands
+2015-10-16 15:27:25     2.1    0.3  STATUS                     Created 540 heatmaps based on the clustering results
+2015-10-16 15:27:25     2.1    0.3  STATUS                 COMPLETED Generating Heatmaps
+2015-10-16 15:27:25     2.1    0.3  STATUS                 STARTED Adding Color Legends
+2015-10-16 15:27:55     2.1    0.3  STATUS                 COMPLETED Adding Color Legends
+2015-10-16 15:27:56     2.1    0.3  STATUS                 STARTED Estimating Optimal Numbers of Clusters
+2015-10-16 15:28:07     2.1    0.3  STATUS                     Estimated number of clusters based on mean silhouette value
+2015-10-16 15:28:07     2.1    0.3  STATUS                 COMPLETED Estimating Optimal Numbers of Clusters
+2015-10-16 15:28:07     2.1    0.3  STATUS                 STARTED Overlapping Clusters with Sample Traits
+2015-10-16 15:28:07     2.1    0.3  STATUS                     Computed adjusted rand indices and saved to exploratory_analysis_data/adjusted_rand_indices_1.csv
+2015-10-16 15:28:07     2.1    0.3  STATUS                     Computed adjusted rand indices and saved to exploratory_analysis_data/adjusted_rand_indices_2.csv
+2015-10-16 15:28:07     2.1    0.3  STATUS                     Computed adjusted rand indices and saved to exploratory_analysis_data/adjusted_rand_indices_3.csv
+2015-10-16 15:28:07     2.1    0.3  STATUS                     Computed adjusted rand indices and saved to exploratory_analysis_data/adjusted_rand_indices_4.csv
+2015-10-16 15:28:07     2.1    0.3  STATUS                     Computed adjusted rand indices and saved to exploratory_analysis_data/adjusted_rand_indices_5.csv
+2015-10-16 15:28:17     2.1    0.3  STATUS                 COMPLETED Overlapping Clusters with Sample Traits
+2015-10-16 15:28:17     2.1    0.3  STATUS             COMPLETED Clustering Section
+2015-10-16 15:28:17     2.1    0.3  STATUS         COMPLETED Sample Clustering
+2015-10-16 15:28:17     2.1    0.3  STATUS         STARTED Drawing regional methylation profiles
+2015-10-16 15:28:18     2.1    0.3  STATUS             STARTED Creating a Corresponding Section in the Report
+2015-10-16 15:28:22     2.1    0.3  STATUS                 Plotting region profiles for region genes and column all samples ...
+2015-10-16 15:34:22     8.3    0.3  STATUS                 Plotting region profiles for region genes and column A ...
+2015-10-16 15:36:15     6.5    0.3  STATUS                 Plotting region profiles for region genes and column B ...
+2015-10-16 15:37:57     5.8    0.3  STATUS                 Plotting region profiles for region genes and column Predicted Gender ...
+2015-10-16 15:42:21     5.9    0.3  STATUS                 Plotting region profiles for region promoters and column all samples ...
+2015-10-16 15:43:49     7.4    0.3  STATUS                 Plotting region profiles for region promoters and column A ...
+2015-10-16 15:44:21     5.9    0.3  STATUS                 Plotting region profiles for region promoters and column B ...
+2015-10-16 15:44:51     5.9    0.3  STATUS                 Plotting region profiles for region promoters and column Predicted Gender ...
+2015-10-16 15:46:07     5.6    0.3  STATUS                 Plotting region profiles for region cpgislands and column all samples ...
+2015-10-16 15:46:57     5.8    0.3  STATUS                 Plotting region profiles for region cpgislands and column A ...
+2015-10-16 15:47:20     5.6    0.3  STATUS                 Plotting region profiles for region cpgislands and column B ...
+2015-10-16 15:47:43     5.6    0.3  STATUS                 Plotting region profiles for region cpgislands and column Predicted Gender ...
+2015-10-16 15:48:32     5.6    0.3  STATUS             COMPLETED Creating a Corresponding Section in the Report
+2015-10-16 15:48:32     5.6    0.3  STATUS         COMPLETED Drawing regional methylation profiles
+2015-10-16 15:48:32     5.6    0.3  STATUS     COMPLETED Exploratory Analysis
+2015-10-16 15:48:33     5.6    0.3    INFO     Initialized report index and saved to index.html
+2015-10-16 15:48:33     5.6    0.3  STATUS     STARTED Differential Methylation
+2015-10-16 15:48:33     5.6    0.3    INFO         Number of cores: 1
+2015-10-16 15:48:33     5.6    0.3  STATUS         STARTED Analysis
+2015-10-16 15:48:33     5.6    0.3    INFO             Using 0 permutation tests
+2015-10-16 15:48:33     5.6    0.3    INFO             Using columns: A,B
+2015-10-16 15:48:33     5.6    0.3    INFO             Using region types: tiling,genes,promoters,cpgislands
+2015-10-16 15:48:33     5.6    0.3  STATUS             STARTED Retrieving comparison info
+2015-10-16 15:48:33     5.6    0.3  STATUS             COMPLETED Retrieving comparison info
+2015-10-16 15:48:33     5.6    0.3  STATUS             STARTED Computing differential methylation tables
+2015-10-16 15:48:33     5.6    0.3  STATUS                 STARTED Comparing: B_high vs. B_low (based on A)
+2015-10-16 15:48:33     5.6    0.3  STATUS                     STARTED Computing Differential Methylation Table (Site Level)
+2015-10-16 15:48:33     5.6    0.3    INFO                         Conducting differential analysis using limma
+2015-10-16 15:48:37     5.6    0.3  STATUS                     COMPLETED Computing Differential Methylation Table (Site Level)
+2015-10-16 15:48:38     5.6    0.3  STATUS                     STARTED Computing Differential Methylation Tables (Region Level)
+2015-10-16 15:51:51     5.6    0.3  STATUS                         Computed table for tiling
+2015-10-16 15:52:42     5.6    0.3  STATUS                         Computed table for genes
+2015-10-16 15:53:33     5.6    0.3  STATUS                         Computed table for promoters
+2015-10-16 15:54:19     5.6    0.3  STATUS                         Computed table for cpgislands
+2015-10-16 15:54:19     5.6    0.3  STATUS                     COMPLETED Computing Differential Methylation Tables (Region Level)
+2015-10-16 15:54:19     5.6    0.4  STATUS                 COMPLETED Comparing: B_high vs. B_low (based on A)
+2015-10-16 15:54:19     5.6    0.4  STATUS                 STARTED Comparing: F_high vs. F_low (based on B)
+2015-10-16 15:54:19     5.6    0.4  STATUS                     STARTED Computing Differential Methylation Table (Site Level)
+2015-10-16 15:54:19     5.6    0.4    INFO                         Conducting differential analysis using limma
+2015-10-16 15:54:23     5.6    0.4  STATUS                     COMPLETED Computing Differential Methylation Table (Site Level)
+2015-10-16 15:54:23     5.6    0.4  STATUS                     STARTED Computing Differential Methylation Tables (Region Level)
+2015-10-16 15:57:21     5.6    0.4  STATUS                         Computed table for tiling
+2015-10-16 15:58:13     5.6    0.4  STATUS                         Computed table for genes
+2015-10-16 15:59:04     5.6    0.4  STATUS                         Computed table for promoters
+2015-10-16 15:59:50     5.6    0.4  STATUS                         Computed table for cpgislands
+2015-10-16 15:59:50     5.6    0.4  STATUS                     COMPLETED Computing Differential Methylation Tables (Region Level)
+2015-10-16 15:59:50     5.6    0.4  STATUS                 COMPLETED Comparing: F_high vs. F_low (based on B)
+2015-10-16 15:59:50     5.6    0.4  STATUS             COMPLETED Computing differential methylation tables
+2015-10-16 15:59:50     5.6    0.4  STATUS             STARTED Differential Methylation Enrichment Analysis
+2015-10-16 15:59:50     5.6    0.4  STATUS                 STARTED Comparison:  B_high vs. B_low (based on A)
+2015-10-16 15:59:50     5.6    0.4  STATUS                     STARTED Ontology:  BP
+2015-10-16 15:59:50     5.6    0.4  STATUS                         STARTED Region Level
+2015-10-16 15:59:50     5.6    0.4  STATUS                             STARTED Region Type: tiling
+2015-10-16 15:59:51     5.6    0.4    INFO                                 Not annotated with entrezID --> Skipped
+2015-10-16 15:59:51     5.6    0.4  STATUS                             COMPLETED Region Type: tiling
+2015-10-16 15:59:51     5.6    0.4  STATUS                             STARTED Region Type: genes
+2015-10-16 15:59:53     5.6    0.4    INFO                                 Rank cutoff: 100
+2015-10-16 16:01:08     5.7    0.4    INFO                                 Rank cutoff: 500
+2015-10-16 16:02:22     5.7    0.4    INFO                                 Rank cutoff: 1000
+2015-10-16 16:03:40     5.7    0.4    INFO                                 Rank cutoff: 5 (auto-select)
+2015-10-16 16:04:04     5.7    0.4    INFO                                 Could not conduct enrichment analysis as associated genes are not in GO database.
+2015-10-16 16:04:29     5.7    0.4  STATUS                             COMPLETED Region Type: genes
+2015-10-16 16:04:29     5.7    0.4  STATUS                             STARTED Region Type: promoters
+2015-10-16 16:04:31     5.7    0.4    INFO                                 Rank cutoff: 100
+2015-10-16 16:05:46     5.7    0.4    INFO                                 Rank cutoff: 500
+2015-10-16 16:06:59     5.7    0.4    INFO                                 Rank cutoff: 1000
+2015-10-16 16:08:20     5.7    0.4    INFO                                 Rank cutoff: 1 (auto-select)
+2015-10-16 16:08:45     5.7    0.4    INFO                                 Could not conduct enrichment analysis as associated genes are not in GO database.
+2015-10-16 16:08:45     5.7    0.4  STATUS                             COMPLETED Region Type: promoters
+2015-10-16 16:08:45     5.7    0.4  STATUS                             STARTED Region Type: cpgislands
+2015-10-16 16:08:46     5.7    0.4    INFO                                 Not annotated with entrezID --> Skipped
+2015-10-16 16:08:46     5.7    0.4  STATUS                             COMPLETED Region Type: cpgislands
+2015-10-16 16:08:46     5.7    0.4  STATUS                         COMPLETED Region Level
+2015-10-16 16:08:46     5.7    0.4  STATUS                     COMPLETED Ontology:  BP
+2015-10-16 16:08:46     5.7    0.4  STATUS                     STARTED Ontology:  MF
+2015-10-16 16:08:46     5.7    0.4  STATUS                         STARTED Region Level
+2015-10-16 16:08:46     5.7    0.4  STATUS                             STARTED Region Type: tiling
+2015-10-16 16:08:47     5.7    0.4    INFO                                 Not annotated with entrezID --> Skipped
+2015-10-16 16:08:47     5.7    0.4  STATUS                             COMPLETED Region Type: tiling
+2015-10-16 16:08:47     5.7    0.4  STATUS                             STARTED Region Type: genes
+2015-10-16 16:08:49     5.7    0.4    INFO                                 Rank cutoff: 100
+2015-10-16 16:09:29     5.7    0.4    INFO                                 Rank cutoff: 500
+2015-10-16 16:10:07     5.7    0.4    INFO                                 Rank cutoff: 1000
+2015-10-16 16:10:45     5.7    0.4    INFO                                 Rank cutoff: 5 (auto-select)
+2015-10-16 16:11:01     5.7    0.4    INFO                                 Could not conduct enrichment analysis as associated genes are not in GO database.
+2015-10-16 16:11:18     5.7    0.4  STATUS                             COMPLETED Region Type: genes
+2015-10-16 16:11:18     5.7    0.4  STATUS                             STARTED Region Type: promoters
+2015-10-16 16:11:20     5.7    0.4    INFO                                 Rank cutoff: 100
+2015-10-16 16:11:57     5.7    0.4    INFO                                 Rank cutoff: 500
+2015-10-16 16:12:35     5.7    0.4    INFO                                 Rank cutoff: 1000
+2015-10-16 16:13:13     5.7    0.4    INFO                                 Rank cutoff: 1 (auto-select)
+2015-10-16 16:13:29     5.7    0.4    INFO                                 Could not conduct enrichment analysis as associated genes are not in GO database.
+2015-10-16 16:13:30     5.7    0.4  STATUS                             COMPLETED Region Type: promoters
+2015-10-16 16:13:30     5.7    0.4  STATUS                             STARTED Region Type: cpgislands
+2015-10-16 16:13:30     5.7    0.4    INFO                                 Not annotated with entrezID --> Skipped
+2015-10-16 16:13:30     5.7    0.4  STATUS                             COMPLETED Region Type: cpgislands
+2015-10-16 16:13:30     5.7    0.4  STATUS                         COMPLETED Region Level
+2015-10-16 16:13:30     5.7    0.4  STATUS                     COMPLETED Ontology:  MF
+2015-10-16 16:13:30     5.7    0.4  STATUS                 COMPLETED Comparison:  B_high vs. B_low (based on A)
+2015-10-16 16:13:30     5.7    0.4  STATUS                 STARTED Comparison:  F_high vs. F_low (based on B)
+2015-10-16 16:13:30     5.7    0.4  STATUS                     STARTED Ontology:  BP
+2015-10-16 16:13:30     5.7    0.4  STATUS                         STARTED Region Level
+2015-10-16 16:13:30     5.7    0.4  STATUS                             STARTED Region Type: tiling
+2015-10-16 16:13:31     5.7    0.4    INFO                                 Not annotated with entrezID --> Skipped
+2015-10-16 16:13:31     5.7    0.4  STATUS                             COMPLETED Region Type: tiling
+2015-10-16 16:13:31     5.7    0.4  STATUS                             STARTED Region Type: genes
+2015-10-16 16:13:34     5.7    0.4    INFO                                 Rank cutoff: 100
+2015-10-16 16:14:51     5.7    0.4    INFO                                 Rank cutoff: 500
+2015-10-16 16:16:17     5.7    0.4    INFO                                 Rank cutoff: 1000
+2015-10-16 16:17:42     5.7    0.4    INFO                                 Rank cutoff: 2 (auto-select)
+2015-10-16 16:18:12     5.7    0.4  STATUS                             COMPLETED Region Type: genes
+2015-10-16 16:18:12     5.7    0.4  STATUS                             STARTED Region Type: promoters
+2015-10-16 16:18:14     5.7    0.4    INFO                                 Rank cutoff: 100
+2015-10-16 16:19:27     5.7    0.4    INFO                                 Rank cutoff: 500
+2015-10-16 16:20:46     5.7    0.4    INFO                                 Rank cutoff: 1000
+2015-10-16 16:22:11     5.7    0.4    INFO                                 Rank cutoff: 1 (auto-select)
+2015-10-16 16:22:37     5.7    0.4  STATUS                             COMPLETED Region Type: promoters
+2015-10-16 16:22:37     5.7    0.4  STATUS                             STARTED Region Type: cpgislands
+2015-10-16 16:22:38     5.7    0.4    INFO                                 Not annotated with entrezID --> Skipped
+2015-10-16 16:22:38     5.7    0.4  STATUS                             COMPLETED Region Type: cpgislands
+2015-10-16 16:22:38     5.7    0.4  STATUS                         COMPLETED Region Level
+2015-10-16 16:22:38     5.7    0.4  STATUS                     COMPLETED Ontology:  BP
+2015-10-16 16:22:38     5.7    0.4  STATUS                     STARTED Ontology:  MF
+2015-10-16 16:22:38     5.7    0.4  STATUS                         STARTED Region Level
+2015-10-16 16:22:38     5.7    0.4  STATUS                             STARTED Region Type: tiling
+2015-10-16 16:22:38     5.7    0.4    INFO                                 Not annotated with entrezID --> Skipped
+2015-10-16 16:22:39     5.7    0.4  STATUS                             COMPLETED Region Type: tiling
+2015-10-16 16:22:39     5.7    0.4  STATUS                             STARTED Region Type: genes
+2015-10-16 16:22:41     5.7    0.4    INFO                                 Rank cutoff: 100
+2015-10-16 16:23:21     5.7    0.4    INFO                                 Rank cutoff: 500
+2015-10-16 16:24:03     5.7    0.4    INFO                                 Rank cutoff: 1000
+2015-10-16 16:24:40     5.7    0.4    INFO                                 Rank cutoff: 2 (auto-select)
+2015-10-16 16:24:57     5.7    0.4  STATUS                             COMPLETED Region Type: genes
+2015-10-16 16:24:57     5.7    0.4  STATUS                             STARTED Region Type: promoters
+2015-10-16 16:24:59     5.7    0.4    INFO                                 Rank cutoff: 100
+2015-10-16 16:25:34     5.7    0.4    INFO                                 Rank cutoff: 500
+2015-10-16 16:26:10     5.7    0.4    INFO                                 Rank cutoff: 1000
+2015-10-16 16:26:48     5.7    0.4    INFO                                 Rank cutoff: 1 (auto-select)
+2015-10-16 16:27:08     5.7    0.4  STATUS                             COMPLETED Region Type: promoters
+2015-10-16 16:27:08     5.7    0.4  STATUS                             STARTED Region Type: cpgislands
+2015-10-16 16:27:09     5.7    0.4    INFO                                 Not annotated with entrezID --> Skipped
+2015-10-16 16:27:09     5.7    0.4  STATUS                             COMPLETED Region Type: cpgislands
+2015-10-16 16:27:09     5.7    0.4  STATUS                         COMPLETED Region Level
+2015-10-16 16:27:09     5.7    0.4  STATUS                     COMPLETED Ontology:  MF
+2015-10-16 16:27:09     5.7    0.4  STATUS                 COMPLETED Comparison:  F_high vs. F_low (based on B)
+2015-10-16 16:27:09     5.7    0.4  STATUS             COMPLETED Differential Methylation Enrichment Analysis
+2015-10-16 16:27:09     5.7    0.4  STATUS         COMPLETED Analysis
+2015-10-16 16:27:09     5.7    0.4  STATUS         STARTED Report Generation
+2015-10-16 16:27:09     5.7    0.4  STATUS             Added introductory section
+2015-10-16 16:27:10     5.7    0.4  STATUS             STARTED Adding Site Level Information
+2015-10-16 16:27:10     5.7    0.4  STATUS                 STARTED Selection of rank cutoffs
+2015-10-16 16:27:11     5.7    0.4  STATUS                 COMPLETED Selection of rank cutoffs
+2015-10-16 16:27:11     5.7    0.4  STATUS                 STARTED Adding scatterplots
+2015-10-16 16:32:28     5.9    0.4 WARNING                     Could not assess density colors using densCols: 'breaks' are not unique
+2015-10-16 16:37:53     6.2    0.4  STATUS                 COMPLETED Adding scatterplots
+2015-10-16 16:37:53     6.2    0.4  STATUS                 STARTED Adding volcano plots
+2015-10-16 16:42:14     5.7    0.4  STATUS                 COMPLETED Adding volcano plots
+2015-10-16 16:42:14     5.7    0.4  STATUS                 STARTED Adding tables
+2015-10-16 16:42:43     5.7    0.4  STATUS                 COMPLETED Adding tables
+2015-10-16 16:42:43     5.7    0.4  STATUS             COMPLETED Adding Site Level Information
+2015-10-16 16:42:43     5.7    0.4  STATUS             STARTED Adding Region Level Information
+2015-10-16 16:42:43     5.7    0.4  STATUS                 STARTED Selection of rank cutoffs
+2015-10-16 16:42:44     5.7    0.4  STATUS                 COMPLETED Selection of rank cutoffs
+2015-10-16 16:42:44     5.7    0.4  STATUS                 STARTED Adding scatterplots
+2015-10-16 16:44:28     5.7    0.4 WARNING                     Could not assess density colors using densCols: dim(X) must have a positive length
+2015-10-16 16:44:48     5.7    0.4 WARNING                     Could not assess density colors using densCols: dim(X) must have a positive length
+2015-10-16 16:44:54     5.7    0.4 WARNING                     Could not assess density colors using densCols: dim(X) must have a positive length
+2015-10-16 16:46:42     5.7    0.4 WARNING                     Could not assess density colors using densCols: dim(X) must have a positive length
+2015-10-16 16:46:48     5.7    0.4 WARNING                     Could not assess density colors using densCols: dim(X) must have a positive length
+2015-10-16 16:47:02     5.7    0.4 WARNING                     Could not assess density colors using densCols: dim(X) must have a positive length
+2015-10-16 16:47:07     5.7    0.4  STATUS                 COMPLETED Adding scatterplots
+2015-10-16 16:47:07     5.7    0.4  STATUS                 STARTED Adding volcano plots
+2015-10-16 16:49:55     5.7    0.4  STATUS                 COMPLETED Adding volcano plots
+2015-10-16 16:49:55     5.7    0.4  STATUS                 STARTED Adding tables
+2015-10-16 16:50:11     5.7    0.4  STATUS                 COMPLETED Adding tables
+2015-10-16 16:50:11     5.7    0.4  STATUS                 STARTED Adding enrichment analysis results
+2015-10-16 17:27:09     5.7    0.4  STATUS                 COMPLETED Adding enrichment analysis results
+2015-10-16 17:27:09     5.7    0.4  STATUS             COMPLETED Adding Region Level Information
+2015-10-16 17:27:09     5.7    0.4  STATUS         COMPLETED Report Generation
+2015-10-16 17:27:09     5.7    0.4  STATUS     COMPLETED Differential Methylation
+2015-10-16 17:27:09     5.7    0.4    INFO     Initialized report index and saved to index.html
+2015-10-16 17:27:10     5.7    0.4  STATUS     STARTED Saving RData
+2015-10-16 17:27:54     5.7    0.4  STATUS     COMPLETED Saving RData
+2015-10-16 17:27:54     5.7    0.4  STATUS COMPLETED RnBeads Pipeline
+

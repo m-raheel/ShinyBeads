@@ -3,6 +3,7 @@
 export(comparison_plot)
 export(datasets_common)
 export(datasets_list)
+export(datasets_total)
 export(launch_app)
 export(modules_performed)
 export(squareri)
