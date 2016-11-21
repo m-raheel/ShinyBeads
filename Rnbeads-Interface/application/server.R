@@ -1042,13 +1042,13 @@ shinyServer(function(input, output, session) {
 
   output$compqqplot <- renderPlot({
 
-    dist <- switch(input$dist,
-                   unif = runif,
-                   norm = rnorm,
-
-                   # lnorm = rlnorm,
-                   # exp = rexp,
-                   rnorm)
+    # dist <- switch(input$dist,
+    #                unif = runif,
+    #                norm = rnorm,
+    #
+    #                # lnorm = rlnorm,
+    #                # exp = rexp,
+    #                rnorm)
 
     if(length(list.pvalues()) == 0) {
 
@@ -1058,7 +1058,7 @@ shinyServer(function(input, output, session) {
 
     }
     else{
-      y <- dist(ppoints(length(list.pvalues())))
+      #y <- dist(ppoints(length(list.pvalues())))
       #qqline(y,list.pvalues())
       #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
       qq(list.pvalues(),main="Q-Q plot of p-values",xlim = c(0, 7), ylim = c(0,12), pch = 18, col = "blue4")

@@ -301,13 +301,13 @@ tabPanel("Integrative Visualization",
 
 
                                            tags$p("The qqplot of diffmethy p values from the above selected comparison is shown below:"),
-                                           radioButtons("dist", "Distribution type:",
-                                                        c(
-                                                          "Uniform" = "unif",
-                                                          "Normal" = "norm")
-                                                          # "Log-normal" = "lnorm",
-                                                          # "Exponential" = "exp")
-                                                          ),
+                                           # radioButtons("dist", "Distribution type:",
+                                           #              c(
+                                           #                "Uniform" = "unif",
+                                           #                "Normal" = "norm")
+                                           #                # "Log-normal" = "lnorm",
+                                           #                # "Exponential" = "exp")
+                                           #                ),
                                            plotOutput('compqqplot')
 
 
