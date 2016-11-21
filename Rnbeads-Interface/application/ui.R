@@ -403,122 +403,122 @@ tabPanel("Integrative Visualization",
 
          )# end  of  main panel
 
-),#end of integrative visualization nav menu
+  )#end of integrative visualization nav menu
 
-tabPanel("About",
-
-
-         # Application title
-         #headerPanel("RnBeads Results"),
-
-
-
-         # Sidebar with controls to select the variable to plot against xyz
-         # and to specify whether outliers should be included
-         sidebarPanel(
-           selectInput("input_type", "Select analysis folder:", choices)
-
-           #checkboxInput("outliers", "Show outliers", FALSE)
-
-
-         ),
-
-         mainPanel(
-
-
-
-
-
-           tabsetPanel(
-             tabPanel("Summary",
-                      br(), br(),
-
-                      h3("clientData values"),
-                      verbatimTextOutput("clientdataText"),
-
-                      br(), br(),
-                      tags$strong("Working Directory:"),
-                      verbatimTextOutput("workingDirText"),
-
-                      tags$strong("Selected RnBeads reuslts folder path:"),
-                      verbatimTextOutput("text"),
-
-
-                      tags$strong("Dataset path used for the analysis of RnBeads:"),
-                      verbatimTextOutput("data_path"),
-
-
-                      # a div named mydiv
-
-                      tags$div("click to change color" , id="mydiv", style="width: 50px; height :60px;
-                      left: 550px; top: 000px;
-                      background-color: gray; position: absolute"),
-
-                      # javascript code to send data to shiny server
-
-                      tags$script('
-                                  document.getElementById("mydiv").onclick = function() {
-                                  var number = Math.random();
-                                  Shiny.onInputChange("mydata", number);
-                                  };
-                                  '),
-
-                      # handler to receive data from server
-
-
-                      tags$input( id="myinput", style="width: 100px; height :60px;
-                                  left: 150px; top: 100px;
-                                  position: absolute"),
-
-                      tags$script('
-                                  Shiny.addCustomMessageHandler("myperformedmodulesno",
-                                  function(color) {
-                                  document.getElementById("myinput").value = color;
-                                  });
-                                  ')
-
-                      ),# tab panel end
-
-             tabPanel("Analysis Options",
-                      br(), br()
-
-             ),# tab panel end
-
-             tabPanel("Annotation.csv",
-                      br(), br()
-
-
-
-             ),# tab panel end
-
-
-
-
-             tabPanel("qq-Plots",
-                   br(), br(),
-                   radioButtons("qqplots", "QQ-plots:",
-                                c("summary1_betas_qq", "summary2_betas_qq")),
-
-                   imageOutput("qqimage", width="300px",height="600px")
-
-             ),
-
-             tabPanel("All qq-Plots",
-                      #fluidRow(
-                      #splitLayout(cellWidths = c("60%", "60%"), imageOutput("qq1plot1"), imageOutput("qq1plot2")),
-                      #column(6,imageOutput("qq1plot1", width="300px",height="300px")),
-                      #column(6,imageOutput("qq1plot2", width="300px",height="300px"))
-                      #)
-                      imageOutput("qq1plot1", width="300px",height="600px"),
-                      imageOutput("qq1plot2", width="300px",height="600px")
-
-             )# tab panel end
-                      )# end tabset panel
-
-        )#end of mainbar
-
-
-  )# end of about tab  menu
+# tabPanel("About",
+#
+#
+#          # Application title
+#          #headerPanel("RnBeads Results"),
+#
+#
+#
+#          # Sidebar with controls to select the variable to plot against xyz
+#          # and to specify whether outliers should be included
+#          sidebarPanel(
+#            selectInput("input_type", "Select analysis folder:", choices)
+#
+#            #checkboxInput("outliers", "Show outliers", FALSE)
+#
+#
+#          ),
+#
+#          mainPanel(
+#
+#
+#
+#
+#
+#            tabsetPanel(
+#              tabPanel("Summary",
+#                       br(), br(),
+#
+#                       h3("clientData values"),
+#                       verbatimTextOutput("clientdataText"),
+#
+#                       br(), br(),
+#                       tags$strong("Working Directory:"),
+#                       verbatimTextOutput("workingDirText"),
+#
+#                       tags$strong("Selected RnBeads reuslts folder path:"),
+#                       verbatimTextOutput("text"),
+#
+#
+#                       tags$strong("Dataset path used for the analysis of RnBeads:"),
+#                       verbatimTextOutput("data_path"),
+#
+#
+#                       # a div named mydiv
+#
+#                       tags$div("click to change color" , id="mydiv", style="width: 50px; height :60px;
+#                       left: 550px; top: 000px;
+#                       background-color: gray; position: absolute"),
+#
+#                       # javascript code to send data to shiny server
+#
+#                       tags$script('
+#                                   document.getElementById("mydiv").onclick = function() {
+#                                   var number = Math.random();
+#                                   Shiny.onInputChange("mydata", number);
+#                                   };
+#                                   '),
+#
+#                       # handler to receive data from server
+#
+#
+#                       tags$input( id="myinput", style="width: 100px; height :60px;
+#                                   left: 150px; top: 100px;
+#                                   position: absolute"),
+#
+#                       tags$script('
+#                                   Shiny.addCustomMessageHandler("myperformedmodulesno",
+#                                   function(color) {
+#                                   document.getElementById("myinput").value = color;
+#                                   });
+#                                   ')
+#
+#                       ),# tab panel end
+#
+#              tabPanel("Analysis Options",
+#                       br(), br()
+#
+#              ),# tab panel end
+#
+#              tabPanel("Annotation.csv",
+#                       br(), br()
+#
+#
+#
+#              ),# tab panel end
+#
+#
+#
+#
+#              tabPanel("qq-Plots",
+#                    br(), br(),
+#                    radioButtons("qqplots", "QQ-plots:",
+#                                 c("summary1_betas_qq", "summary2_betas_qq")),
+#
+#                    imageOutput("qqimage", width="300px",height="600px")
+#
+#              ),
+#
+#              tabPanel("All qq-Plots",
+#                       #fluidRow(
+#                       #splitLayout(cellWidths = c("60%", "60%"), imageOutput("qq1plot1"), imageOutput("qq1plot2")),
+#                       #column(6,imageOutput("qq1plot1", width="300px",height="300px")),
+#                       #column(6,imageOutput("qq1plot2", width="300px",height="300px"))
+#                       #)
+#                       imageOutput("qq1plot1", width="300px",height="600px"),
+#                       imageOutput("qq1plot2", width="300px",height="600px")
+#
+#              )# tab panel end
+#                       )# end tabset panel
+#
+#         )#end of mainbar
+#
+#
+#   )# end of about tab  menu
 
 
 
