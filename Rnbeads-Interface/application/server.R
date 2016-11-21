@@ -64,9 +64,9 @@ shinyServer(function(input, output, session) {
 
 
 
-    #updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
+    updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
 
-    updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
+    #updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
