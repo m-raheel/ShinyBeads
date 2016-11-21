@@ -156,9 +156,9 @@ shinyUI(
 
 
 
-                       ),
+                       )
 
-                       tabPanel("Others")
+
            )
 
   ),
@@ -338,22 +338,22 @@ tabPanel("Integrative Visualization",
                                             plotOutput('multicompqqplot')
 
 
-                                  ),
+                                  )
 
-                                  tabPanel("QQ-Plots 3",
-
-                                           br(), br(),
-
-                                           checkboxGroupInput("check_comp", label = h3("Select comparison file"),
-                                                              choices = list("",1),
-                                                              selected = 1),
-
-                                           actionButton('insertBtn', 'Show'),
-
-
-                                           plotOutput('compqqplot3')
-
-                                  )#tab panel
+                                #   tabPanel("QQ-Plots 3",
+                                #
+                                #            br(), br(),
+                                #
+                                #            checkboxGroupInput("check_comp", label = h3("Select comparison file"),
+                                #                               choices = list("",1),
+                                #                               selected = 1),
+                                #
+                                #            actionButton('insertBtn', 'Show'),
+                                #
+                                #
+                                #            plotOutput('compqqplot3')
+                                #
+                                #   )#tab panel
                                 )# tab set panel
 
                        ),
