@@ -1405,13 +1405,13 @@ shinyServer(function(input, output, session) {
 
   output$multicompqqplot <- renderPlot({
 
-    dist <- switch(input$dist,
-                   unif = runif,
-                   norm = rnorm,
-
-                   # lnorm = rlnorm,
-                   # exp = rexp,
-                   rnorm)
+    # dist <- switch(input$dist,
+    #                unif = runif,
+    #                norm = rnorm,
+    #
+    #                # lnorm = rlnorm,
+    #                # exp = rexp,
+    #                rnorm)
 
     if(length(list.pvalues_1()) == 0) {
 
