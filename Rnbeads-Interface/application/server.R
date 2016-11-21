@@ -1663,7 +1663,7 @@ qqunif.plot<-function(pvalues,
                       xlab=expression(paste("Expected (",-log[10], " p-value)")),
                       ylab=expression(paste("Observed (",-log[10], " p-value)")),
                       draw.conf=TRUE, conf.points=1000, conf.col="lightgray", conf.alpha=.05,
-                      already.transformed=FALSE, pch=20, aspect="iso", prepanel=prepanel.qqunif,
+                      already.transformed=FALSE, pch=20, aspect="fill", prepanel=prepanel.qqunif,
                       par.settings=list(superpose.symbol=list(pch=pch)), ...) {
 
 
