@@ -1061,9 +1061,10 @@ shinyServer(function(input, output, session) {
       #y <- dist(ppoints(length(list.pvalues())))
       #qqline(y,list.pvalues())
       #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
-      qq(list.pvalues(),main="Q-Q plot of p-values",xlim = c(0, 7), ylim = c(0,12), pch = 18, col = "blue4")
+      #qq(list.pvalues(),main="Q-Q plot of p-values",xlim = c(0, 7), ylim = c(0,12), pch = 18, col = "blue4")
       #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
 
+      qqunif.plot(list.pvalues())
     }
 
   }, height = 400, width = 500)
