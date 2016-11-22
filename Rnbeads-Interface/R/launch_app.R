@@ -8,7 +8,7 @@ launch_app <- function()
 {
 
 
-  app.path <- normalizePath(paste(getwd(),'application',sep = "/"), winslash = "\\", mustWork = NA)
+  app.path <- normalizePath(paste(getwd(),sep = "/"), winslash = "\\", mustWork = NA)
 
   print(app.path)
   shiny::runApp(appDir = app.path)
