@@ -116,13 +116,13 @@ shinyServer(function(input, output, session) {
 
     updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
 
-    #updatedDir <- choose.dir(getwd(), "Choose an Rnbeads repository")
+    #updatedDir <- choose.dir(getwd(), "Choose an RnBeads repository")
 
     #workDir = gsub("\\\\", "/", updatedDir)
 
     selectedDir <-  as.character(updatedDir)
 
-    # return the Rnbeads directories
+    # return the RnBeads directories
     #setwd(selectedDir)
 
     #shinyjs::js$workingDirButton()
@@ -154,11 +154,11 @@ shinyServer(function(input, output, session) {
     dirfolder = list.files(path = selectedDir)
 
     if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
-      output$ErrorText1 <- renderText({ paste("You are working with the Rnbeads analysis repository:",sep="") })
+      output$ErrorText1 <- renderText({ paste("You are working with the RnBeads analysis repository:",sep="") })
       output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
     }
     else{
-      output$ErrorText1 <- renderText({ paste("Not a Valid Rnbeads Repository:",sep="") })
+      output$ErrorText1 <- renderText({ paste("Not a Valid RnBeads Repository:",sep="") })
       output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
       observe({
 
@@ -228,16 +228,16 @@ shinyServer(function(input, output, session) {
       output$list_folders <- renderDataTable({
 
 
-        #DT <- data.table(ID = 1:length(choices) , Rnbeads_Analysis = choices)
+        #DT <- data.table(ID = 1:length(choices) , RnBeads_Analysis = choices)
         # DT
 
 
 
-        DT <- data.table( Rnbeads_Analysis = choices)
-        # DT$Rnbeads_Analysis <- sapply(DT$Rnbeads_Analysis, function(x)
+        DT <- data.table( RnBeads_Analysis = choices)
+        # DT$RnBeads_Analysis <- sapply(DT$RnBeads_Analysis, function(x)
         #   toString(tags$a(href=paste0("#Individual analysis", x), x)))
 
-        #DT$link <- createLink(DT$Rnbeads_Analysis)
+        #DT$link <- createLink(DT$RnBeads_Analysis)
 
 
         return(DT)
@@ -250,7 +250,7 @@ shinyServer(function(input, output, session) {
 
       output$list_folders <- renderDataTable({
 
-        DT <- data.table( Rnbeads_Analysis = 'No directory in this repository.')
+        DT <- data.table( RnBeads_Analysis = 'No directory in this repository.')
         return(DT)
 
       },selection = 'single', escape = FALSE)
@@ -1511,7 +1511,7 @@ shinyServer(function(input, output, session) {
   #######################################################################
 
 
-  # QQ Plot 3  comparison among different files of same Rnbeads Analysis
+  # QQ Plot 3  comparison among different files of same RnBeads Analysis
   ####################################################################################
 
   observeEvent(input$insertBtn, {

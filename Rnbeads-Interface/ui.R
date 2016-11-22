@@ -23,8 +23,8 @@ shinyUI(
 
 
 
-  #title= div(id= "id_div_title" ,tags$a(href = '.', tags$img(src = 'RnBeads.png', width = 100, height = 20)),"Rnbeads Interface"),
-  title= "Rnbeads Interface",
+  #title= div(id= "id_div_title" ,tags$a(href = '.', tags$img(src = 'RnBeads.png', width = 100, height = 20)),"RnBeads Interface"),
+  title= "RnBeads Interface",
 
 
   # Home nav menu
@@ -182,7 +182,7 @@ shinyUI(
              tabsetPanel(id = "analysis_option",
                          tabPanel("Analysis options",
 
-                            tags$strong("Lisitng all the options of Rnbeads from the analysis_options.RData file:"),
+                            tags$strong("Lisitng all the options of RnBeads from the analysis_options.RData file:"),
 
                             tags$p(""),
                             # UI output
@@ -317,7 +317,7 @@ tabPanel("Integrative Visualization",
                                    tabPanel("QQ-Plots 2",
 
                                             br(),
-                                            h3("Select comparison among two rnbeads analysis"),
+                                            h3("Select comparison among two RnBeads analysis"),
                                             fluidRow(
                                               column(width = 6,
                                                      selectInput("input_dmcomp_choices_1", "Analysis 1:", choices),
