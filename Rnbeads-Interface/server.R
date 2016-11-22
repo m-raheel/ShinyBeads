@@ -1147,9 +1147,12 @@ shinyServer(function(input, output, session) {
   # qqplots 2 of diff methylation p- values in which two comarprisons qqplots is displayed
   ####################################################################################
 
+  v <- reactiveValues(data = TRUE)
 
   # for Repository 1
   observeEvent(input$input_dmcomp_choices_1,{
+
+    v$data <- FALSE
 
     input_choices <- as.character(input$input_dmcomp_choices_1)
 
@@ -1213,6 +1216,8 @@ shinyServer(function(input, output, session) {
 
   # returns the index of selected comparison file in QQplot 1
   index_list_1 <- eventReactive(input$input_dmcomp_files_1, {
+
+
 
     input_choices <- as.character(input$input_dmcomp_choices_1)
 
@@ -1280,6 +1285,8 @@ shinyServer(function(input, output, session) {
 
   list.pvalues_1 <- reactive({
 
+
+
     qq.value <- as.character(input$input_dmcomp_choices_1)
 
     qq.dir <- file.path(results.dir(), qq.value)
@@ -1314,6 +1321,7 @@ shinyServer(function(input, output, session) {
 
   # for Repository 2
   observeEvent(input$input_dmcomp_choices_2,{
+    v$data <- FALSE
 
     input_choices <- as.character(input$input_dmcomp_choices_2)
 
@@ -1377,6 +1385,8 @@ shinyServer(function(input, output, session) {
 
   # returns the index of selected comparison file in QQplot 1
   index_list_2 <- eventReactive(input$input_dmcomp_files_2, {
+
+
 
     input_choices <- as.character(input$input_dmcomp_choices_2)
 
@@ -1442,6 +1452,8 @@ shinyServer(function(input, output, session) {
 
   list.pvalues_2 <- reactive({
 
+
+
     qq.value <- as.character(input$input_dmcomp_choices_2)
 
     qq.dir <- file.path(results.dir(), qq.value)
@@ -1475,38 +1487,63 @@ shinyServer(function(input, output, session) {
 
 
 
-  output$multicompqqplot <- renderPlot({
 
-    # dist <- switch(input$dist,
-    #                unif = runif,
-    #                norm = rnorm,
-    #
-    #                # lnorm = rlnorm,
-    #                # exp = rexp,
-    #                rnorm)
+  observeEvent(input$displayBtn, {
 
-    if(length(list.pvalues_1()) == 0) {
+    v$data <- TRUE
 
-      # print error/ warning message
-      qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-      text(1,1,"No data available or no comparison file exist from repository 1")
+    print (v$data)
 
-    }
-    else if (length(list.pvalues_2()) == 0){
-      # print error/ warning message
-      qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-      text(1,1,"No data available or no comparison file exist from repository 2")
-    }
-    else{
-      x<- list.pvalues_1()
-      y<- list.pvalues_2()
+    output$multicompqqplot <- renderPlot({
 
-      #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
-      my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
-      qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
-    }
+      # dist <- switch(input$dist,
+      #                unif = runif,
+      #                norm = rnorm,
+      #
+      #                # lnorm = rlnorm,
+      #                # exp = rexp,
+      #                rnorm)
 
-  }, height = 400, width = 500)
+      if (is.null(v$data)) {
+        print (v$data)
+        return()
+      }
+
+      else if (identical(v$data, FALSE)) {
+        print (v$data)
+        return()
+      }
+
+      else {
+
+
+
+        if(length(list.pvalues_1()) == 0) {
+
+          # print error/ warning message
+          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+          text(1,1,"No data available or no comparison file exist from repository 1")
+
+        }
+        else if (length(list.pvalues_2()) == 0){
+          # print error/ warning message
+          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+          text(1,1,"No data available or no comparison file exist from repository 2")
+        }
+        else{
+          x<- list.pvalues_1()
+          y<- list.pvalues_2()
+
+          #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
+          my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
+          qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
+        }
+      }
+
+    }, height = 400, width = 500)
+
+
+  })
 
   #######################################################################
 

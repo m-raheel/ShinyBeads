@@ -336,6 +336,7 @@ tabPanel("Integrative Visualization",
 
 
 
+                                            actionButton('displayBtn', 'Display'),
                                             plotOutput('multicompqqplot')
 
 
