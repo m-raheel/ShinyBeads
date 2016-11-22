@@ -205,8 +205,8 @@ shinyUI(
                               tableOutput("list_module")
 
                          ),
-                         tabPanel("Link to report"),
-                         tabPanel(".......")
+                         tabPanel("reports")
+
               )#end of tabsetpanel
 
            )#end of mainpanel
@@ -308,7 +308,8 @@ tabPanel("Integrative Visualization",
                                            #                # "Log-normal" = "lnorm",
                                            #                # "Exponential" = "exp")
                                            #                ),
-                                           plotOutput('compqqplot')
+                                           plotOutput('compqqplot'),
+                                           downloadButton('downloadData', 'Download')
 
 
                                     ),
@@ -359,14 +360,16 @@ tabPanel("Integrative Visualization",
                        ),
 
                        tabPanel("Table Browser",
-                                br(), br(),
+                                br(),
+
+
 
                                 tabsetPanel("Browser",
-                                            tabPanel("Parameter Overview",
+                                            tabPanel("p-values",
 
                                                      br(), br(),
 
-                                                     tags$p("The table below lists the options of the executed module.")
+                                                     tags$p("The table below lists the p values from selected analysis.")
 
                                                      ,
 
@@ -374,24 +377,24 @@ tabPanel("Integrative Visualization",
 
                                             ),
 
-                                            tabPanel("Comparisons",
-                                                     br(), br(),
+                                            # tabPanel("Comparisons",
+                                            #          br(), br(),
+                                            #
+                                            #          tags$p("The following comparisons were made:")
+                                            #
+                                            #          ,
+                                            #
+                                            #          tableOutput("htmlcomparisonTable")
+                                            #
+                                            #
+                                            #
+                                            # ),
+                                            tabPanel("Comparisons p-values"
 
-                                                     tags$p("The following comparisons were made:")
-
-                                                     ,
-
-                                                     tableOutput("htmlcomparisonTable")
 
 
-
-                                            ),
-                                            tabPanel("Comparisons CSV"
-
-
-
-                                            ),
-                                            tabPanel(".......")
+                                            )
+                                            # tabPanel(".......")
                                 )
 
 
@@ -405,8 +408,33 @@ tabPanel("Integrative Visualization",
 
   )#end of integrative visualization nav menu
 
-# tabPanel("About",
-#
+ # tabPanel("About",
+ #
+ #
+ #          titlePanel("Download base plot in Shiny - an example"),
+ #          sidebarLayout(
+ #            sidebarPanel(
+ #              selectInput(inputId = "var1", label = "Select the X variable", choices = c("Sepal.Length" = 1, "Sepal.Width" = 2, "Petal.Length" = 3, "Petal.Width" = 4)),
+ #              selectInput(inputId = "var2", label = "Select the Y variable", choices = c("Sepal.Length" = 1, "Sepal.Width" = 2, "Petal.Length" = 3, "Petal.Width" = 4), selected = 2),
+ #              radioButtons(inputId = "var3", label = "Select the file type", choices = list("png", "pdf"))
+ #            ),
+ #            mainPanel(
+ #              plotOutput("plot"),
+ #              downloadButton(outputId = "down", label = "Download the plot")
+ #            )
+ #          ),
+ #
+ #          # Adding the 'a' tag to the sidebar linking external file
+ #          tags$p("'a' tag linking external file"),
+ #          tags$a(href='https://designer.genomecompiler.com/plasmid_iframe?file_url=http://s3.amazonaws.com/gcc_production/plasmid_viewer/OG34_OG34_pSF-OXB19.gb', target='blank', 'plasmid1_URLfile'),
+ #
+ #          # Line spacing
+ #          hr(),
+ #
+ #          # Adding the 'a' tag to the sidebar linking local file
+ #          tags$p("'a' tag linking local file"),
+ #          tags$a(href='data/plasmid1.txt', target='blank', 'plasmid1_localfile', download = 'plasmid1.txt')
+ # )
 #
 #          # Application title
 #          #headerPanel("RnBeads Results"),
