@@ -22,63 +22,113 @@ shinyUI(
   navbarobject <- navbarPage('idnavBarTop', theme = shinytheme("cerulean"),
 
 
+  # class="navbar navbar-fixed-bottom"
+
+
+  footer = tags$div(class="", checked=NA,
+                    #tags$p("&copy; 2016 - RnBeads-Interface"),
+
+                    htmlTemplate("footer.html")
+  ),
+
 
   #title= div(id= "id_div_title" ,tags$a(href = '.', tags$img(src = 'RnBeads.png', width = 100, height = 20)),"RnBeads Interface"),
-  title= "RnBeads Interface",
+  title= "RnBeads-Interface",
+  #title= tags$a(href = '.', tags$p('RnBeads-Interface', class = 'text-danger')),
 
 
   # Home nav menu
   tabPanel("Home",
 
+           shinyjs::useShinyjs(),
+           #shinyjs::extendShinyjs(text = "shinyjs.clearDirButton = function() { location.reload(); }"),
+
+
 
            #tags$style(type="text/css", "body {padding-top: 70px;}"),
 
 
-           fluidRow(
-             column(width = 1,
-                    tags$a(href = '.', tags$img(src = 'RnBeads.png'))
 
-             ),
-             column(width = 11,
-                    headerPanel("Interface")
-             )
-           ),
 
            includeCSS("includes/styles.css"),
 
 
            #shinythemes::themeSelector(),
 
+           # fluidRow(
+           #   column(width = 1,
+           #          tags$a(href = '.', tags$img(src = 'RnBeads.png'))
+           #
+           #   ),
+           #   column(width = 11,
+           #          h2("Interface")
+           #   )
+           # ),
 
-           br(),
+           HTML(paste('<div class="jumbotron">',
+                        '<div class="container">',
 
-           fluidRow(
-             column(width = 12,
-                    shinyjs::useShinyjs(),
-                    #shinyjs::extendShinyjs(text = "shinyjs.clearDirButton = function() { location.reload(); }"),
+                            '<h2>Rnbeads-Interface!</h2>',
+                            '<p>It is a tool to provide user friendly interactive interface for RnBeads generated reports. It allows to keep track of the analysis performed and prevent performing same analysis again and again. It makes it interactive and easier to compare same or different RnBeads analysis. Target users are the ones who uses RnBeads for analyzing DNA methylation data either individually or as a group.</p>',
+
+                        '</div>',
+                      '</div>',
+
+                      '<div class="container">',
+                          '<!-- Example row of columns -->',
+                          '<div class="row">',
+                              '<div class="col-md-6">',
+                                '<h2>Working Repository</h2>',
+                                  tags$p("Click the select button to read the RnBeads analysis repository:"),
+
+                                  actionButton("workingDirButton",label= "Select",class="btn btn-primary"),
 
 
-                    # Use imageOutput to place the image on the page
-                    #imageOutput("preImage"),
+                                  paste('<p>',textOutput("ErrorText1"),'</p>'),
+
+                                  paste('<h5>',textOutput("ErrorText2"),'</h5>'),
+
+                                  actionButton("action", label = "Continue", class="btn btn-primary"),
+
+                                  actionButton("clearDirButton",label= "Clear",class="btn btn-primary"),
+
+                                  br(),
+                              '</div>',
+                              '<div class="col-md-3">',
+
+                              '<h2>RnBeads</h2>',
+
+                              '</div>',
+                              '<div class="col-md-3">',
+                                br(),
+                                tags$a(class='pull-right', href = '.', tags$img(src = 'RnBeads.png')),
+
+                              '</div>',
+                              '<div class="col-md-6">',
 
 
-                    tags$strong("Choose RnBeads analysis repository:"),
-                    br(),br(),
-                    actionButton("workingDirButton",label= "Choose",class="btn btn-primary"),
-                    br(),
 
-                    textOutput("ErrorText1"),
+                                    '<p>RnBeads is an R package for comprehensive analysis of DNA methylation data obtained with any experimental protocol that provides single-CpG resolution. </p>',
+                                    '<p><a class="btn btn-primary btn-md" href="http://rnbeads.mpi-inf.mpg.de/" target = "blank" role="button">Learn more &raquo;</a></p>',
 
-                    br(),
-                    verbatimTextOutput ("ErrorText2"),
 
-                    actionButton("action", label = "Continue", class="btn btn-primary"),
 
-                    actionButton("clearDirButton",label= "Clear",class="btn btn-primary")
 
-             )
 
-           ),
+
+                              '</div>',
+
+
+                          '</div>',
+                      '</div>',
+
+                      '<br/>')),
+
+
+           #includeHTML("index.html"),
+
+
+
 
            # commented is the script to change the tab
 
