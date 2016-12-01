@@ -4,12 +4,10 @@ library(RnBeads)
 library(XML)
 library(compare)
 library(data.table) # using the function fread for reading large csv files
-
 library(qqman)
-
 library(tcltk)# OS independent file dir selection
-
 library(lattice)# using qqunif.plot
+library(plotly) #interactive graphics with D3
 
 qqman.qq <- qqman::qq    #EDIT
 
@@ -24,6 +22,8 @@ qqman.qq <- qqman::qq    #EDIT
 
 shinyServer(function(input, output, session) {
 
+  # update timestamp when update is clicked
+  shinyjs::onclick("update", shinyjs::html("time", date()))
 
   # x contains all the observations of the x variable selected by the user. X is a reactive function
   x <- reactive({
@@ -110,15 +110,9 @@ shinyServer(function(input, output, session) {
   #select working directory
   selectedRepository <- eventReactive(input$workingDirButton,{
 
-
-
-    #updatedDir <- tk_choose.dir(getwd(), "Choose an Rnbeads repository")
-
     updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
 
-    #updatedDir <- choose.dir(getwd(), "Choose an RnBeads repository")
 
-    #workDir = gsub("\\\\", "/", updatedDir)
 
     selectedDir <-  as.character(updatedDir)
 
@@ -209,8 +203,6 @@ shinyServer(function(input, output, session) {
 
   ####################################################################################
 
-
-
   # displaying folders of repository selected
   ##################################################################################
   observe({
@@ -226,20 +218,7 @@ shinyServer(function(input, output, session) {
     if ( length(choices) != 0 ){
 
       output$list_folders <- renderDataTable({
-
-
-        #DT <- data.table(ID = 1:length(choices) , RnBeads_Analysis = choices)
-        # DT
-
-
-
         DT <- data.table( RnBeads_Analysis = choices)
-        # DT$RnBeads_Analysis <- sapply(DT$RnBeads_Analysis, function(x)
-        #   toString(tags$a(href=paste0("#Individual analysis", x), x)))
-
-        #DT$link <- createLink(DT$RnBeads_Analysis)
-
-
         return(DT)
 
       },selection = 'single', escape = FALSE)
@@ -258,18 +237,9 @@ shinyServer(function(input, output, session) {
     }
   })
 
-  # # if the list folder row is selected
-  # observeEvent(input$list_folders_rows_selected, {
-  #   row <- input$list_folders_rows_selected
-  #
-  #   updateTabsetPanel(session, "repository", selected = "DatasetList")
-  # })
+  ############################################################################################
 
-
-
-  ###############################################################
-
-  # check and return the results folder that have the same sample annotation file.###############
+  # check and return the results folder that have the same sample annotation file.
   ############################################################################################
 
   observe({
@@ -280,7 +250,7 @@ shinyServer(function(input, output, session) {
 
     common.datasets = datasets_total(results.dir())
     common.datasets = common.datasets$path_list
-    #common.datasets <- list()
+
 
     if (length(common.datasets) != 0){
 
@@ -305,10 +275,6 @@ shinyServer(function(input, output, session) {
 
       })
 
-
-
-
-
       output$list_datasets <- renderDataTable({
         cd_list <- unlist(cd_list)
         DT <- data.table( Datasets_Used = cd_list)
@@ -323,9 +289,6 @@ shinyServer(function(input, output, session) {
 
     else if ( file.exists( isolate({ normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA) }) ) )
     {
-
-
-      print ('inside commom else if')
       # update the datalist dropdown in the individual data sets tab
       updateSelectInput(session, "dd_ids_datasets",
                         label = "Datasets",
@@ -367,7 +330,14 @@ shinyServer(function(input, output, session) {
 
   })
 
-  # if the dataset row is selected
+
+  ############################################################################################
+
+  # if any of the datasetslist rows is clicked then it will redirects to individual dataset
+  #tab to display the annotaion.csv file contents
+  ############################################################################################
+
+
   observeEvent(input$list_datasets_rows_selected, {
     row <- input$list_datasets_rows_selected
 
@@ -375,11 +345,7 @@ shinyServer(function(input, output, session) {
 
     total.datasets = datasets_total(results.dir())
 
-
-
     path_list = total.datasets$path_list
-
-
 
     # if no datasets returned means that we have only one analysis so in else showing it
     if (length(path_list) != 0){
@@ -390,10 +356,6 @@ shinyServer(function(input, output, session) {
 
         dataset <- a.file()
         dataset
-
-
-
-
       },selection = 'single', escape = TRUE)
 
       output$h1_datasettab <- renderText({
@@ -417,9 +379,6 @@ shinyServer(function(input, output, session) {
           dataset <- a.file()
           dataset
 
-
-
-
         },selection = 'single', escape = TRUE)
 
         output$h1_datasettab <- renderText({
@@ -434,10 +393,6 @@ shinyServer(function(input, output, session) {
 
           dataset <- data.table( data = "No infomation available.")
           dataset
-
-
-
-
         },selection = 'single', escape = TRUE)
 
         output$h1_datasettab <- renderText({
@@ -537,9 +492,8 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
-
-  # analysis options
-  ##################################################################################
+  # displaying RnBeads options
+  ############################################################################################
 
 
   observeEvent(input$select_ia,{
@@ -597,18 +551,15 @@ shinyServer(function(input, output, session) {
 
   })
 
-  ################################################################
+  ############################################################################################
 
-  # list of modules performed
+  # displaying list of RnBeads modules performed
   ############################################################################################
 
   observeEvent(input$select_ia,{
 
     value.modules <- reactive({as.character(input$select_ia) })
-
-
     wd_modules <- reactive({file.path(results.dir(), value.modules()) })
-
 
     if ( file.exists( isolate({ paste(wd_modules(),'analysis.log',sep="/") }) ) ){
       #fucntion from the RnBeadsInterface package
@@ -635,11 +586,11 @@ shinyServer(function(input, output, session) {
     }
 
   })
+
   ############################################################################################
 
-
-
-  # individual data sets tab
+  # Displaying annotation file contents as well as in how many of the RnBeads analysis
+  # annotation file is used
   ############################################################################################
 
   observeEvent(input$dd_ids_datasets,{
@@ -667,7 +618,7 @@ shinyServer(function(input, output, session) {
 
         # Generate a summary of the dataset
         output[[paste0('annotation')]] <- renderDataTable({
-          #paste0("Annotation.csv")
+
           dataset <- a.file()
           dataset
 
@@ -677,9 +628,6 @@ shinyServer(function(input, output, session) {
           paste("Dataset_",last_character)
 
         })
-
-
-
       }
       else{
 
@@ -689,7 +637,7 @@ shinyServer(function(input, output, session) {
 
           # Generate a summary of the dataset
           output[[paste0('annotation')]] <- renderDataTable({
-            #paste0("Annotation.csv")
+
             dataset <- a.file()
             dataset
 
@@ -705,7 +653,7 @@ shinyServer(function(input, output, session) {
         else{
           # Generate a summary of the dataset
           output[[paste0('annotation')]] <- renderDataTable({
-            #paste0("Annotation.csv")
+
             dataset <- data.table( data = "No infomation available.")
             dataset
 
@@ -743,9 +691,6 @@ shinyServer(function(input, output, session) {
           common.index = i
         }
       }
-
-      #print((matrix.list[1]))
-
 
       # if no datasets returned means that we have only one analysis so in else showing it
 
@@ -810,8 +755,11 @@ shinyServer(function(input, output, session) {
 
     }
   })
-  ###############################################################################################
-  # Comparisons Table from HTML files
+
+  ############################################################################################
+
+  # Differential Methylation options getting it from the HTML file
+  ############################################################################################
 
   observe({
 
@@ -876,22 +824,16 @@ shinyServer(function(input, output, session) {
 
   })
 
-
   ############################################################################################
 
-
-  # qqplots 1 of diff methylation p- values
-  ####################################################################################
+  # showing comparisons performed from the HTML file
+  ############################################################################################
 
   observeEvent(input$input_dmcomp_choices,{
 
     input_choices <- as.character(input$input_dmcomp_choices)
 
     qq.dir <- file.path(results.dir(), input_choices)
-
-    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
-    #
-    # input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
@@ -965,6 +907,10 @@ shinyServer(function(input, output, session) {
   })
 
 
+  ############################################################################################
+
+  # qqplots 1 of diff methylation p- values
+  ############################################################################################
 
   # returns the index of selected comparison file in QQplot 1
   index_list <- eventReactive(input$input_dmcomp_files, {
@@ -997,23 +943,12 @@ shinyServer(function(input, output, session) {
 
         for (i in 1:length(dates)) {
 
-          #if statement is not vectorized. For vectorized if statements you should use ifelse
-          #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
-
           if (identical(input$input_dmcomp_files, dates[i])){
-
 
             choice.index <- as.character(i)
 
-
-
-
             break
-
-
           }
-
-
         }
 
       }
@@ -1140,12 +1075,11 @@ shinyServer(function(input, output, session) {
   )
 
 
-  #######################################################################
 
-
+  ############################################################################################
 
   # qqplots 2 of diff methylation p- values in which two comarprisons qqplots is displayed
-  ####################################################################################
+  ############################################################################################
 
   v <- reactiveValues(data = TRUE)
 
@@ -1246,18 +1180,9 @@ shinyServer(function(input, output, session) {
 
 
         for (i in 1:length(dates)) {
-
-          #if statement is not vectorized. For vectorized if statements you should use ifelse
-          #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
-
           if (identical(input$input_dmcomp_files_1, dates[i])){
 
-
             choice.index <- as.character(i)
-
-
-
-
             break
 
 
@@ -1545,11 +1470,10 @@ shinyServer(function(input, output, session) {
 
   })
 
-  #######################################################################
-
+  ###################################################################################################
 
   # QQ Plot 3  comparison among different files of same RnBeads Analysis
-  ####################################################################################
+  ###################################################################################################
 
   observeEvent(input$insertBtn, {
 
@@ -1594,19 +1518,10 @@ shinyServer(function(input, output, session) {
 
         f = "diffMethTable_site_cmp1.csv"
 
-
-
         if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
           check.choices.list[i] <- list(comparison_plot(qq.dir , f))
         }
-
-
-        #qq.value <- as.character(unlist(vec[i][1]) )
-        #f = "diffMethTable_site_cmp1.csv"
-        #check.choices.list[i] <- list(comparison_plot(qq.dir , f))
-
-
       }
 
 

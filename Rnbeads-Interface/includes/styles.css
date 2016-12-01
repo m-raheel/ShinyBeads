@@ -1,5 +1,12 @@
 @import url("//fonts.googleapis.com/css?family=Lobster|Cabin:400,700");
 
+body {
+  background-color: #fff;
+  overflow-y: scroll;
+  padding-bottom: 20px;
+}
+
+
 h1 {
   font-family: 'Lobster', cursive;
   font-weight: 500;
@@ -13,6 +20,3 @@ h2 {
   color: #ad1d28;
 }
 
-body {
-  background-color: #fff;
-}
