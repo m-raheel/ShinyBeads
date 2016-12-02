@@ -7,7 +7,7 @@ library(data.table) # using the function fread for reading large csv files
 library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
-library(plotly) #interactive graphics with D3
+#library(plotly) #interactive graphics with D3
 
 qqman.qq <- qqman::qq    #EDIT
 
