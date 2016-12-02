@@ -7,7 +7,7 @@ library(data.table) # using the function fread for reading large csv files
 library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
-#library(plotly) #interactive graphics with D3
+library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 
 qqman.qq <- qqman::qq    #EDIT
 
@@ -1667,8 +1667,19 @@ shinyServer(function(input, output, session) {
   }, deleteFile = FALSE)
   #######################################################################
 
+  output$p_plotly <- renderPlot({
+    d <- diamonds[sample(nrow(diamonds), 1000), ]
+    p <- ggplot(data = d, aes(x = carat, y = price)) +
+      geom_point(aes(text = paste("Clarity:", clarity))) +
+      geom_smooth(aes(colour = cut, fill = cut)) + facet_wrap(~ cut)
+
+    ggplotly(p)
+
+  })
 
 })
+
+
 
 # http://stats.stackexchange.com/questions/110755/how-calculate-inflation-observed-and-expected-p-values-from-uniform-distribution
 # refrerence : http://genome.sph.umich.edu/wiki/Code_Sample:_Generating_QQ_Plots_in_R

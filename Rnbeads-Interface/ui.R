@@ -431,6 +431,8 @@ tabPanel("Integrative Visualization",
 
                                                            tableOutput("htmlTable"),
 
+                                                           plotOutput("p_plotly"),
+
                                                            br()
 
                                                   ),
