@@ -262,30 +262,50 @@ tabPanel("Individual data set",
                               br(),
 
 
-                              selectInput("dd_ids_datasets", "Datasets:", choices),
+                              fluidRow(
+                                column(width = 6,
+
+                                             plotlyOutput('common_dataset_pie')
+
+                                      ),#end of column
+
+                                column(width = 6,
+                                         selectInput("dd_ids_datasets", "Datasets:", choices),
 
 
 
-                              wellPanel(
-                                tags$strong("Selected dataset is used in following analysis.")
+                                         wellPanel(
+                                           tags$strong("Selected dataset is used in following analysis.")
+                                         ),
+
+                                         dataTableOutput(paste0('annotation1')),
+
+
+                                         #h3(span( "Selected Dataset", class="label label-default"), class= "text-info"),
+                                         #h3(verbatimTextOutput("h1_datasettab"), class= "text-info"),
+                                         #absolutePanel('absolute panel'),
+                                         br()
+
+                                       )
+
+
+                                ),#end of fluid row
+
+
+                              fluidRow(
+                                column(width = 12,
+                                       br(),
+
+                                       wellPanel(
+                                         tags$strong("Dataset Sample sheet file content.")
+                                       ),
+
+                                       dataTableOutput(paste0('annotation')),
+                                       br()
+                                )
                               ),
 
-                              dataTableOutput(paste0('annotation1')),
-
-
-                              #h3(span( "Selected Dataset", class="label label-default"), class= "text-info"),
-                              #h3(verbatimTextOutput("h1_datasettab"), class= "text-info"),
-                              #absolutePanel('absolute panel'),
-
-                              br(),
-
-                              wellPanel(
-                                tags$strong("Selected dataset file content.")
-                              ),
-
-                              dataTableOutput(paste0('annotation')),
                               br()
-
 
 
 
@@ -429,9 +449,9 @@ tabPanel("Integrative Visualization",
 
                                                            ,
 
-                                                           tableOutput("htmlTable"),
+                                                           dataTableOutput('p_values'),
 
-                                                           plotOutput("p_plotly"),
+
 
                                                            br()
 
@@ -449,9 +469,10 @@ tabPanel("Integrative Visualization",
                                                   #
                                                   #
                                                   # ),
-                                                  tabPanel("Comparisons p-values"
+                                                  tabPanel("Comparisons p-values",
 
-
+                                                           plotlyOutput("p_plotly"),
+                                                           br()
 
                                                   )
                                                   # tabPanel(".......")

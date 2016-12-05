@@ -3,6 +3,7 @@ library(RnBeadsInterface)
 library(RnBeads)
 library(XML)
 library(compare)
+library(DT)
 library(data.table) # using the function fread for reading large csv files
 library(qqman)
 library(tcltk)# OS independent file dir selection
@@ -710,6 +711,28 @@ shinyServer(function(input, output, session) {
 
         },selection = 'single', escape = TRUE)
 
+        output$common_dataset_pie <- renderPlotly({
+
+          v2 <- vector(mode="character", length=length(matrix.unlist))
+          for (i in 1:length(matrix.unlist)) {
+            v2[i] <- '10'
+          }
+
+          print (v2)
+          matrix.unlist <- data.frame("Categorie"=matrix.unlist, "values"= v2)
+
+          data <- matrix.unlist[,c('Categorie', 'values')]
+          print (data)
+
+          p <- plot_ly(data, labels = ~Categorie, values = ~values, type = 'pie') %>%
+            layout(title = paste('RnBeads Analysis using',dd_datasets ),
+                   xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                   yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+
+
+        })
+
       }
 
       else if (length(analysis_list) != 0){
@@ -724,6 +747,26 @@ shinyServer(function(input, output, session) {
 
 
         },selection = 'single', escape = TRUE)
+
+
+        output$common_dataset_pie <- renderPlotly({
+            v2 <- c('10')
+
+
+            print (v2)
+            matrix.unlist <- data.frame("Categorie"=al(), "values"= v2)
+
+            data <- matrix.unlist[,c('Categorie', 'values')]
+            print (data)
+
+            p <- plot_ly(data, labels = ~Categorie, values = ~values, type = 'pie') %>%
+                layout(title = paste('RnBeads Analysis using',dd_datasets ),
+                       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                       yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+
+
+            })
 
       }
       else{
@@ -742,18 +785,11 @@ shinyServer(function(input, output, session) {
 
         },selection = 'single', escape = TRUE)
 
-
-
-
       }
 
       ###################################################################################
-
-
-
-
-
     }
+
   })
 
   ############################################################################################
@@ -1018,6 +1054,59 @@ shinyServer(function(input, output, session) {
 
 
   })
+
+
+  output$p_values <- renderDataTable({
+
+    if(length(list.pvalues()) == 0) {
+      dataset <- data.table( p_values = "No data available")
+
+    }
+    else{
+
+      dataset <- data.table( p_values = list.pvalues())
+    }
+
+    dataset
+
+
+
+
+  },selection = 'single', filter = 'top',
+
+   extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+   options = list(
+    dom = 'Blfrtip',
+    buttons = list(
+          'copy',
+          'print',
+          list(
+            extend = 'collection',
+            buttons = c('csv', 'excel', 'pdf'),
+            text = 'Download'
+          ),
+          I('colvis')
+
+        ),
+    keys = TRUE
+
+  ), escape = TRUE)
+
+
+  output$p_values2 <- renderDataTable({
+    iris2 = head(iris, 20)
+    # only show the Copy and Print buttons
+    datatable(
+      iris2,
+      extensions = 'Buttons', options = list(
+        dom = 'Bfrtip',
+        buttons = c('copy', 'print')
+      )
+
+    )
+
+  })
+
 
   plotInput <- reactive({
 
@@ -1667,15 +1756,17 @@ shinyServer(function(input, output, session) {
   }, deleteFile = FALSE)
   #######################################################################
 
-  output$p_plotly <- renderPlot({
+  output$p_plotly <- renderPlotly({
     d <- diamonds[sample(nrow(diamonds), 1000), ]
-    p <- ggplot(data = d, aes(x = carat, y = price)) +
-      geom_point(aes(text = paste("Clarity:", clarity))) +
-      geom_smooth(aes(colour = cut, fill = cut)) + facet_wrap(~ cut)
+    p <- ggplot(txhousing, aes(date, median)) +
+      geom_line(aes(group = city), alpha = 0.2)
 
     ggplotly(p)
 
   })
+
+
+
 
 })
 
