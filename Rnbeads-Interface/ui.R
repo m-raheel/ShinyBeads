@@ -84,7 +84,7 @@ shinyUI(
                                 '<h2>Working Repository</h2>',
                                   tags$p("Click the select button to read the RnBeads analysis repository:"),
 
-                                  actionButton("workingDirButton",label= "Select",class="btn btn-primary"),
+                                  #actionButton("workingDirButton",label= "Select",class="btn btn-primary"),
 
 
                                   paste('<p>',textOutput("ErrorText1"),'</p>'),
@@ -93,7 +93,7 @@ shinyUI(
 
                                   actionButton("action", label = "Continue", class="btn btn-primary"),
 
-                                  actionButton("clearDirButton",label= "Clear",class="btn btn-primary"),
+                                  #actionButton("clearDirButton",label= "Clear",class="btn btn-primary"),
 
                                   br(),
                               '</div>',
@@ -256,20 +256,15 @@ shinyUI(
 
 tabPanel("Individual data set",
 
-         tabsetPanel(id= "DatasetTab",
+
                      tabPanel("Dataset",
 
                               br(),
 
 
                               fluidRow(
-                                column(width = 6,
 
-                                             plotlyOutput('common_dataset_pie')
-
-                                      ),#end of column
-
-                                column(width = 6,
+                                column(width = 7,
                                          selectInput("dd_ids_datasets", "Datasets:", choices),
 
 
@@ -286,10 +281,16 @@ tabPanel("Individual data set",
                                          #absolutePanel('absolute panel'),
                                          br()
 
-                                       )
+                                       ),
+
+                                column(width = 5,
+
+                                       plotlyOutput('common_dataset_pie')
+
+                                  )#end of column
 
 
-                                ),#end of fluid row
+                            ),#end of fluid row
 
 
                               fluidRow(
@@ -309,12 +310,9 @@ tabPanel("Individual data set",
 
 
 
-                     ),
+                     )
 
-                     tabPanel("..."),
 
-                     tabPanel(".......")
-         )
 
 ),# end of individual dataset nav menu
 
@@ -322,172 +320,212 @@ tabPanel("Individual data set",
 
 tabPanel("Integrative Visualization",
 
-         br(),
 
-         fluidRow(
-           column(width = 12,
-               sidebarPanel(
-                 selectInput("input_dmcomp_choices", "Select analysis folder:", choices),
-                 br(),
-                 tags$h3(style="color:black;","Quantile-quantile plots (qq-plots)"),
-                 tags$div(id = "iv_div_info", class="text text-info", checked=NA,
+         tabsetPanel("visualization",
+                     tabPanel("QQ-Plots",
+                              br(),
 
-                          tags$p(paste("Quantile-quantile plots (qq-plots) can be useful for verifying that a set of values",
-                                  "come from a certain distribution.")
-                          ),
+                              fluidRow(
+                                column(width = 12,
+                                       sidebarPanel(
+                                         selectInput("input_dmcomp_choices", "Select analysis folder:", choices),
+                                         br(),
+                                         tags$h3(style="color:black;","Quantile-quantile plots (qq-plots)"),
+                                         tags$div(id = "iv_div_info", class="text text-info", checked=NA,
 
-                          br(),
-                          tags$p(paste("For example in a genome-wide association study,",
-                                       "we expect that most of the SNPs we are testing not to be associated with the disease.",
-                                       "Under the null, this means that the p-values we get from tests where no true",
-                                       "association exists should follow a uniform(0,1) distribution. Since we're usually most",
-                                       "interested in really small p-values, we generally transform the p-values by -log10 so",
-                                       "that the smallest values near zero become the larger values and are thus easier to see.")
-                          ),
-                          br()
-                 )
-
-              ),
-
-
-               mainPanel(
-
-                 tabsetPanel("visualization",
-                             tabPanel("QQ-Plots",
-                                      br(),
-                                      tabsetPanel("sub_visuallization",
-
-                                          tabPanel("QQ-Plots 1",
-
-                                                 br(),
-
-                                                 selectInput("input_dmcomp_files", "comparisons:", ""),
-
-
-                                                 # shinyjs::hidden(
-                                                 #   div(id = "hide_input",
-                                                 #       selectInput("input_dmcomp_files_index", "comparisons:", "")
-                                                 #
-                                                 #   )
-                                                 # ),
-
-
-                                                 tags$p("The qqplot of diffmethy p values from the above selected comparison is shown below:"),
-                                                 # radioButtons("dist", "Distribution type:",
-                                                 #              c(
-                                                 #                "Uniform" = "unif",
-                                                 #                "Normal" = "norm")
-                                                 #                # "Log-normal" = "lnorm",
-                                                 #                # "Exponential" = "exp")
-                                                 #                ),
-                                                 downloadButton('downloadData', 'Download'),
-                                                 plotOutput('compqqplot'),
-
-                                                 br()
-
-
-                                          ),
-
-                                         tabPanel("QQ-Plots 2",
+                                                  tags$p(paste("Quantile-quantile plots (qq-plots) can be useful for verifying that a set of values",
+                                                               "come from a certain distribution.")
+                                                  ),
 
                                                   br(),
-                                                  h3("Select comparison among two RnBeads analysis"),
-                                                  fluidRow(
-                                                    column(width = 6,
-                                                           selectInput("input_dmcomp_choices_1", "Analysis 1:", choices),
-                                                           br(),
-
-                                                           selectInput("input_dmcomp_files_1", "Comaprisons 1:", "")
-
-                                                    ),
-                                                    column(width = 6,
-                                                           selectInput("input_dmcomp_choices_2", "Analysis 2:", choices),
-                                                           br(),
-                                                           selectInput("input_dmcomp_files_2", "Comparisons 2:", "")
-
-                                                    )
+                                                  tags$p(paste("For example in a genome-wide association study,",
+                                                               "we expect that most of the SNPs we are testing not to be associated with the disease.",
+                                                               "Under the null, this means that the p-values we get from tests where no true",
+                                                               "association exists should follow a uniform(0,1) distribution. Since we're usually most",
+                                                               "interested in really small p-values, we generally transform the p-values by -log10 so",
+                                                               "that the smallest values near zero become the larger values and are thus easier to see.")
                                                   ),
-
-
-
-                                                  actionButton('displayBtn', 'Display'),
-                                                  plotOutput('multicompqqplot'),
                                                   br()
+                                         )
+
+                                       ),
 
 
-                                        )
+                                       mainPanel(
+                                         tabsetPanel("sub_visuallization",
 
-                                      #   tabPanel("QQ-Plots 3",
-                                      #
-                                      #            br(), br(),
-                                      #
-                                      #            checkboxGroupInput("check_comp", label = h3("Select comparison file"),
-                                      #                               choices = list("",1),
-                                      #                               selected = 1),
-                                      #
-                                      #            actionButton('insertBtn', 'Show'),
-                                      #
-                                      #
-                                      #            plotOutput('compqqplot3')
-                                      #
-                                      #   )#tab panel
-                                      )# tab set panel
+                                                     tabPanel("QQ-Plot",
 
-                             ),
+                                                              br(),
 
-                             tabPanel("Table Browser",
-                                      br(),
+                                                              selectInput("input_dmcomp_files", "comparisons:", ""),
 
 
-
-                                      tabsetPanel("Browser",
-                                                  tabPanel("p-values",
-
-                                                           br(), br(),
-
-                                                           tags$p("The table below lists the p values from selected analysis.")
-
-                                                           ,
-
-                                                           dataTableOutput('p_values'),
+                                                              # shinyjs::hidden(
+                                                              #   div(id = "hide_input",
+                                                              #       selectInput("input_dmcomp_files_index", "comparisons:", "")
+                                                              #
+                                                              #   )
+                                                              # ),
 
 
+                                                              tags$p("The qqplot of diffmethy p values from the above selected comparison is shown below:"),
+                                                              # radioButtons("dist", "Distribution type:",
+                                                              #              c(
+                                                              #                "Uniform" = "unif",
+                                                              #                "Normal" = "norm")
+                                                              #                # "Log-normal" = "lnorm",
+                                                              #                # "Exponential" = "exp")
+                                                              #                ),
 
-                                                           br()
+                                                              fluidRow(
+                                                                column(width = 8,
+                                                                    plotlyOutput('compqqplot')
+                                                                )),# end  of  fluid row
 
+                                                              br()
+
+
+                                                     ),
+
+                                                     tabPanel("QQ-Plot Comparison",
+
+                                                              br(),
+                                                              h3("Select comparison among two RnBeads analysis"),
+                                                              fluidRow(
+                                                                column(width = 6,
+                                                                       selectInput("input_dmcomp_choices_1", "Analysis 1:", choices),
+                                                                       br(),
+
+                                                                       selectInput("input_dmcomp_files_1", "Comaprisons 1:", "")
+
+                                                                ),
+                                                                column(width = 6,
+                                                                       selectInput("input_dmcomp_choices_2", "Analysis 2:", choices),
+                                                                       br(),
+                                                                       selectInput("input_dmcomp_files_2", "Comparisons 2:", "")
+
+                                                                )
+                                                              ),
+
+
+
+                                                              actionButton('displayBtn', 'Display'),
+                                                              plotOutput('multicompqqplot'),
+                                                              br()
+
+
+                                                     )
+
+                                                     #   tabPanel("QQ-Plots 3",
+                                                     #
+                                                     #            br(), br(),
+                                                     #
+                                                     #            checkboxGroupInput("check_comp", label = h3("Select comparison file"),
+                                                     #                               choices = list("",1),
+                                                     #                               selected = 1),
+                                                     #
+                                                     #            actionButton('insertBtn', 'Show'),
+                                                     #
+                                                     #
+                                                     #            plotOutput('compqqplot3')
+                                                     #
+                                                     #   )#tab panel
+                                         )# tab set panel
+
+
+                                       )# end  of  main panel
+
+                                ))# end  of  fluid row
+
+
+
+                     ),
+
+                     tabPanel("Table Browser",
+                              br(),
+
+
+                              fluidRow(
+                                column(width = 12,
+                                       sidebarPanel(
+                                         selectInput("input_tablebrowser_choices", "Select analysis folder:", choices),
+                                         br(),
+                                         tags$h3(style="color:black;","Quantile-quantile plots (qq-plots)"),
+                                         tags$div(id = "iv_div_info", class="text text-info", checked=NA,
+
+                                                  tags$p(paste("Quantile-quantile plots (qq-plots) can be useful for verifying that a set of values",
+                                                               "come from a certain distribution.")
                                                   ),
 
-                                                  # tabPanel("Comparisons",
-                                                  #          br(), br(),
-                                                  #
-                                                  #          tags$p("The following comparisons were made:")
-                                                  #
-                                                  #          ,
-                                                  #
-                                                  #          tableOutput("htmlcomparisonTable")
-                                                  #
-                                                  #
-                                                  #
-                                                  # ),
-                                                  tabPanel("Comparisons p-values",
+                                                  br(),
+                                                  tags$p(paste("For example in a genome-wide association study,",
+                                                               "we expect that most of the SNPs we are testing not to be associated with the disease.",
+                                                               "Under the null, this means that the p-values we get from tests where no true",
+                                                               "association exists should follow a uniform(0,1) distribution. Since we're usually most",
+                                                               "interested in really small p-values, we generally transform the p-values by -log10 so",
+                                                               "that the smallest values near zero become the larger values and are thus easier to see.")
+                                                  ),
+                                                  br()
+                                         )
 
-                                                           plotlyOutput("p_plotly"),
-                                                           br()
-
-                                                  )
-                                                  # tabPanel(".......")
-                                      )
+                                       ),
 
 
-                              ),
+                                       mainPanel(
 
-                             tabPanel("Top-scorer list stability")
 
-                 )# end of tabsetpanel("visualization")
+                                              tabsetPanel("Browser",
+                                                          tabPanel("p-values",
 
-               )# end  of  main panel
+                                                                   br(),
 
-         )),# end  of  fluid row
+
+
+                                                                   tags$p("The table below lists the p values from selected analysis.")
+
+                                                                   ,
+
+                                                                   #dataTableOutput('p_values'),
+
+                                                                   dataTableOutput('output.comparison.file'),
+
+
+
+                                                                   br()
+
+                                                          ),
+
+                                                          # tabPanel("Comparisons",
+                                                          #          br(), br(),
+                                                          #
+                                                          #          tags$p("The following comparisons were made:")
+                                                          #
+                                                          #          ,
+                                                          #
+                                                          #          tableOutput("htmlcomparisonTable")
+                                                          #
+                                                          #
+                                                          #
+                                                          # ),
+                                                          tabPanel("Comparisons p-values",
+
+                                                                   plotlyOutput("p_plotly"),
+                                                                   br()
+
+                                                          )
+                                                          # tabPanel(".......")
+                                              )# end tabsetpanel
+                                       )# end  of  main panel
+
+                                ))# end  of  fluid row
+
+                     ),
+
+                     tabPanel("Top-scorer list stability")
+
+         ),# end of tabsetpanel("visualization")
+
          br()
 
   )#end of integrative visualization nav menu

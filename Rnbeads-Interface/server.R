@@ -9,6 +9,7 @@ library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
 library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+library(manhattanly)
 
 qqman.qq <- qqman::qq    #EDIT
 
@@ -108,64 +109,121 @@ shinyServer(function(input, output, session) {
 
   })
 
-  #select working directory
-  selectedRepository <- eventReactive(input$workingDirButton,{
+  # #select working directory
+  # selectedRepository <- eventReactive(input$workingDirButton,{
+  #
+  #   updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
+  #
+  #
+  #
+  #   selectedDir <-  as.character(updatedDir)
+  #
+  #   # return the RnBeads directories
+  #   #setwd(selectedDir)
+  #
+  #   #shinyjs::js$workingDirButton()
+  #
+  #   # updating all the selectInput dropdowns
+  #
+  #   updateSelectInput(session, "input_type",
+  #                     label = paste("Select analysis folder"),
+  #                     choices = list.files(path = selectedDir))
+  #
+  #   updateSelectInput(session, "select_ia",
+  #                     label = paste("Select analysis folder"),
+  #                     choices = list.files(path = selectedDir))
+  #
+  #
+  #
+  #   updateSelectInput(session, "input_dmcomp_choices",
+  #                     label = paste("Select analysis folder"),
+  #                     choices = list.files(path = selectedDir))
+  #
+  #   updateSelectInput(session, "input_dmcomp_choices_1",
+  #                     label = paste("Analysis 1"),
+  #                     choices = list.files(path = selectedDir))
+  #
+  #   updateSelectInput(session, "input_dmcomp_choices_2",
+  #                     label = paste("Analysis 2"),
+  #                     choices = list.files(path = selectedDir))
+  #
+  #   dirfolder = list.files(path = selectedDir)
+  #
+  #   if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
+  #     output$ErrorText1 <- renderText({ paste("You are working with the RnBeads analysis repository:",sep="") })
+  #     output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
+  #   }
+  #   else{
+  #     output$ErrorText1 <- renderText({ paste("Not a Valid RnBeads Repository:",sep="") })
+  #     output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
+  #     observe({
+  #
+  #       check.repo = 'FALSE'
+  #       session$sendCustomMessage(type = "t", check.repo)
+  #     })
+  #
+  #   }
+  #
+  #   selectedDir
+  #
+  # })
 
-    updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
+
+  # #select working directory
+
+
+  updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
 
 
 
-    selectedDir <-  as.character(updatedDir)
+  selectedDir <-  as.character(updatedDir)
 
-    # return the RnBeads directories
-    #setwd(selectedDir)
+  # updating all the selectInput dropdowns
 
-    #shinyjs::js$workingDirButton()
+  updateSelectInput(session, "input_type",
+                    label = paste("Select analysis folder"),
+                    choices = list.files(path = selectedDir))
 
-    # updating all the selectInput dropdowns
-
-    updateSelectInput(session, "input_type",
-                      label = paste("Select analysis folder"),
-                      choices = list.files(path = selectedDir))
-
-    updateSelectInput(session, "select_ia",
-                      label = paste("Select analysis folder"),
-                      choices = list.files(path = selectedDir))
+  updateSelectInput(session, "select_ia",
+                    label = paste("Select analysis folder"),
+                    choices = list.files(path = selectedDir))
 
 
 
-    updateSelectInput(session, "input_dmcomp_choices",
-                      label = paste("Select analysis folder"),
-                      choices = list.files(path = selectedDir))
+  updateSelectInput(session, "input_dmcomp_choices",
+                    label = paste("Select analysis folder"),
+                    choices = list.files(path = selectedDir))
 
-    updateSelectInput(session, "input_dmcomp_choices_1",
-                      label = paste("Analysis 1"),
-                      choices = list.files(path = selectedDir))
+  updateSelectInput(session, "input_dmcomp_choices_1",
+                    label = paste("Analysis 1"),
+                    choices = list.files(path = selectedDir))
 
-    updateSelectInput(session, "input_dmcomp_choices_2",
-                      label = paste("Analysis 2"),
-                      choices = list.files(path = selectedDir))
+  updateSelectInput(session, "input_dmcomp_choices_2",
+                    label = paste("Analysis 2"),
+                    choices = list.files(path = selectedDir))
 
-    dirfolder = list.files(path = selectedDir)
+  updateSelectInput(session, "input_tablebrowser_choices",
+                    label = paste("Select analysis folder"),
+                    choices = list.files(path = selectedDir))
 
-    if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
-      output$ErrorText1 <- renderText({ paste("You are working with the RnBeads analysis repository:",sep="") })
-      output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
-    }
-    else{
-      output$ErrorText1 <- renderText({ paste("Not a Valid RnBeads Repository:",sep="") })
-      output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
-      observe({
+  dirfolder = list.files(path = selectedDir)
 
-        check.repo = 'FALSE'
-        session$sendCustomMessage(type = "t", check.repo)
-      })
+  if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
+    output$ErrorText1 <- renderText({ paste("You are working with the RnBeads analysis repository:",sep="") })
+    output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
+  }
+  else{
+    output$ErrorText1 <- renderText({ paste("Not a Valid RnBeads Repository:",sep="") })
+    output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
+    observe({
 
-    }
+      check.repo = 'FALSE'
+      session$sendCustomMessage(type = "t", check.repo)
+    })
 
-    selectedDir
+  }
 
-  })
+
 
 
   # displaying all session values store in the clientData
@@ -185,7 +243,7 @@ shinyServer(function(input, output, session) {
 
 
   dirfolder = reactive({list.files(path = getwd())})
-  results.dir = reactive({file.path(path = selectedRepository())})
+  results.dir = reactive({file.path(path = selectedDir)})
 
   # selected RnBeads repository folder
   value <- reactive({as.character(input$input_type) })
@@ -1026,17 +1084,8 @@ shinyServer(function(input, output, session) {
 
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
-
-
-        # Create a Progress object
-        progress <- shiny::Progress$new()
-        # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
-
-        progress$set(message = "Making plot", value = 0)
-
-
         comparison_plot(qq.dir , f)
+
 
         # # Increment the progress bar, and update the detail text.
         # progress$inc(detail = paste("Please wait..."))
@@ -1056,68 +1105,32 @@ shinyServer(function(input, output, session) {
   })
 
 
-  output$p_values <- renderDataTable({
 
-    if(length(list.pvalues()) == 0) {
-      dataset <- data.table( p_values = "No data available")
-
-    }
-    else{
-
-      dataset <- data.table( p_values = list.pvalues())
-    }
-
-    dataset
-
-
-
-
-  },selection = 'single', filter = 'top',
-
-   extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-   options = list(
-    dom = 'Blfrtip',
-    buttons = list(
-          'copy',
-          'print',
-          list(
-            extend = 'collection',
-            buttons = c('csv', 'excel', 'pdf'),
-            text = 'Download'
-          ),
-          I('colvis')
-
-        ),
-    keys = TRUE
-
-  ), escape = TRUE)
-
-
-  output$p_values2 <- renderDataTable({
-    iris2 = head(iris, 20)
-    # only show the Copy and Print buttons
-    datatable(
-      iris2,
-      extensions = 'Buttons', options = list(
-        dom = 'Bfrtip',
-        buttons = c('copy', 'print')
-      )
-
-    )
-
-  })
+  # output$p_values2 <- renderDataTable({
+  #   iris2 = head(iris, 20)
+  #   # only show the Copy and Print buttons
+  #   datatable(
+  #     iris2,
+  #     extensions = 'Buttons', options = list(
+  #       dom = 'Bfrtip',
+  #       buttons = c('copy', 'print')
+  #     )
+  #
+  #   )
+  #
+  # })
 
 
   plotInput <- reactive({
 
-    if(length(list.pvalues()) == 0) {
+    qq.value <- as.character(input$input_dmcomp_choices)
 
-      # print error/ warning message
-      qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-      text(1,1,"No data available or no comparison file exist")
+    qq.dir <- file.path(results.dir(), qq.value)
 
-    }
-    else{
+    f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+
+    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
+    {
       #y <- dist(ppoints(length(list.pvalues())))
       #qqline(y,list.pvalues())
       #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
@@ -1127,43 +1140,144 @@ shinyServer(function(input, output, session) {
       #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
 
       ##from package lattice
-      qqunif.plot(list.pvalues())
+
+      #qqunif.plot(list.pvalues())
+
+      filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+      filename= as.character(filename)
+
+      # fread function from the library data.table
+      comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr"))
+
+      comp.file <- as.data.frame(comp.file)
+
+      qqrObject <- qqr(comp.file , p = "diffmeth.p.val" , snp = "cgid" )
+
+      qqly(qqrObject, col = "#6087ea", size = 1, type = 20, abline_col = "pink",
+            abline_size = 0.5, abline_type = 1, highlight = NULL,
+            highlight_color = "#00FF00", xlab = "Expected -log10(p)",
+            ylab = "Observed -log10(p)", title = "")
+
 
 
 
     }
 
+    else {
+
+      # print error/ warning message
+      # qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+      # text(1,1,"No data available or no comparison file exist")
+
+      Primates <- c('No Data Avaiable')
+      Bodywt <- c(0.5 )
+      Brainwt <- c(0.5)
+
+      data <- data.frame(Primates, Bodywt, Brainwt)
+
+
+      p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                   mode = 'text', text = ~Primates, textposition = 'middle center',
+                   textfont = list(color = '#000000', size = 16))%>%
+        layout(title = 'Q-Q Plot',
+               xaxis = list(title = 'Expected -log10(p)',
+                            zeroline = TRUE,
+                            range = c(0, 1)),
+               yaxis = list(title = 'Observed -log10(p)',
+                            range = c(0,1)))
+
+
+    }
+
+
   })
 
-  output$compqqplot <- renderPlot({
+  output$compqqplot <- renderPlotly({
 
     plotInput()
 
 
 
-  }, height = 400, width = 500)
+  })
 
-  output$downloadData <- downloadHandler(
+  output$output.comparison.file <- renderDataTable({
+
+    qq.value <- as.character(input$input_tablebrowser_choices)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      dataset <- data.table( data = "No data available.")
+    }
+    else{
 
 
 
-    # filename = function(file) {
-    #   paste("test",".csv",sep = ".")
-    # },
-    # content = function(file) {
-    #   write.csv('', file)
-    # }
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
 
-    filename = function() { paste('testing', 'png', sep='.') },
-    content = function(file) {
-      png(file)
-      plotInput()
-      dev.off()
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Reading data", value = 0)
+
+
+        filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+        filename= as.character(filename)
+
+        # fread function from the library data.table
+        comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr","mean.covg.Normal"))
+
+        comp.file <- as.data.frame(comp.file)
+
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        dataset <- data.table( comp.file)
+
+      }
+      else{
+        dataset <- data.table( data = "No data available.")
+      }
     }
 
-  )
 
 
+
+
+    dataset
+
+
+
+
+  },selection = 'single', filter = 'top',
+
+  extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+  options = list(
+    dom = 'Blfrtip',
+    buttons = list(
+      'copy',
+      'print',
+      list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      ),
+      I('colvis')
+
+    ),
+    br(),
+    keys = TRUE
+
+  ), escape = TRUE)
 
   ############################################################################################
 

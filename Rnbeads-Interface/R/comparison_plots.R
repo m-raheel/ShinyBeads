@@ -12,6 +12,11 @@ comparison_plot <- function(wd,f) {
     filename <- file.path(wd, 'differential_methylation_data',f)
 
 
+    # Create a Progress object
+    progress <- shiny::Progress$new()
+
+    progress$set(message = "Making plot", value = 0)
+
     filename= as.character(filename)
 
     # fread function from the library data.table
@@ -26,6 +31,9 @@ comparison_plot <- function(wd,f) {
     list.diff.p.values <- lapply(seq_len(ncol(list.diff.p.values)), function(col) list.diff.p.values[,col])
 
     list.diff.p.values <- unlist(list.diff.p.values)
+
+    # Make sure it closes when we exit this reactive, even if there's an error
+     on.exit(progress$close())
 
     return(list.diff.p.values)
   }
