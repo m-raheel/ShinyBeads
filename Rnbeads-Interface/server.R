@@ -9,7 +9,7 @@ library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
 library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-library(manhattanly)
+library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 
 qqman.qq <- qqman::qq    #EDIT
 
