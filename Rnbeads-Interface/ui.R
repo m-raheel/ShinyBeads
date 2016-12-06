@@ -3,6 +3,7 @@ library(RnBeadsInterface)
 library(DT)
 library(shinyjs)
 library(shinythemes)
+library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 #library(V8) # package for extended shinyJS
 #library(shinyFiles)
 
