@@ -1,3 +1,29 @@
+
+# libraries to run on the shiny server ( uncomment it on the server)
+######################################################################
+# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+# library(DT)
+# library(shiny)
+#
+# #library(RnBeads)
+# library(XML)
+# library(compare)
+# # libFolders <- .libPaths()
+# # .libPaths(.libPaths()[-1])
+#
+# # .libPaths(libFolders)
+# library(data.table) # using the function fread for reading large csv files
+# library(qqman)
+# library(tcltk)# OS independent file dir selection
+# library(lattice)# using qqunif.plot
+# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+# library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+
+#####################################################################
+
+
+# local (comment while on the server)
+#####################################################################
 library(shiny)
 library(RnBeadsInterface)
 #library(RnBeads)
@@ -10,6 +36,7 @@ library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
 library(manhattanly)
+
 
 qqman.qq <- qqman::qq    #EDIT
 
