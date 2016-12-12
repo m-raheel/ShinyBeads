@@ -1,6 +1,6 @@
 library(shiny)
 library(RnBeadsInterface)
-library(RnBeads)
+#library(RnBeads)
 library(XML)
 library(compare)
 library(DT)
@@ -8,8 +8,8 @@ library(data.table) # using the function fread for reading large csv files
 library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(plotly) #interactive graphics with D3
+library(manhattanly)
 
 qqman.qq <- qqman::qq    #EDIT
 
@@ -1194,11 +1194,40 @@ shinyServer(function(input, output, session) {
 
   })
 
-  output$compqqplot <- renderPlotly({
+  output$compqqplot <- renderPlot({
 
-    plotInput()
+    #plotInput()
+
+    qq.value <- as.character(input$input_dmcomp_choices)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+    f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+
+    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
+    {
+      #y <- dist(ppoints(length(list.pvalues())))
+      #qqline(y,list.pvalues())
+      #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
+
+      #qqman.qq(list.pvalues(),main="Q-Q plot of p-values")
+
+      #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
+
+      ##from package lattice
+
+      qqunif.plot(list.pvalues())
+
+    }
+
+    else {
+
+      # print error/ warning message
+      qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+      text(1,1,"No data available or no comparison file exist")
 
 
+    }
 
   })
 
