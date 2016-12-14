@@ -1,30 +1,30 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-#.libPaths(.libPaths()[-1])
-library(DT)
-library(shiny)
-
-library(shinyjs)
-library(shinythemes)
-library(plyr , lib.loc = '/opt/Rlib/3.4')
-library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+# #.libPaths(.libPaths()[-1])
+# library(DT)
+# library(shiny)
+#
+# library(shinyjs)
+# library(shinythemes)
+# library(plyr , lib.loc = '/opt/Rlib/3.4')
+# library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
+# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 #####################################################################
 
 
 # local (comment while on the server)
 #####################################################################
 
-# library(shiny)
-# library(RnBeadsInterface)
-# library(DT)
-# library(shinyjs)
-# library(shinythemes)
-# library(plotly) #interactive graphics with D3
-# #library(V8) # package for extended shinyJS
-# #library(shinyFiles)
+library(shiny)
+library(RnBeadsInterface)
+library(DT)
+library(shinyjs)
+library(shinythemes)
+library(plotly) #interactive graphics with D3
+#library(V8) # package for extended shinyJS
+#library(shinyFiles)
 
 
 
@@ -464,86 +464,117 @@ tabPanel("Integrative Visualization",
                      ),
 
                      tabPanel("Table Browser",
+
+
                               br(),
+
+                              tags$h3(style="color:black;","Table Browser"),
+                              tags$div(id = "tb_div_info", checked=NA,
+
+                                       tags$p(paste("Table Browser is useful for filtering and sorting of the differential methylation comparison data, Select the RnBeads analysis and then you can filter the table with all the columns and you can download the results.",
+                                                    "Also you can upload external files that contains the same columns as the table and filter based on that column."
+                                                    )
+                                              )# end p tag
+
+                              ),
+
+
+
 
 
                               fluidRow(
+                                column(width = 4, offset = 0, style='padding-top:0px;',
+
+                                       div(class="well",
+                                         selectInput("input_tablebrowser_choices", "Select analysis folder:", choices)
+                                       ),
+
+                                       div(class="well",
+
+                                        tags$h3(style="color:black;",paste("Filter with external files",
+                                                                          "e.g 450K annotation etc")),
+
+
+
+
+                                           fileInput('file1', 'Choose file to filter the table on the right',
+                                                     accept = c(
+                                                       'text/csv',
+                                                       'text/comma-separated-values',
+                                                       'text/tab-separated-values',
+                                                       'text/plain',
+                                                       '.csv',
+                                                       '.tsv'
+                                                     )
+                                           ),
+                                           tags$hr(),
+                                           checkboxInput('header', 'Header', TRUE),
+                                           radioButtons('sep', 'Separator',
+                                                        c(Comma=',',
+                                                          Semicolon=';',
+                                                          Tab='\t'),
+                                                        ','),
+
+                                           tags$hr()
+
+                                           #dataTableOutput('p_values'),
+
+                                      )
+
+
+
+                                ), #end of column
+
+
+                                column(width = 8,
+
+                                       div(class="well",
+                                         tags$p("The table below lists the p values from selected analysis.")
+
+                                         ,
+                                         dataTableOutput('output.comparison.file')
+                                       ),
+                                       br()
+
+
+                                )# end of column
+
+
+                              )# end  of  fluid row
+
+
+
+
+                     ), # end of tab set panel of table browser
+
+                     tabPanel("Top-scorer list stability",
+                              br(),
+                              fluidRow(
                                 column(width = 12,
                                        sidebarPanel(
-                                         selectInput("input_tablebrowser_choices", "Select analysis folder:", choices),
-                                         br(),
-                                         tags$h3(style="color:black;","Quantile-quantile plots (qq-plots)"),
-                                         tags$div(id = "iv_div_info", class="text text-info", checked=NA,
 
-                                                  tags$p(paste("Quantile-quantile plots (qq-plots) can be useful for verifying that a set of values",
-                                                               "come from a certain distribution.")
-                                                  ),
 
-                                                  br(),
-                                                  tags$p(paste("For example in a genome-wide association study,",
-                                                               "we expect that most of the SNPs we are testing not to be associated with the disease.",
-                                                               "Under the null, this means that the p-values we get from tests where no true",
-                                                               "association exists should follow a uniform(0,1) distribution. Since we're usually most",
-                                                               "interested in really small p-values, we generally transform the p-values by -log10 so",
-                                                               "that the smallest values near zero become the larger values and are thus easier to see.")
-                                                  ),
-                                                  br()
-                                         )
+
 
                                        ),
+
+
 
 
                                        mainPanel(
 
 
-                                              tabsetPanel("Browser",
-                                                          tabPanel("p-values",
+                                         #plotlyOutput("p_plotly"),
 
-                                                                   br(),
-
+                                         br()
 
 
-                                                                   tags$p("The table below lists the p values from selected analysis.")
-
-                                                                   ,
-
-                                                                   #dataTableOutput('p_values'),
-
-                                                                   dataTableOutput('output.comparison.file'),
-
-
-
-                                                                   br()
-
-                                                          ),
-
-                                                          # tabPanel("Comparisons",
-                                                          #          br(), br(),
-                                                          #
-                                                          #          tags$p("The following comparisons were made:")
-                                                          #
-                                                          #          ,
-                                                          #
-                                                          #          tableOutput("htmlcomparisonTable")
-                                                          #
-                                                          #
-                                                          #
-                                                          # ),
-                                                          tabPanel("Comparisons p-values",
-
-                                                                   plotlyOutput("p_plotly"),
-                                                                   br()
-
-                                                          )
-                                                          # tabPanel(".......")
-                                              )# end tabsetpanel
                                        )# end  of  main panel
 
                                 ))# end  of  fluid row
 
-                     ),
+                        )# end of tabpanel of top scorer
 
-                     tabPanel("Top-scorer list stability")
 
          ),# end of tabsetpanel("visualization")
 

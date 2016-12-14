@@ -1,41 +1,41 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-library(DT)
-library(shiny)
-
-#library(RnBeads)
-library(XML)
-library(compare)
-# libFolders <- .libPaths()
-# .libPaths(.libPaths()[-1])
-
-# .libPaths(libFolders)
-library(data.table) # using the function fread for reading large csv files
-library(qqman)
-library(tcltk)# OS independent file dir selection
-library(lattice)# using qqunif.plot
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+# library(DT)
+# library(shiny)
+#
+# #library(RnBeads)
+# library(XML)
+# library(compare)
+# # libFolders <- .libPaths()
+# # .libPaths(.libPaths()[-1])
+#
+# # .libPaths(libFolders)
+# library(data.table) # using the function fread for reading large csv files
+# library(qqman)
+# library(tcltk)# OS independent file dir selection
+# library(lattice)# using qqunif.plot
+# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+# library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 
 #####################################################################
 
 
 # local (comment while on the server)
 #####################################################################
-# library(shiny)
-# library(RnBeadsInterface)
-# #library(RnBeads)
-# library(XML)
-# library(compare)
-# library(DT)
-# library(data.table) # using the function fread for reading large csv files
-# library(qqman)
-# library(tcltk)# OS independent file dir selection
-# library(lattice)# using qqunif.plot
-# library(plotly) #interactive graphics with D3
-# library(manhattanly)
+library(shiny)
+library(RnBeadsInterface)
+#library(RnBeads)
+library(XML)
+library(compare)
+library(DT)
+library(data.table) # using the function fread for reading large csv files
+library(qqman)
+library(tcltk)# OS independent file dir selection
+library(lattice)# using qqunif.plot
+library(plotly) #interactive graphics with D3
+library(manhattanly)
 
 
 qqman.qq <- qqman::qq    #EDIT
@@ -48,6 +48,7 @@ qqman.qq <- qqman::qq    #EDIT
 
 
 
+options(shiny.maxRequestSize=30*1024^2)
 
 shinyServer(function(input, output, session) {
 
@@ -1114,6 +1115,7 @@ shinyServer(function(input, output, session) {
         comparison_plot(qq.dir , f)
 
 
+
         # # Increment the progress bar, and update the detail text.
         # progress$inc(detail = paste("Please wait..."))
         #
@@ -1316,6 +1318,21 @@ shinyServer(function(input, output, session) {
 
         dataset <- data.table( comp.file)
 
+
+        inFile <- input$file1
+
+        if (!is.null(inFile)){
+          input.file <- fread(inFile$datapath, header = input$header,
+                              sep = input$sep)
+
+          dataset <- merge(dataset, input.file, by.x="cgid", by.y="cgid", all.x="TRUE")
+
+        }
+
+
+
+
+
         # Make sure it closes when we exit this reactive, even if there's an error
         on.exit(progress$close())
 
@@ -1331,6 +1348,136 @@ shinyServer(function(input, output, session) {
 
 
     dataset
+
+
+
+
+  },selection = 'single', filter = 'top',
+
+  extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+  options = list(
+    dom = 'Blfrtip',
+    buttons = list(
+      'copy',
+      'print',
+      list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      ),
+      I('colvis')
+
+    ),
+    br(),
+    keys = TRUE
+
+  ), escape = TRUE)
+
+
+  output$contents <- renderDataTable({
+    # input$file1 will be NULL initially. After the user selects
+    # and uploads a file, it will be a data frame with 'name',
+    # 'size', 'type', and 'datapath' columns. The 'datapath'
+    # column will contain the local filenames where the data can
+    # be found.
+
+    inFile <- input$file1
+
+    if (is.null(inFile))
+      return(NULL)
+
+    fread(inFile$datapath, header = input$header,
+             sep = input$sep)
+
+
+  },selection = 'single', filter = 'top',
+
+  extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+  options = list(
+    dom = 'Blfrtip',
+    buttons = list(
+      'copy',
+      'print',
+      list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      ),
+      I('colvis')
+
+    ),
+    br(),
+    keys = TRUE
+
+  ), escape = TRUE)
+
+
+  output$mergedData <- renderDataTable({
+    # input$file1 will be NULL initially. After the user selects
+    # and uploads a file, it will be a data frame with 'name',
+    # 'size', 'type', and 'datapath' columns. The 'datapath'
+    # column will contain the local filenames where the data can
+    # be found.
+
+    qq.value <- as.character(input$input_tablebrowser_choices)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      dataset <- data.table( data = "Some information is missing to do the merging.")
+    }
+    else{
+
+
+
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Reading data", value = 50)
+
+
+        filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+        filename= as.character(filename)
+
+        # fread function from the library data.table
+        comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr","mean.covg.Normal"))
+
+        comp.file <- as.data.frame(comp.file)
+
+
+
+
+        dataset <- data.table( comp.file)
+
+
+        dataset
+
+        inFile <- input$file1
+
+        if (is.null(inFile))
+          return(NULL)
+
+        input.file <- fread(inFile$datapath, header = input$header,
+                            sep = input$sep)
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+
+      }
+      else{
+        dataset <- data.table( data = "No data available.")
+      }
+    }
+
 
 
 
