@@ -1,41 +1,41 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-# library(DT)
-# library(shiny)
-#
-# #library(RnBeads)
-# library(XML)
-# library(compare)
-# # libFolders <- .libPaths()
-# # .libPaths(.libPaths()[-1])
-#
-# # .libPaths(libFolders)
-# library(data.table) # using the function fread for reading large csv files
-# library(qqman)
-# library(tcltk)# OS independent file dir selection
-# library(lattice)# using qqunif.plot
-# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-# library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+library(DT)
+library(shiny)
+
+#library(RnBeads)
+library(XML)
+library(compare)
+# libFolders <- .libPaths()
+# .libPaths(.libPaths()[-1])
+
+# .libPaths(libFolders)
+library(data.table) # using the function fread for reading large csv files
+library(qqman)
+library(tcltk)# OS independent file dir selection
+library(lattice)# using qqunif.plot
+library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 
 #####################################################################
 
 
 # local (comment while on the server)
 #####################################################################
-library(shiny)
-library(RnBeadsInterface)
-#library(RnBeads)
-library(XML)
-library(compare)
-library(DT)
-library(data.table) # using the function fread for reading large csv files
-library(qqman)
-library(tcltk)# OS independent file dir selection
-library(lattice)# using qqunif.plot
-library(plotly) #interactive graphics with D3
-library(manhattanly)
+# library(shiny)
+# library(RnBeadsInterface)
+# #library(RnBeads)
+# library(XML)
+# library(compare)
+# library(DT)
+# library(data.table) # using the function fread for reading large csv files
+# library(qqman)
+# library(tcltk)# OS independent file dir selection
+# library(lattice)# using qqunif.plot
+# library(plotly) #interactive graphics with D3
+# library(manhattanly)
 
 
 qqman.qq <- qqman::qq    #EDIT
@@ -1178,14 +1178,16 @@ shinyServer(function(input, output, session) {
       # fread function from the library data.table
       comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr"))
 
-      comp.file <- as.data.frame(comp.file)
 
-      qqrObject <- qqr(comp.file , p = "diffmeth.p.val" , snp = "cgid" )
-
-      qqly(qqrObject, col = "#6087ea", size = 1, type = 20, abline_col = "pink",
-            abline_size = 0.5, abline_type = 1, highlight = NULL,
-            highlight_color = "#00FF00", xlab = "Expected -log10(p)",
-            ylab = "Observed -log10(p)", title = "")
+#       comp.file <- data.frame(comp.file)
+#       qqrObject <- qqr(comp.file , p = "diffmeth.p.val" , snp = "cgid" )
+      qqly(HapMap)
+#       qqrObject <- qqr(comp.file , p = "diffmeth.p.val" , snp = "cgid" )
+#
+#       qqly(qqrObject, col = "#6087ea", size = 1, type = 20, abline_col = "pink",
+#             abline_size = 0.5, abline_type = 1, highlight = NULL,
+#             highlight_color = "#00FF00", xlab = "Expected -log10(p)",
+#             ylab = "Observed -log10(p)", title = "")
 
 
 
@@ -1221,6 +1223,13 @@ shinyServer(function(input, output, session) {
 
   })
 
+  output$compqqplotly <- renderPlotly({
+    pdf(NULL)
+    plotInput()
+
+
+  })
+
   output$compqqplot <- renderPlot({
 
     #plotInput()
@@ -1243,8 +1252,17 @@ shinyServer(function(input, output, session) {
 
       ##from package lattice
 
-      qqunif.plot(list.pvalues())
+      # Create a Progress object
+      progress <- shiny::Progress$new()
 
+      progress$set(message = "Makind QQ Plot", value = 50)
+
+      q <- qqunif.plot(list.pvalues())
+
+      # Make sure it closes when we exit this reactive, even if there's an error
+      on.exit(progress$close())
+
+      q
     }
 
     else {
@@ -1280,7 +1298,7 @@ shinyServer(function(input, output, session) {
         # Create a Progress object
         progress <- shiny::Progress$new()
 
-        progress$set(message = "Reading data", value = 0)
+        progress$set(message = "Reading data", value = 50)
 
 
         filename <- file.path(qq.dir, 'differential_methylation_data',f)
@@ -1294,11 +1312,14 @@ shinyServer(function(input, output, session) {
         comp.file <- as.data.frame(comp.file)
 
 
-        # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
+
 
         dataset <- data.table( comp.file)
 
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        dataset
       }
       else{
         dataset <- data.table( data = "No data available.")
@@ -1490,7 +1511,17 @@ shinyServer(function(input, output, session) {
 
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
-        comparison_plot(qq.dir , f)
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Makind QQ Plot", value = 50)
+
+        x <- comparison_plot(qq.dir , f)
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        x
       }
       else{
         x <- list()
@@ -1657,7 +1688,17 @@ shinyServer(function(input, output, session) {
 
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
-        comparison_plot(qq.dir , f)
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Makind QQ Plot", value = 50)
+
+        x <- comparison_plot(qq.dir , f)
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        x
       }
       else{
         x <- list()
@@ -1677,6 +1718,9 @@ shinyServer(function(input, output, session) {
     v$data <- TRUE
 
     print (v$data)
+
+
+
 
     output$multicompqqplot <- renderPlot({
 
@@ -1702,9 +1746,12 @@ shinyServer(function(input, output, session) {
 
 
 
+
         if(length(list.pvalues_1()) == 0) {
 
           # print error/ warning message
+
+
           qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
           text(1,1,"No data available or no comparison file exist from repository 1")
 
@@ -1715,16 +1762,31 @@ shinyServer(function(input, output, session) {
           text(1,1,"No data available or no comparison file exist from repository 2")
         }
         else{
+
+          # Create a Progress object
+          progress <- shiny::Progress$new()
+
+          progress$set(message = "Makind QQ Plot", value = 50)
+
           x<- list.pvalues_1()
           y<- list.pvalues_2()
 
           #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
           my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
-          qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
+          q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
+
+          # Make sure it closes when we exit this reactive, even if there's an error
+          on.exit(progress$close())
+
+          q
+
         }
+
+
       }
 
     }, height = 400, width = 500)
+
 
 
   })
