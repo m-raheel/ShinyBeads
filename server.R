@@ -1042,6 +1042,7 @@ shinyServer(function(input, output, session) {
   # returns the index of selected comparison file in QQplot 1
   index_list <- eventReactive(input$input_dmcomp_files, {
 
+
     input_choices <- as.character(input$input_dmcomp_choices)
 
     qq.dir <- file.path(results.dir(), input_choices)
@@ -1237,49 +1238,55 @@ shinyServer(function(input, output, session) {
 
   })
 
-  output$compqqplot <- renderPlot({
+  observeEvent(input$displayQQPlotBtn,{
 
-    #plotInput()
+    #shinyjs::show(id = "id_qqplot")
 
-    qq.value <- as.character(input$input_dmcomp_choices)
+    output$compqqplot <- renderPlot({
 
-    qq.dir <- file.path(results.dir(), qq.value)
-
-    f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
-
-    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
-    {
-      #y <- dist(ppoints(length(list.pvalues())))
-      #qqline(y,list.pvalues())
-      #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
-
-      #qqman.qq(list.pvalues(),main="Q-Q plot of p-values")
-
-      #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
-
-      ##from package lattice
-
-      # Create a Progress object
-      progress <- shiny::Progress$new()
-
-      progress$set(message = "Makind QQ Plot", value = 50)
-
-      q <- qqunif.plot(list.pvalues())
-
-      # Make sure it closes when we exit this reactive, even if there's an error
-      on.exit(progress$close())
-
-      q
-    }
-
-    else {
-
-      # print error/ warning message
-      qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-      text(1,1,"No data available or no comparison file exist")
+      #plotInput()
 
 
-    }
+      qq.value <- as.character(input$input_dmcomp_choices)
+
+      qq.dir <- file.path(results.dir(), qq.value)
+
+      f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
+      {
+        #y <- dist(ppoints(length(list.pvalues())))
+        #qqline(y,list.pvalues())
+        #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
+
+        #qqman.qq(list.pvalues(),main="Q-Q plot of p-values")
+
+        #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
+
+        ##from package lattice
+
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Makind QQ Plot", value = 50)
+
+        q <- qqunif.plot(list.pvalues())
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        q
+      }
+
+      else {
+
+        # print error/ warning message
+        qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+        text(1,1,"No data available or no comparison file exist")
+
+
+      }
+    })
 
   })
 

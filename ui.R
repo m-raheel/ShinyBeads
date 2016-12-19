@@ -398,11 +398,18 @@ tabPanel("Integrative Visualization",
                                                               #                # "Exponential" = "exp")
                                                               #                ),
 
-                                                              fluidRow(
-                                                                column(width = 8,
-                                                                    #plotlyOutput('compqqplotly'),
-                                                                    plotOutput('compqqplot')
-                                                                )),# end  of  fluid row
+                                                              actionButton('displayQQPlotBtn', 'Display'),
+
+
+
+                                                              div(id="id_qqplot",
+                                                                  fluidRow(
+                                                                    column(width = 8,
+                                                                           #plotlyOutput('compqqplotly'),
+                                                                           plotOutput('compqqplot')
+                                                                    ))# end  of  fluid row
+
+                                                              ),
 
                                                               br()
 
