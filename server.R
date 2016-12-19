@@ -1597,6 +1597,30 @@ shinyServer(function(input, output, session) {
 
           p
         }
+        else if (length(filtered_data) > 50000)
+        {
+          Primates <- c('Data too big to display in plot! please filter some data')
+          Bodywt <- c(0.5 )
+          Brainwt <- c(0.5)
+
+          data <- data.frame(Primates, Bodywt, Brainwt)
+
+
+          p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                       mode = 'text', text = ~Primates, textposition = 'middle center',
+                       textfont = list(color = '#000000', size = 14))%>%
+            layout(                        # all of layout's properties: /r/reference/#layout
+              title = "Plot", # layout's title: /r/reference/#layout-title
+              xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
+                title = "mean.diff",      # xaxis's title: /r/reference/#layout-xaxis-title
+                showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
+              yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
+                title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
+            )
+
+          p
+
+        }
         else{
 
             qq.value <- as.character(input$input_tablebrowser_choices)
