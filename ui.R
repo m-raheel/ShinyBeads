@@ -472,7 +472,7 @@ tabPanel("Integrative Visualization",
                               tags$div(id = "tb_div_info", checked=NA,
 
                                        tags$p(paste("Table Browser is useful for filtering and sorting of the differential methylation comparison data, Select the RnBeads analysis and then you can filter the table with all the columns and you can download the results.",
-                                                    "Also you can upload external files that contains the same columns as the table and filter based on that column."
+                                                    "Also you can upload external files having at least a target column whoes values are like cgxxxxxxx and the table will get filtered."
                                                     )
                                               )# end p tag
 
@@ -486,7 +486,9 @@ tabPanel("Integrative Visualization",
                                 column(width = 4, offset = 0, style='padding-top:0px;',
 
                                        div(class="well",
-                                         selectInput("input_tablebrowser_choices", "Select analysis folder:", choices)
+                                         selectInput("input_tablebrowser_choices", "Select analysis folder:", choices),
+                                         selectInput("input_tablebrowser_files", "comparisons:", "")
+
                                        ),
 
                                        div(class="well",
@@ -519,7 +521,17 @@ tabPanel("Integrative Visualization",
 
                                            #dataTableOutput('p_values'),
 
+
+
                                       )
+
+
+                                      # div(class="well",
+                                      #
+
+                                      #
+                                      # ),
+                                      # br()
 
 
 
@@ -529,10 +541,38 @@ tabPanel("Integrative Visualization",
                                 column(width = 8,
 
                                        div(class="well",
-                                         tags$p("The table below lists the p values from selected analysis.")
 
-                                         ,
-                                         dataTableOutput('output.comparison.file')
+                                         tags$p("The table below lists the data from the selected analysis."),
+
+                                         actionButton('displayTableBrowserBtn', 'Display'),
+
+
+                                         br(),
+                                         br(),
+                                         dataTableOutput('output.comparison.file'),
+                                         br(),
+                                         br(),
+
+                                         div(id="id_tb_filterPlot_Btn",
+                                           actionButton('displayPlotBtn', 'Filtered Plot'),
+                                           div(id="id_tb_filterPlot",
+
+                                               br(),
+                                               br(),
+                                               plotlyOutput('x5')
+                                           )
+                                           # actionButton('displaySimplePlotBtn', 'Simple Plot'),
+                                           # div(id="id_tb_simplefilterPlot",
+                                           #
+                                           #     br(),
+                                           #     br(),
+                                           #     plotOutput('simpleTBPlot')
+                                           # )
+                                         )
+
+
+
+
                                        ),
                                        br()
 
@@ -551,25 +591,53 @@ tabPanel("Integrative Visualization",
                               br(),
                               fluidRow(
                                 column(width = 12,
-                                       sidebarPanel(
-
-
-
-
-                                       ),
-
-
-
-
-                                       mainPanel(
+                                       # sidebarPanel(
+                                       #
+                                       #
+                                       #
+                                       #
+                                       # ),
+                                       #
+                                       #
+                                       #
+                                       #
+                                       # mainPanel(
 
 
                                          #plotlyOutput("p_plotly"),
 
-                                         br()
+                                         radioButtons("plotType", "Plot Type:", choices = c("ggplotly", "plotly")),
+                                         plotlyOutput("plot"),
+                                         verbatimTextOutput("hover"),
+                                         verbatimTextOutput("click"),
+                                         verbatimTextOutput("brush"),
+                                         verbatimTextOutput("zoom"),
+
+                                         br(),
 
 
-                                       )# end  of  main panel
+                                         title = 'Select Table Rows',
+
+                                         h1('A Client-side Table'),
+
+                                         fluidRow(
+                                           column(6, DT::dataTableOutput('x1')),
+                                           column(6, plotlyOutput('x2', height = 500))
+                                         ),
+
+                                         hr(),
+
+                                         h1('A Server-side Table'),
+
+                                         fluidRow(
+                                           column(9, DT::dataTableOutput('x3')),
+                                           column(3, verbatimTextOutput('x4'))
+                                         )
+
+
+
+
+                                       #)# end  of  main panel
 
                                 ))# end  of  fluid row
 

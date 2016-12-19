@@ -234,6 +234,8 @@ shinyServer(function(input, output, session) {
                     label = paste("Select analysis folder"),
                     choices = list.files(path = selectedDir))
 
+
+
   dirfolder = list.files(path = selectedDir)
 
   if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
@@ -948,7 +950,7 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
-  # showing comparisons performed from the HTML file
+  # showing comparisons performed from the HTML file and displaying in the dropdown for qqplot 1
   ############################################################################################
 
   observeEvent(input$input_dmcomp_choices,{
@@ -1025,6 +1027,9 @@ shinyServer(function(input, output, session) {
       )
 
     }
+
+
+
 
   })
 
@@ -1278,100 +1283,599 @@ shinyServer(function(input, output, session) {
 
   })
 
-  output$output.comparison.file <- renderDataTable({
 
-    qq.value <- as.character(input$input_tablebrowser_choices)
+  ############################################################################################
 
-    qq.dir <- file.path(results.dir(), qq.value)
+  # Table browser filling up the comparisons in the dropdown
+  ############################################################################################
+
+  checkDisplay <- reactiveValues(data = FALSE , data2 = FALSE)
+
+  observeEvent(input$input_tablebrowser_choices,{
+
+    checkDisplay$data <- FALSE
+    checkDisplay$data2 <- FALSE
+
+    shinyjs::hide(id = "id_tb_filterPlot_Btn")
+    shinyjs::hide(id = "id_tb_filterPlot")
+
+    input_choices <- as.character(input$input_tablebrowser_choices)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    if (input_choices != "NA"){
 
 
-    if (qq.value == "" || qq.value == "NA"){
-      dataset <- data.table( data = "No data available.")
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+        dates
+        comp_names <- list()
+        comp_names_counter <- 1
+        for (i in 1:length(dates)) {
+
+          comp_names[comp_names_counter] <- dates[i]
+          comp_names_counter = comp_names_counter + 1
+
+        }
+
+
+        choices.list <- comp_names
+
+
+      }
+      else{
+        choices.list <- 'NA'
+      }
     }
     else{
+      choices.list <- 'NA'
+
+    }
 
 
 
-      #index_list() contains the index of the selected file ffrom the dropdown
-      f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-        # Create a Progress object
-        progress <- shiny::Progress$new()
-
-        progress$set(message = "Reading data", value = 50)
+    updateSelectInput(session, "input_tablebrowser_files",
+                      label = paste("Comparison", ""),
+                      choices = choices.list)
 
 
-        filename <- file.path(qq.dir, 'differential_methylation_data',f)
+  })
 
 
-        filename= as.character(filename)
+  # returns the index of selected comparison file in table browser section
+  comp.file.index <- eventReactive(input$input_tablebrowser_files, {
 
-        # fread function from the library data.table
-        comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr","mean.covg.Normal"))
+    #checkDisplay$data <- FALSE
+    shinyjs::hide(id = "id_tb_filterPlot")
 
-        comp.file <- as.data.frame(comp.file)
+    input_choices <- as.character(input$input_tablebrowser_choices)
 
-
-
-
-        dataset <- data.table( comp.file)
+    qq.dir <- file.path(results.dir(), input_choices)
 
 
-        inFile <- input$file1
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
-        if (!is.null(inFile)){
-          input.file <- fread(inFile$datapath, header = input$header,
-                              sep = input$sep)
+    choice.index <- '1'
 
-          dataset <- merge(dataset, input.file, by.x="cgid", by.y="cgid", all.x="TRUE")
+    if (input_choices != "NA"){
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+
+
+        for (i in 1:length(dates)) {
+
+          if (identical(input$input_dmcomp_files, dates[i])){
+
+            choice.index <- as.character(i)
+
+            break
+          }
+        }
+
+      }
+      else{
+        choice.index <- '1'
+
+      }
+    }
+    else{
+      choice.index <- '1'
+
+
+    }
+
+    return(choice.index)
+  })
+
+  ############################################################################################
+
+  # showing comparisons in the Table Browser tab
+  ############################################################################################
+
+  observeEvent(input$displayTableBrowserBtn,{
+
+
+    checkDisplay$data <- TRUE
+    checkDisplay$data2 <- FALSE
+
+
+    shinyjs::show(id = "id_tb_filterPlot_Btn")
+
+    shinyjs::hide(id = "id_tb_filterPlot")
+
+      output$output.comparison.file <- renderDataTable({
+
+
+        if (is.null(checkDisplay$data)) {
+          print (checkDisplay$data)
+          return()
+        }
+
+        else if (identical(checkDisplay$data, FALSE)) {
+          print (checkDisplay$data)
+          return()
+        }
+
+        else {
+
+
+            checkDisplay$data2 <- FALSE
+
+            qq.value <- as.character(input$input_tablebrowser_choices)
+
+            qq.dir <- file.path(results.dir(), qq.value)
+
+
+            if (qq.value == "" || qq.value == "NA"){
+              dataset <- data.table( data = "No data available.")
+            }
+            else{
+
+
+
+              #index_list() contains the index of the selected file ffrom the dropdown
+              f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
+
+              if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+                # Create a Progress object
+                progress <- shiny::Progress$new()
+
+                progress$set(message = "Reading data", value = 50)
+
+
+                filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+                filename= as.character(filename)
+
+                # fread function from the library data.table
+                comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+                #comp.file <- fread(filename,sep = ",")
+
+                comp.file <- as.data.frame(comp.file)
+
+
+
+
+                dataset <- data.table( comp.file)
+
+
+                inFile <- input$file1
+
+                if (!is.null(inFile)){
+                  input.file <- fread(inFile$datapath, header = input$header,
+                                      sep = input$sep)
+
+                  dataset <- merge(dataset, input.file, by.x="cgid", by.y="cgid", all.x="TRUE")
+
+                }
+
+
+
+
+
+                # Make sure it closes when we exit this reactive, even if there's an error
+                on.exit(progress$close())
+
+                dataset
+              }
+              else{
+                dataset <- data.table( data = "No data available.")
+              }
+            }
+
+
+
+
+
+            dataset
 
         }
 
 
 
 
+      },selection = 'single', filter = 'top',
 
-        # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
+      extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+      options = list(
+        dom = 'Blfrtip',
+        buttons = list(
+          'copy',
+          'print',
+          list(
+            extend = 'collection',
+            buttons = c('csv', 'excel', 'pdf'),
+            text = 'Download'
+          ),
+          I('colvis')
 
-        dataset
+        ),
+        br(),
+        keys = TRUE
+
+      ), escape = TRUE)
+  })
+
+
+  observeEvent(input$displayPlotBtn,{
+
+
+    #checkDisplay$data <- FALSE
+    checkDisplay$data2 <- TRUE
+    shinyjs::show(id = "id_tb_filterPlot")
+
+    output$x5 <- renderPlotly({
+      if (is.null(checkDisplay$data2)) {
+
+
+
+        return()
+
+
       }
-      else{
-        dataset <- data.table( data = "No data available.")
+
+      else if (identical(checkDisplay$data2, FALSE)) {
+
+
+
+        return()
+
       }
-    }
+
+      else {
+
+            # use the key aesthetic/argument to help uniquely identify selected observations
+        filtered_data <- input$output.comparison.file_rows_all
+        print(length(filtered_data))
+
+        if (length(filtered_data) <  2)
+        {
+          Primates <- c('No Data Avaiable')
+          Bodywt <- c(0.5 )
+          Brainwt <- c(0.5)
+
+          data <- data.frame(Primates, Bodywt, Brainwt)
+
+
+          p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                       mode = 'text', text = ~Primates, textposition = 'middle center',
+                       textfont = list(color = '#000000', size = 16))%>%
+            layout(                        # all of layout's properties: /r/reference/#layout
+              title = "Plot", # layout's title: /r/reference/#layout-title
+              xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
+                title = "mean.diff",      # xaxis's title: /r/reference/#layout-xaxis-title
+                showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
+              yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
+                title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
+            )
+
+          p
+        }
+        else{
+
+            qq.value <- as.character(input$input_tablebrowser_choices)
+
+            qq.dir <- file.path(results.dir(), qq.value)
+
+
+            if (qq.value == "" || qq.value == "NA"){
+              dataset <- data.table( data = "No data available.")
+            }
+            else{
 
 
 
+              #index_list() contains the index of the selected file ffrom the dropdown
+              f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
+
+              if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+                # Create a Progress object
+                progress <- shiny::Progress$new()
+
+                progress$set(message = "Making Plot", value = 50)
 
 
-    dataset
+                filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+                filename= as.character(filename)
+
+                # fread function from the library data.table
+                comp.file <- fread(filename,sep = ",", select = c("id","cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+                #comp.file <- fread(filename,sep = ",")
+
+                comp.file <- as.data.frame(comp.file)
+
+
+                key <- colnames(comp.file) <- c("id","cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val")
+                print(key)
+                p <- plot_ly(comp.file[filtered_data, , drop = FALSE],
+                             type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
+                             x = ~mean.diff,               # more about scatter's "x": /r/reference/#scatter-x
+                             y = ~diffmeth.p.val,            # more about scatter's "y": /r/reference/#scatter-y
+                             name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
+                             marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
+                               color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
+                             )) %>%
+
+                  # add_trace(x = ~mean.diff,                                         # scatter's "x": /r/reference/#scatter-x
+                  #           y = ~diffmeth.p.val,  # scatter's "y": /r/reference/#scatter-y
+                  #           mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
+                  #           line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
+                  #             color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
+                  #             dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
+                  #           )
+                  # ) %>%
+
+                  layout(                        # all of layout's properties: /r/reference/#layout
+                    title = "Plot", # layout's title: /r/reference/#layout-title
+                    xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
+                      title = "mean.diff",      # xaxis's title: /r/reference/#layout-xaxis-title
+                      showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
+                    yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
+                      title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
+                  )
+
+                # Make sure it closes when we exit this reactive, even if there's an error
+                on.exit(progress$close())
+
+
+                p
+              }
+
+            }
+
+        }
+      }
+    })
 
 
 
+  })
 
-  },selection = 'single', filter = 'top',
 
-  extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-  options = list(
-    dom = 'Blfrtip',
-    buttons = list(
-      'copy',
-      'print',
-      list(
-        extend = 'collection',
-        buttons = c('csv', 'excel', 'pdf'),
-        text = 'Download'
-      ),
-      I('colvis')
+  # observeEvent(input$displayPlotBtn,{
+  #
+  #
+  #   #checkDisplay$data <- FALSE
+  #   checkDisplay$data2 <- TRUE
+  #
+  #   output$x5 <- renderPlotly({
+  #     if (is.null(checkDisplay$data2)) {
+  #
+  #
+  #
+  #         return()
+  #
+  #
+  #     }
+  #
+  #     else if (identical(checkDisplay$data2, FALSE)) {
+  #
+  #
+  #
+  #         return()
+  #
+  #     }
+  #
+  #     else {
+  #
+  #
+  #         x.axis <- c(-10 , -5 , - 2.5 , 0 , 2.5 , 5, 10 , 20 , 30 , 40)
+  #
+  #
+  #
+  #         qq.value <- as.character(input$input_tablebrowser_choices)
+  #
+  #         qq.dir <- file.path(results.dir(), qq.value)
+  #
+  #
+  #         if (qq.value == "" || qq.value == "NA"){
+  #           dataset <- data.table( data = "No data available.")
+  #         }
+  #         else{
+  #
+  #
+  #
+  #           #index_list() contains the index of the selected file ffrom the dropdown
+  #           f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
+  #
+  #           if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+  #
+  #             # Create a Progress object
+  #             progress <- shiny::Progress$new()
+  #
+  #             progress$set(message = "Reading data", value = 50)
+  #
+  #
+  #             filename <- file.path(qq.dir, 'differential_methylation_data',f)
+  #
+  #
+  #             filename= as.character(filename)
+  #
+  #             # fread function from the library data.table
+  #             comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+  #             #comp.file <- fread(filename,sep = ",")
+  #
+  #             comp.file <- as.data.frame(comp.file )
+  #
+  #
+  #
+  #
+  #             # use the key aesthetic/argument to help uniquely identify selected observations
+  #             key <- colnames(comp.file) <- c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val")
+  #             print(key)
+  #
+  #             p <- plot_ly(comp.file,
+  #                          type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
+  #                          x = ~mean.diff,               # more about scatter's "x": /r/reference/#scatter-x
+  #                          y = ~diffmeth.p.val,            # more about scatter's "y": /r/reference/#scatter-y
+  #                          name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
+  #                          marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
+  #                            color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
+  #                          )) %>%
+  #
+  #               # add_trace(x = ~mean.diff,                                         # scatter's "x": /r/reference/#scatter-x
+  #               #           y = ~diffmeth.p.val,  # scatter's "y": /r/reference/#scatter-y
+  #               #           mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
+  #               #           line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
+  #               #             color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
+  #               #             dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
+  #               #           )
+  #               # ) %>%
+  #
+  #               layout(                        # all of layout's properties: /r/reference/#layout
+  #                 title = "Plot", # layout's title: /r/reference/#layout-title
+  #                 xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
+  #                   title = "mean.diff",      # xaxis's title: /r/reference/#layout-xaxis-title
+  #                   showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
+  #                 yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
+  #                   title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
+  #               )
+  #
+  #             # Make sure it closes when we exit this reactive, even if there's an error
+  #             on.exit(progress$close())
+  #
+  #             p
+  #           }
+  #
+  #         }
+  #
+  #     }
+  #
+  #   })
+  #
+  #
+  #
+  # })
 
-    ),
-    br(),
-    keys = TRUE
 
-  ), escape = TRUE)
+  observeEvent(input$displaySimplePlotBtn,{
+
+
+
+    shinyjs::show(id = "id_tb_filterPlot")
+
+    output$simpleTBPlot <- renderPlot({
+
+
+        # use the key aesthetic/argument to help uniquely identify selected observations
+        filtered_data <- input$output.comparison.file_rows_all
+        print(length(filtered_data))
+
+        if (length(filtered_data) <  2)
+        {
+          p <- plot('no data available')
+
+          # qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+          # text(1,1,"No data available or no comparison file exist")
+
+        }
+        else{
+
+          qq.value <- as.character(input$input_tablebrowser_choices)
+
+          qq.dir <- file.path(results.dir(), qq.value)
+
+
+          if (qq.value == "" || qq.value == "NA"){
+            dataset <- data.table( data = "No data available.")
+          }
+          else{
+
+
+
+            #index_list() contains the index of the selected file ffrom the dropdown
+            f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
+
+            if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+              # Create a Progress object
+              progress <- shiny::Progress$new()
+
+              progress$set(message = "Making Plot", value = 50)
+
+
+              filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+              filename= as.character(filename)
+
+              # fread function from the library data.table
+              comp.file <- fread(filename,sep = ",", select = c( "id","mean.diff"))
+              #comp.file <- fread(filename,sep = ",")
+
+              comp.file <- as.data.frame(comp.file)
+
+
+              key <- colnames(comp.file) <- c("id","mean.diff")
+              print(key)
+
+              p <- qqnorm(comp.file[filtered_data, , drop = FALSE]$mean.diff   )
+
+              # Make sure it closes when we exit this reactive, even if there's an error
+              on.exit(progress$close())
+
+
+              p
+
+            }
+          }
+        }
+
+
+    })
+
+
+
+  })
 
 
   output$contents <- renderDataTable({
@@ -1502,6 +2006,8 @@ shinyServer(function(input, output, session) {
     keys = TRUE
 
   ), escape = TRUE)
+
+
 
   ############################################################################################
 
@@ -2144,6 +2650,96 @@ shinyServer(function(input, output, session) {
 
   })
 
+
+
+  output$plot <- renderPlotly({
+    # use the key aesthetic/argument to help uniquely identify selected observations
+    key <- row.names(mtcars)
+    if (identical(input$plotType, "ggplotly")) {
+      p <- ggplot(mtcars, aes(x = mpg, y = wt, colour = factor(vs), key = key)) +
+        geom_point()
+      ggplotly(p) %>% layout(dragmode = "select")
+    } else {
+      plot_ly(mtcars, x = ~mpg, y = ~wt, key = ~key) %>%
+        layout(dragmode = "select")
+    }
+  })
+
+  output$hover <- renderPrint({
+    d <- event_data("plotly_hover")
+    if (is.null(d)) "Hover events appear here (unhover to clear)" else d
+  })
+
+  output$click <- renderPrint({
+    d <- event_data("plotly_click")
+    if (is.null(d)) "Click events appear here (double-click to clear)" else d
+  })
+
+  output$brush <- renderPrint({
+    d <- event_data("plotly_selected")
+    if (is.null(d)) "Click and drag events (i.e., select/lasso) appear here (double-click to clear)" else d
+  })
+
+  output$zoom <- renderPrint({
+    d <- event_data("plotly_relayout")
+    if (is.null(d)) "Relayout (i.e., zoom) events appear here" else d
+  })
+
+
+
+  output$x1 <- DT::renderDataTable(cars, server = FALSE)
+
+  # highlight selected rows in the scatterplot
+  # output$x2 <- renderPlotly({
+  #   p <- plot_ly(cars, x = ~speed, y = ~dist, mode = "markers",
+  #                marker = list(opacity = 0.2, color = "black"))
+  #   s <- input$x1_rows_selected
+  #   if (length(s)) {
+  #     p <- p %>%
+  #       add_trace(data = cars[s, , drop = FALSE],
+  #                 x = ~speed, y = ~dist, mode = "markers",
+  #                 marker = list(opacity = 1, color = "black")) %>%
+  #       layout(showlegend = FALSE)
+  #   }
+  #   p
+  # })
+
+  output$x2 <- renderPlotly({
+    # use the key aesthetic/argument to help uniquely identify selected observations
+    key <- row.names(cars)
+    if (identical(input$plotType, "ggplotly")) {
+      p <- ggplot(cars, aes(x = speed, y = dist, colour = "black", key = key)) +
+        geom_point()
+      ggplotly(p) %>% layout(dragmode = "select")
+    } else {
+      p <- plot_ly(cars, x = ~speed, y = ~dist, key = ~key) %>%
+           layout(dragmode = "select")
+
+      s <- input$x1_rows_selected
+        if (length(s)) {
+          p <- p %>%
+            add_trace(data = cars[s, , drop = FALSE],
+                      x = ~speed, y = ~dist, mode = "markers",
+                      marker = list(opacity = 1, color = "black")) %>%
+            layout(showlegend = FALSE)
+        }
+      p
+    }
+  })
+
+
+  # server-side processing
+  mtcars2 <- mtcars[, 1:8]
+  output$x3 <- DT::renderDataTable(mtcars2, server = TRUE)
+
+  # print the selected indices
+  output$x4 <- renderPrint({
+    s <- input$x3_rows_selected
+    if (length(s)) {
+      cat('These rows were selected:\n\n')
+      cat(s, sep = ', ')
+    }
+  })
 
 
 
