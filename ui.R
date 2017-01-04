@@ -76,6 +76,7 @@ shinyUI(
            includeCSS("includes/styles.css"),
 
 
+
            #shinythemes::themeSelector(),
 
            # fluidRow(
@@ -261,7 +262,34 @@ shinyUI(
                                   br()
 
                              ),
-                             tabPanel("reports")
+                             tabPanel("RnBeads Reports",
+
+                                      HTML(paste('<div class="">',
+                                                 '<div class="container">',
+
+                                                 '<h2>Rnbeads Reports!</h2>',
+
+                                                 '<p class = "text-info">Select from the left menu to see the reports of other analysis!</p>',
+
+                                                 '<p class = "text-info">Click on the report button to see the RnBeads generated reports of the selected analysis!</p>',
+                                                 br(),
+
+                                                 actionButton("view_rnbeads_reports", label = "RnBeads Reports", class="btn btn-primary"),
+                                                 br(),
+                                                 uiOutput('rnbeadsReports'),
+
+                                                 '</div>',
+                                                 '</div>'
+
+
+
+
+                                                 )
+                                      ),
+
+                                      br()
+
+                             )
 
                   )#end of tabsetpanel
 
@@ -398,7 +426,7 @@ tabPanel("Integrative Visualization",
                                                               #                # "Exponential" = "exp")
                                                               #                ),
 
-                                                              actionButton('displayQQPlotBtn', 'Display'),
+                                                              actionButton('displayQQPlotBtn', 'Display',class="btn btn-primary btn-md"),
 
 
 
@@ -438,7 +466,7 @@ tabPanel("Integrative Visualization",
 
 
 
-                                                              actionButton('displayBtn', 'Display'),
+                                                              actionButton('displayBtn', 'Display',class="btn btn-primary btn-md"),
                                                               plotOutput('multicompqqplot'),
                                                               br()
 
@@ -547,11 +575,11 @@ tabPanel("Integrative Visualization",
 
                                 column(width = 8,
 
-                                       div(class="well",
+                                       div(class="",
 
                                          tags$p("The table below lists the data from the selected analysis."),
 
-                                         actionButton('displayTableBrowserBtn', 'Display'),
+                                         actionButton('displayTableBrowserBtn', 'Display',class="btn btn-primary btn-md"),
 
 
                                          br(),
@@ -561,7 +589,7 @@ tabPanel("Integrative Visualization",
                                          br(),
 
                                          div(id="id_tb_filterPlot_Btn",
-                                           actionButton('displayPlotBtn', 'Filtered Plot'),
+                                           actionButton('displayPlotBtn', 'Filter Plot', class="btn btn-primary btn-md"),
                                            div(id="id_tb_filterPlot",
 
                                                br(),

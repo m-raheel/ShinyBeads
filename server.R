@@ -678,6 +678,46 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
+  # displaying rnbeads reports index.html file content
+  ############################################################################################
+
+
+  observeEvent(input$view_rnbeads_reports,{
+
+    value.modules <- reactive({as.character(input$select_ia) })
+    wd_modules <- reactive({file.path(results.dir(), value.modules()) })
+
+    if ( file.exists( isolate({ paste(wd_modules(),'index.html',sep="/") }) ) ){
+
+
+      output$rnbeadsReports <- renderUI({
+
+         # data = includeHTML(paste(wd_modules(),'index.html',sep="/"))
+         #
+         # data = gsub('<link rel="stylesheet" href="configuration/report.css" type="text/css" />',"",data)
+         # print(data)
+         # HTML(data)
+        browseURL(paste(wd_modules(),'index.html',sep="/"))
+        HTML('<p></p>')
+      })
+
+
+
+    }
+    else{
+
+      output$rnbeadsReports <- renderUI({
+
+        HTML('<p>No index.html exists!</p>')
+      })
+
+    }
+
+  })
+
+
+  ############################################################################################
+
   # Displaying annotation file contents as well as in how many of the RnBeads analysis
   # annotation file is used
   ############################################################################################
@@ -1472,7 +1512,7 @@ shinyServer(function(input, output, session) {
                 # Create a Progress object
                 progress <- shiny::Progress$new()
 
-                progress$set(message = "Reading data", value = 50)
+                progress$set(message = "Reading data! please wait...", value = 50)
 
 
                 filename <- file.path(qq.dir, 'differential_methylation_data',f)
@@ -1650,7 +1690,7 @@ shinyServer(function(input, output, session) {
                 # Create a Progress object
                 progress <- shiny::Progress$new()
 
-                progress$set(message = "Making Plot", value = 50)
+                progress$set(message = "Making Plot! please wait...", value = 50)
 
 
                 filename <- file.path(qq.dir, 'differential_methylation_data',f)
@@ -1871,7 +1911,7 @@ shinyServer(function(input, output, session) {
               # Create a Progress object
               progress <- shiny::Progress$new()
 
-              progress$set(message = "Making Plot", value = 50)
+              progress$set(message = "Making Plot! please wait...", value = 50)
 
 
               filename <- file.path(qq.dir, 'differential_methylation_data',f)
@@ -1974,7 +2014,7 @@ shinyServer(function(input, output, session) {
         # Create a Progress object
         progress <- shiny::Progress$new()
 
-        progress$set(message = "Reading data", value = 50)
+        progress$set(message = "Reading data! please wait...", value = 50)
 
 
         filename <- file.path(qq.dir, 'differential_methylation_data',f)
@@ -2771,6 +2811,7 @@ shinyServer(function(input, output, session) {
       cat(s, sep = ', ')
     }
   })
+
 
 
 
