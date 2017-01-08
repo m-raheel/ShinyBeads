@@ -36,6 +36,8 @@ library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
 library(manhattanly)
+library(VennDiagram)
+library(limma)
 
 
 qqman.qq <- qqman::qq    #EDIT
@@ -47,6 +49,54 @@ qqman.qq <- qqman::qq    #EDIT
 # }
 
 
+readingPValues <- function(qq.value, qq.dir , comp.index , topRows) {
+
+  if (qq.value == "" || qq.value == "NA"){
+    dataset <- data.table( data = "No data available.")
+  }
+  else{
+
+
+
+    #index_list() contains the index of the selected file ffrom the dropdown
+    f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
+
+    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+
+      filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+      filename= as.character(filename)
+
+      nrows.value <- as.character(topRows)
+      if (nrows.value == 'ALL'){
+        nrows.value = -1
+      }
+
+      # fread function from the library data.table
+      comp.file <- fread(filename,sep = ",", nrows = nrows.value, select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+      #comp.file <- fread(filename,sep = ",")
+
+      comp.file <- as.data.frame(comp.file)
+
+
+
+
+      dataset <- data.table( comp.file)
+
+
+
+      dataset
+    }
+    else{
+      dataset <- data.table( data = "No data available.")
+    }
+  }
+
+  return(dataset)
+
+}
 
 options(shiny.maxRequestSize=30*1024^2)
 
@@ -232,6 +282,14 @@ shinyServer(function(input, output, session) {
 
   updateSelectInput(session, "input_tablebrowser_choices",
                     label = paste("Select analysis folder"),
+                    choices = list.files(path = selectedDir))
+
+  updateSelectInput(session, "input_topscorer_choices_1",
+                    label = paste("Analysis 1"),
+                    choices = list.files(path = selectedDir))
+
+  updateSelectInput(session, "input_topscorer_choices_2",
+                    label = paste("Analysis 2"),
                     choices = list.files(path = selectedDir))
 
 
@@ -1333,6 +1391,547 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
+  # qqplots 2 of diff methylation p- values in which two comarprisons qqplots is displayed
+  ############################################################################################
+
+  v <- reactiveValues(data = TRUE)
+
+  # for Repository 1
+  observeEvent(input$input_dmcomp_choices_1,{
+
+    v$data <- FALSE
+
+    input_choices <- as.character(input$input_dmcomp_choices_1)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+    #
+    # input_c = list.files(path = qq.dmd.dir)
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    if (input_choices != "NA"){
+
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+        dates
+        comp_names <- list()
+        comp_names_counter <- 1
+        for (i in 1:length(dates)) {
+
+          comp_names[comp_names_counter] <- dates[i]
+          comp_names_counter = comp_names_counter + 1
+
+
+        }
+
+        choices.list <- comp_names
+      }
+      else{
+        choices.list <- 'NA'
+      }
+    }
+    else{
+      choices.list <- 'NA'
+
+    }
+
+
+    updateSelectInput(session, "input_dmcomp_files_1",
+                      label = paste("Comparison 1", ""),
+                      choices = choices.list)
+
+
+
+
+  })
+
+
+  # returns the index of selected comparison file in QQplot 1
+  index_list_1 <- eventReactive(input$input_dmcomp_files_1, {
+
+
+
+    input_choices <- as.character(input$input_dmcomp_choices_1)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    choice.index <- '1'
+
+    if (input_choices != "NA"){
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+
+
+        for (i in 1:length(dates)) {
+          if (identical(input$input_dmcomp_files_1, dates[i])){
+
+            choice.index <- as.character(i)
+            break
+
+
+          }
+
+
+        }
+
+      }
+      else{
+        choice.index <- '1'
+
+      }
+    }
+    else{
+      choice.index <- '1'
+
+
+    }
+
+    return(choice.index)
+  })
+
+
+
+  list.pvalues_1 <- reactive({
+
+
+
+    qq.value <- as.character(input$input_dmcomp_choices_1)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+    #qq.value <- as.character(input$input_dmcomp_files_1)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      x <- list()
+      x
+    }
+    else{
+      #fucntion from the RnBeadsInterface package
+
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Makind QQ Plot", value = 50)
+
+        x <- comparison_plot(qq.dir , f)
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        x
+      }
+      else{
+        x <- list()
+        x
+      }
+    }
+
+
+  })
+
+  ################################################
+
+  # for Repository 2
+  observeEvent(input$input_dmcomp_choices_2,{
+    v$data <- FALSE
+
+    input_choices <- as.character(input$input_dmcomp_choices_2)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
+    #
+    # input_c = list.files(path = qq.dmd.dir)
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    if (input_choices != "NA"){
+
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+        dates
+        comp_names <- list()
+        comp_names_counter <- 1
+        for (i in 1:length(dates)) {
+
+          comp_names[comp_names_counter] <- dates[i]
+          comp_names_counter = comp_names_counter + 1
+
+
+        }
+
+        choices.list <- comp_names
+      }
+      else{
+        choices.list <- 'NA'
+      }
+    }
+    else{
+      choices.list <- 'NA'
+
+    }
+
+
+    updateSelectInput(session, "input_dmcomp_files_2",
+                      label = paste("Comparison 2", ""),
+                      choices = choices.list)
+
+
+
+
+  })
+
+
+  # returns the index of selected comparison file in QQplot 1
+  index_list_2 <- eventReactive(input$input_dmcomp_files_2, {
+
+
+
+    input_choices <- as.character(input$input_dmcomp_choices_2)
+
+    qq.dir <- file.path(results.dir(), input_choices)
+
+
+    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+
+    choice.index <- '1'
+
+    if (input_choices != "NA"){
+
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
+
+
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+
+
+        for (i in 1:length(dates)) {
+
+          #if statement is not vectorized. For vectorized if statements you should use ifelse
+          #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
+
+          if (identical(input$input_dmcomp_files_2, dates[i])){
+
+
+            choice.index <- as.character(i)
+
+
+
+
+            break
+
+
+          }
+
+
+        }
+
+      }
+      else{
+        choice.index <- '1'
+
+      }
+    }
+    else{
+      choice.index <- '1'
+
+
+    }
+
+    return(choice.index)
+  })
+
+  list.pvalues_2 <- reactive({
+
+
+
+    qq.value <- as.character(input$input_dmcomp_choices_2)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+    #qq.value <- as.character(input$input_dmcomp_files_2)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      x <- list()
+      x
+    }
+    else{
+      #fucntion from the RnBeadsInterface package
+
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Makind QQ Plot", value = 50)
+
+        x <- comparison_plot(qq.dir , f)
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        x
+      }
+      else{
+        x <- list()
+        x
+      }
+    }
+
+
+  })
+
+
+
+
+
+  observeEvent(input$displayBtn, {
+
+    v$data <- TRUE
+
+    print (v$data)
+
+
+
+
+    output$multicompqqplot <- renderPlot({
+
+      # dist <- switch(input$dist,
+      #                unif = runif,
+      #                norm = rnorm,
+      #
+      #                # lnorm = rlnorm,
+      #                # exp = rexp,
+      #                rnorm)
+
+      if (is.null(v$data)) {
+        print (v$data)
+        return()
+      }
+
+      else if (identical(v$data, FALSE)) {
+        print (v$data)
+        return()
+      }
+
+      else {
+
+
+
+
+        if(length(list.pvalues_1()) == 0) {
+
+          # print error/ warning message
+
+
+          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+          text(1,1,"No data available or no comparison file exist from repository 1")
+
+        }
+        else if (length(list.pvalues_2()) == 0){
+          # print error/ warning message
+          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+          text(1,1,"No data available or no comparison file exist from repository 2")
+        }
+        else{
+
+          # Create a Progress object
+          progress <- shiny::Progress$new()
+
+          progress$set(message = "Makind QQ Plot", value = 50)
+
+          x<- list.pvalues_1()
+          y<- list.pvalues_2()
+
+          #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
+          my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
+          q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
+
+          # Make sure it closes when we exit this reactive, even if there's an error
+          on.exit(progress$close())
+
+          q
+
+        }
+
+
+      }
+
+    }, height = 400, width = 500)
+
+
+
+  })
+
+  ###################################################################################################
+
+  # QQ Plot 3  comparison among different files of same RnBeads Analysis
+  ###################################################################################################
+
+  observeEvent(input$insertBtn, {
+
+    qq.value <- as.character(input$input_dmcomp_choices)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+
+    vec <- as.list(input$check_comp)
+
+    check.choices.list <- list()
+
+    if (length(vec) == 0){
+      x <- list()
+      output$compqqplot3 <- renderPlot({
+
+
+
+        if(length(check.choices.list) == 0) {
+
+          # print error/ warning message
+          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+          text(1,1,"No data available or no comparison file exist")
+
+        }
+        else{
+          qqnorm(x)
+        }
+
+
+
+
+      }, height = 400, width = 500)
+    }
+    else{
+
+
+
+      for (i in 1:length(vec)) {
+
+        #fucntion from the RnBeadsInterface package
+
+        f = "diffMethTable_site_cmp1.csv"
+
+        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+          check.choices.list[i] <- list(comparison_plot(qq.dir , f))
+        }
+      }
+
+
+
+      output$compqqplot3 <- renderPlot({
+
+
+
+        print(as.numeric(length(check.choices.list)) == 1)
+
+        if(length(check.choices.list) == 0) {
+
+          # print error/ warning message
+          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+          text(1,1,"No data available or no comparison file exist")
+
+        }
+        else if(as.numeric(length(check.choices.list)) == 1) {
+
+          y<- unlist(check.choices.list[1])
+
+
+          qqnorm(y,main="Normal Q-Q plot", xlab="Theoretical Distribution", ylab="diffmeth.p.val")
+
+
+
+        }
+        else{
+          x<- unlist(check.choices.list[1])
+          y<- unlist(check.choices.list[2])
+
+          qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val", ylab="diffmeth.p.val")
+
+        }
+
+
+
+
+      }, height = 400, width = 500)
+
+
+    }
+
+
+  })
+
+
+
+
+
+
+
+
+
+  ############################################################################################
+
   # Table browser filling up the comparisons in the dropdown
   ############################################################################################
 
@@ -1435,7 +2034,7 @@ shinyServer(function(input, output, session) {
 
         for (i in 1:length(dates)) {
 
-          if (identical(input$input_dmcomp_files, dates[i])){
+          if (identical(input$input_tablebrowser_files, dates[i])){
 
             choice.index <- as.character(i)
 
@@ -1520,8 +2119,14 @@ shinyServer(function(input, output, session) {
 
                 filename= as.character(filename)
 
+                nrows.value <- as.character(input$input_tablebrowser_readtop)
+
+                if (nrows.value == 'ALL'){
+                  nrows.value = -1
+                }
+
                 # fread function from the library data.table
-                comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+                comp.file <- fread(filename,sep = ",", nrows = nrows.value ,select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
                 #comp.file <- fread(filename,sep = ",")
 
                 comp.file <- as.data.frame(comp.file)
@@ -2082,23 +2687,20 @@ shinyServer(function(input, output, session) {
 
   ############################################################################################
 
-  # qqplots 2 of diff methylation p- values in which two comarprisons qqplots is displayed
+  # Top scorer implementation of the input select comparisons
   ############################################################################################
 
-  v <- reactiveValues(data = TRUE)
+  ts.comp1.visible <- reactiveValues(data = TRUE)
 
   # for Repository 1
-  observeEvent(input$input_dmcomp_choices_1,{
+  observeEvent(input$input_topscorer_choices_1,{
 
-    v$data <- FALSE
+    ts.comp1.visible$data <- FALSE
 
-    input_choices <- as.character(input$input_dmcomp_choices_1)
+    input_choices <- as.character(input$input_topscorer_choices_1)
 
     qq.dir <- file.path(results.dir(), input_choices)
 
-    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
-    #
-    # input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
@@ -2142,7 +2744,7 @@ shinyServer(function(input, output, session) {
     }
 
 
-    updateSelectInput(session, "input_dmcomp_files_1",
+    updateSelectInput(session, "input_topscorer_files_1",
                       label = paste("Comparison 1", ""),
                       choices = choices.list)
 
@@ -2152,12 +2754,12 @@ shinyServer(function(input, output, session) {
   })
 
 
-  # returns the index of selected comparison file in QQplot 1
-  index_list_1 <- eventReactive(input$input_dmcomp_files_1, {
+  # returns the index of selected comparison file in top scorer 1
+  ts.comp.index_1 <- eventReactive(input$input_topscorer_files_1, {
 
 
 
-    input_choices <- as.character(input$input_dmcomp_choices_1)
+    input_choices <- as.character(input$input_topscorer_choices_1)
 
     qq.dir <- file.path(results.dir(), input_choices)
 
@@ -2184,7 +2786,7 @@ shinyServer(function(input, output, session) {
 
 
         for (i in 1:length(dates)) {
-          if (identical(input$input_dmcomp_files_1, dates[i])){
+          if (identical(input$input_topscorer_files_1, dates[i])){
 
             choice.index <- as.character(i)
             break
@@ -2210,65 +2812,19 @@ shinyServer(function(input, output, session) {
     return(choice.index)
   })
 
-
-
-  list.pvalues_1 <- reactive({
-
-
-
-    qq.value <- as.character(input$input_dmcomp_choices_1)
-
-    qq.dir <- file.path(results.dir(), qq.value)
-
-    #qq.value <- as.character(input$input_dmcomp_files_1)
-
-
-    if (qq.value == "" || qq.value == "NA"){
-      x <- list()
-      x
-    }
-    else{
-      #fucntion from the RnBeadsInterface package
-
-      #index_list() contains the index of the selected file ffrom the dropdown
-      f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-        # Create a Progress object
-        progress <- shiny::Progress$new()
-
-        progress$set(message = "Makind QQ Plot", value = 50)
-
-        x <- comparison_plot(qq.dir , f)
-
-        # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
-
-        x
-      }
-      else{
-        x <- list()
-        x
-      }
-    }
-
-
-  })
-
   ################################################
 
   # for Repository 2
-  observeEvent(input$input_dmcomp_choices_2,{
-    v$data <- FALSE
 
-    input_choices <- as.character(input$input_dmcomp_choices_2)
+  ts.comp2.visible <- reactiveValues(data = TRUE)
+
+  observeEvent(input$input_topscorer_choices_2,{
+    ts.comp2.visible$data <- FALSE
+
+    input_choices <- as.character(input$input_topscorer_choices_2)
 
     qq.dir <- file.path(results.dir(), input_choices)
 
-    # qq.dmd.dir <- file.path(qq.dir, 'differential_methylation_data')
-    #
-    # input_c = list.files(path = qq.dmd.dir)
 
     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
 
@@ -2312,7 +2868,7 @@ shinyServer(function(input, output, session) {
     }
 
 
-    updateSelectInput(session, "input_dmcomp_files_2",
+    updateSelectInput(session, "input_topscorer_files_2",
                       label = paste("Comparison 2", ""),
                       choices = choices.list)
 
@@ -2322,12 +2878,12 @@ shinyServer(function(input, output, session) {
   })
 
 
-  # returns the index of selected comparison file in QQplot 1
-  index_list_2 <- eventReactive(input$input_dmcomp_files_2, {
+  # returns the index of selected comparison file 2
+  ts.comp.index_2 <- eventReactive(input$input_topscorer_files_2, {
 
 
 
-    input_choices <- as.character(input$input_dmcomp_choices_2)
+    input_choices <- as.character(input$input_topscorer_choices_2)
 
     qq.dir <- file.path(results.dir(), input_choices)
 
@@ -2358,7 +2914,7 @@ shinyServer(function(input, output, session) {
           #if statement is not vectorized. For vectorized if statements you should use ifelse
           #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
 
-          if (identical(input$input_dmcomp_files_2, dates[i])){
+          if (identical(input$input_topscorer_files_2, dates[i])){
 
 
             choice.index <- as.character(i)
@@ -2389,80 +2945,23 @@ shinyServer(function(input, output, session) {
     return(choice.index)
   })
 
-  list.pvalues_2 <- reactive({
+  # Display button 1 of comparisons in the Top scorer tab
+
+  observeEvent(input$displayTopScorerBtn,{
 
 
+    ts.comp1.visible$data <- TRUE
 
-    qq.value <- as.character(input$input_dmcomp_choices_2)
-
-    qq.dir <- file.path(results.dir(), qq.value)
-
-    #qq.value <- as.character(input$input_dmcomp_files_2)
+    output$output.topscorer.comparison_1 <- renderDataTable({
 
 
-    if (qq.value == "" || qq.value == "NA"){
-      x <- list()
-      x
-    }
-    else{
-      #fucntion from the RnBeadsInterface package
-
-      #index_list() contains the index of the selected file ffrom the dropdown
-      f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-        # Create a Progress object
-        progress <- shiny::Progress$new()
-
-        progress$set(message = "Makind QQ Plot", value = 50)
-
-        x <- comparison_plot(qq.dir , f)
-
-        # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
-
-        x
-      }
-      else{
-        x <- list()
-        x
-      }
-    }
-
-
-  })
-
-
-
-
-
-  observeEvent(input$displayBtn, {
-
-    v$data <- TRUE
-
-    print (v$data)
-
-
-
-
-    output$multicompqqplot <- renderPlot({
-
-      # dist <- switch(input$dist,
-      #                unif = runif,
-      #                norm = rnorm,
-      #
-      #                # lnorm = rlnorm,
-      #                # exp = rexp,
-      #                rnorm)
-
-      if (is.null(v$data)) {
-        print (v$data)
+      if (is.null(ts.comp1.visible$data)) {
+        print (ts.comp1.visible$data)
         return()
       }
 
-      else if (identical(v$data, FALSE)) {
-        print (v$data)
+      else if (identical(ts.comp1.visible$data, FALSE)) {
+        print (ts.comp1.visible$data)
         return()
       }
 
@@ -2471,147 +2970,376 @@ shinyServer(function(input, output, session) {
 
 
 
-        if(length(list.pvalues_1()) == 0) {
+        qq.value <- as.character(input$input_topscorer_choices_1)
 
-          # print error/ warning message
+        qq.dir <- file.path(results.dir(), qq.value)
 
 
-          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          text(1,1,"No data available or no comparison file exist from repository 1")
-
-        }
-        else if (length(list.pvalues_2()) == 0){
-          # print error/ warning message
-          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          text(1,1,"No data available or no comparison file exist from repository 2")
+        if (qq.value == "" || qq.value == "NA"){
+          dataset <- data.table( data = "No data available.")
         }
         else{
 
-          # Create a Progress object
-          progress <- shiny::Progress$new()
 
-          progress$set(message = "Makind QQ Plot", value = 50)
 
-          x<- list.pvalues_1()
-          y<- list.pvalues_2()
+          #index_list() contains the index of the selected file ffrom the dropdown
+          f = paste("diffMethTable_site_cmp",ts.comp.index_1(), ".csv",sep = '')
 
-          #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
-          my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
-          q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
+          if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
-          # Make sure it closes when we exit this reactive, even if there's an error
-          on.exit(progress$close())
+            # Create a Progress object
+            progress <- shiny::Progress$new()
 
-          q
+            progress$set(message = "Reading data! please wait...", value = 50)
 
+
+            filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+            filename= as.character(filename)
+
+            nrows.value <- as.character(input$input_topscorer_readtop1)
+
+            if (nrows.value == 'ALL'){
+              nrows.value = -1
+            }
+
+            # fread function from the library data.table
+            comp.file <- fread(filename,sep = ",",nrows = nrows.value, select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+            #comp.file <- fread(filename,sep = ",")
+
+            comp.file <- as.data.frame(comp.file)
+
+
+
+
+            dataset <- data.table( comp.file)
+
+            # Make sure it closes when we exit this reactive, even if there's an error
+            on.exit(progress$close())
+
+            dataset
+          }
+          else{
+            dataset <- data.table( data = "No data available.")
+          }
         }
 
+        dataset
 
       }
 
-    }, height = 400, width = 500)
+    },selection = 'single', filter = 'top',
+
+    extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+    options = list(
+      scrollX = TRUE,
+      scrollY = TRUE,
+      dom = 'Blfrtip',
+      buttons = list(
+        'copy',
+        'print',
+        list(
+          extend = 'collection',
+          buttons = c('csv', 'excel', 'pdf'),
+          text = 'Download'
+        ),
+        I('colvis')
+
+      ),
+      br(),
+      keys = TRUE
+
+    ), escape = TRUE)
+
+
+  })
+
+  # Display button 2 of comparisons in the Top scorer tab
+
+  observeEvent(input$displayTopScorerBtn2,{
+
+    ts.comp2.visible$data <- TRUE
+
+    output$output.topscorer.comparison_2 <- renderDataTable({
+
+
+      if (is.null(ts.comp2.visible$data)) {
+        print (ts.comp2.visible$data)
+        return()
+      }
+
+      else if (identical(ts.comp2.visible$data, FALSE)) {
+        print (ts.comp2.visible$data)
+        return()
+      }
+
+      else {
+
+
+
+
+        qq.value <- as.character(input$input_topscorer_choices_2)
+
+        qq.dir <- file.path(results.dir(), qq.value)
+
+
+        if (qq.value == "" || qq.value == "NA"){
+          dataset <- data.table( data = "No data available.")
+        }
+        else{
+
+
+
+          #index_list() contains the index of the selected file ffrom the dropdown
+          f = paste("diffMethTable_site_cmp",ts.comp.index_2(), ".csv",sep = '')
+
+          if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+            # Create a Progress object
+            progress <- shiny::Progress$new()
+
+            progress$set(message = "Reading data! please wait...", value = 50)
+
+
+            filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+            filename= as.character(filename)
+
+            nrows.value <- as.character(input$input_topscorer_readtop2)
+            if (nrows.value == 'ALL'){
+              nrows.value = -1
+            }
+
+            # fread function from the library data.table
+            comp.file <- fread(filename,sep = ",", nrows = nrows.value, select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+            #comp.file <- fread(filename,sep = ",")
+
+            comp.file <- as.data.frame(comp.file)
+
+
+
+
+            dataset <- data.table( comp.file)
+
+            # Make sure it closes when we exit this reactive, even if there's an error
+            on.exit(progress$close())
+
+            dataset
+          }
+          else{
+            dataset <- data.table( data = "No data available.")
+          }
+        }
+
+        dataset
+
+      }
+
+    },selection = 'single', filter = 'top',
+
+    extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+    options = list(
+      scrollX = TRUE,
+      scrollY = TRUE,
+      dom = 'Blfrtip',
+      buttons = list(
+        'copy',
+        'print',
+        list(
+          extend = 'collection',
+          buttons = c('csv', 'excel', 'pdf'),
+          text = 'Download'
+        ),
+        I('colvis')
+
+      ),
+      br(),
+      keys = TRUE
+
+    ), escape = TRUE)
 
 
 
   })
 
-  ###################################################################################################
+  # Display button 2 of comparisons in the Top scorer tab
 
-  # QQ Plot 3  comparison among different files of same RnBeads Analysis
-  ###################################################################################################
-
-  observeEvent(input$insertBtn, {
-
-    qq.value <- as.character(input$input_dmcomp_choices)
-
-    qq.dir <- file.path(results.dir(), qq.value)
-
-
-    vec <- as.list(input$check_comp)
-
-    check.choices.list <- list()
-
-    if (length(vec) == 0){
-      x <- list()
-      output$compqqplot3 <- renderPlot({
+  observeEvent(input$displayTopScorerMergeBtn,{
 
 
 
-        if(length(check.choices.list) == 0) {
-
-          # print error/ warning message
-          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          text(1,1,"No data available or no comparison file exist")
-
-        }
-        else{
-          qqnorm(x)
-        }
+    output$output.topscorer.mergedComparison <- renderDataTable({
 
 
+      if (is.null(ts.comp1.visible$data) && is.null(ts.comp2.visible$data)) {
 
-
-      }, height = 400, width = 500)
-    }
-    else{
-
-
-
-      for (i in 1:length(vec)) {
-
-        #fucntion from the RnBeadsInterface package
-
-        f = "diffMethTable_site_cmp1.csv"
-
-        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-          check.choices.list[i] <- list(comparison_plot(qq.dir , f))
-        }
+        return()
       }
 
+      else if (identical(ts.comp1.visible$data, FALSE) && identical(ts.comp2.visible$data, FALSE)) {
 
+        return()
+      }
 
-      output$compqqplot3 <- renderPlot({
-
-
-
-        print(as.numeric(length(check.choices.list)) == 1)
-
-        if(length(check.choices.list) == 0) {
-
-          # print error/ warning message
-          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          text(1,1,"No data available or no comparison file exist")
-
-        }
-        else if(as.numeric(length(check.choices.list)) == 1) {
-
-          y<- unlist(check.choices.list[1])
-
-
-          qqnorm(y,main="Normal Q-Q plot", xlab="Theoretical Distribution", ylab="diffmeth.p.val")
+      else {
 
 
 
-        }
-        else{
-          x<- unlist(check.choices.list[1])
-          y<- unlist(check.choices.list[2])
+        # Create a Progress object
+        progress <- shiny::Progress$new()
 
-          qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val", ylab="diffmeth.p.val")
-
-        }
+        progress$set(message = "Reading data! please wait...", value = 50)
 
 
+        qq.value1 <- as.character(input$input_topscorer_choices_1)
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(input$input_topscorer_readtop1)
 
 
-      }, height = 400, width = 500)
+
+        dataset1 <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
 
 
-    }
+
+        qq.value2 <- as.character(input$input_topscorer_choices_2)
+        qq.dir2 <- file.path(results.dir(), qq.value2)
+        nrows.value2 <- as.character(input$input_topscorer_readtop2)
+
+
+
+        dataset2 <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
+
+
+
+        dataset <- merge(dataset1, dataset2 , by.x="cgid", by.y="cgid")
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+
+
+
+
+        dataset
+
+      }
+
+    },selection = 'single', filter = 'top',
+
+    extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+    options = list(
+      scrollY = TRUE,
+      dom = 'Blfrtip',
+      buttons = list(
+        'copy',
+        'print',
+        list(
+          extend = 'collection',
+          buttons = c('csv', 'excel', 'pdf'),
+          text = 'Download'
+        ),
+        I('colvis')
+
+      ),
+      br(),
+      keys = TRUE
+
+    ), escape = TRUE)
+
 
 
   })
+
+  observeEvent(input$displayTopScorerVennDiagramBtn,{
+
+
+
+    output$output.ts.venn.plot <- renderPlot({
+
+        ts.comp1.values <- input$output.topscorer.comparison_1_rows_all
+        ts.comp2.values <- input$output.topscorer.comparison_2_rows_all
+
+
+        qq.value1 <- as.character(input$input_topscorer_choices_1)
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(input$input_topscorer_readtop1)
+
+
+
+        dataset1 <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
+
+
+        qq.value2 <- as.character(input$input_topscorer_choices_2)
+        qq.dir2 <- file.path(results.dir(), qq.value2)
+        nrows.value2 <- as.character(input$input_topscorer_readtop2)
+
+
+
+        dataset2 <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
+
+
+
+
+        hw <- substring(dataset1$cgid, 3)
+        hm <- substring(dataset2$cgid, 3)
+
+        hw <- (hw >= 0)
+        hm <- (hm >= 0)
+
+
+        c3 <- cbind(hw, hm)
+        #c3 <- vennCounts(c3)
+        a1 <- nrow(subset(c3, hw == 1))
+        a2 <- nrow(subset(c3, hm == 1))
+        ca <- nrow(subset(c3, hw == 1 & hm == 1 ))
+
+
+        print(a1)
+        print(a2)
+        print(ca)
+
+        #draw.single.venn(area = a1, category = "Dog People")
+
+        draw.pairwise.venn(area1 = a1 , area2 = a2 , cross.area = ca,
+                         category = c("Analysis 1", "Analysis 2"),
+                         fill = c("skyblue", "pink1"))
+
+        # draw.triple.venn(area1 = nrow(subset(hsb2, hw == 1)), area2 = nrow(subset(hsb2, hm == 1)), area3 = nrow(subset(hsb2, hr == 1)),
+        #                  n12 = nrow(subset(hsb2, hw == 1 & hm == 1 )), n23 = nrow(subset(hsb2, hm == 1 & hr == 1)), n13 = nrow(subset(hsb2, hw == 1 & hr == 1)),
+        #                  n123 = nrow(subset(hsb2, hw == 1 & hm == 1 & hr == 1)), category = c("Dog People", "Cat People", "Lizard People"), lty = "blank",
+        #                  fill = c("skyblue", "pink1", "mediumorchid"))
+    })
+
+
+
+  })
+
+  #end of top scorer tab
+  ####################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   ####################################################################################
   # output for the about section

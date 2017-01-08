@@ -30,6 +30,7 @@ library(plotly) #interactive graphics with D3
 
 
 choices = "NA"
+topRowsChoices = c('100', '500' , '1000', '10000', '50000' , 'ALL')
 
 
 check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPLETED Preprocessing', 'COMPLETED Tracks and Tables','COMPLETED Covariate Inference','COMPLETED Exploratory Analysis','COMPLETED Differential Methylation')
@@ -79,15 +80,7 @@ shinyUI(
 
            #shinythemes::themeSelector(),
 
-           # fluidRow(
-           #   column(width = 1,
-           #          tags$a(href = '.', tags$img(src = 'RnBeads.png'))
-           #
-           #   ),
-           #   column(width = 11,
-           #          h2("Interface")
-           #   )
-           # ),
+
 
            HTML(paste('<div class="jumbotron">',
                         '<div class="container">',
@@ -500,10 +493,7 @@ tabPanel("Integrative Visualization",
 
                      tabPanel("Table Browser",
 
-
-                              br(),
-
-                              tags$h3(style="color:black;","Table Browser"),
+                              tags$h2(style="color:black;","Table Browser"),
                               tags$div(id = "tb_div_info", checked=NA,
 
                                        tags$p(paste("Table Browser is useful for filtering and sorting of the differential methylation comparison data, Select the RnBeads analysis and then you can filter the table with all the columns and you can download the results.",
@@ -522,7 +512,8 @@ tabPanel("Integrative Visualization",
 
                                        div(class="well",
                                          selectInput("input_tablebrowser_choices", "Select analysis folder:", choices),
-                                         selectInput("input_tablebrowser_files", "comparisons:", "")
+                                         selectInput("input_tablebrowser_files", "Select comparison:", ""),
+                                         selectInput("input_tablebrowser_readtop", "Read top n rows:", topRowsChoices)
 
                                        ),
 
@@ -579,11 +570,13 @@ tabPanel("Integrative Visualization",
 
                                          tags$p("The table below lists the data from the selected analysis."),
 
+
                                          actionButton('displayTableBrowserBtn', 'Display',class="btn btn-primary btn-md"),
 
 
                                          br(),
                                          br(),
+
                                          dataTableOutput('output.comparison.file'),
                                          br(),
                                          br(),
@@ -622,57 +615,173 @@ tabPanel("Integrative Visualization",
 
                      ), # end of tab set panel of table browser
 
-                     tabPanel("Top-scorer list stability",
-                              br(),
+                     tabPanel("Top-scorer E.A.",
+
+                              tags$h2(style="color:black;","Top-scorer"),
+                              tags$div(id = "ts_div_info", checked=NA,
+
+                                       tags$p(paste("Top-scorer is useful for filtering and sorting of the differential methylation comparison data, Select the RnBeads analysis and then you can filter the table with all the columns and you can download the results.",
+                                                    "Also you can upload external files having at least a target column whoes values are like cgxxxxxxx and the table will get filtered."
+                                       )
+                                       )# end p tag
+
+                              ),
+
+
+
+
                               fluidRow(
-                                column(width = 12,
-                                       # sidebarPanel(
-                                       #
-                                       #
-                                       #
-                                       #
-                                       # ),
-                                       #
-                                       #
-                                       #
-                                       #
-                                       # mainPanel(
+                                column(width = 6,
+                                       selectInput("input_topscorer_choices_1", "Analysis 1:", choices),
 
 
-                                         #plotlyOutput("p_plotly"),
-
-                                         radioButtons("plotType", "Plot Type:", choices = c("ggplotly", "plotly")),
-                                         plotlyOutput("plot"),
-                                         verbatimTextOutput("hover"),
-                                         verbatimTextOutput("click"),
-                                         verbatimTextOutput("brush"),
-                                         verbatimTextOutput("zoom"),
-
-                                         br(),
+                                       selectInput("input_topscorer_files_1", "Comaprisons 1:", ""),
+                                       selectInput("input_topscorer_readtop1", "Read top n rows:", topRowsChoices)
 
 
-                                         title = 'Select Table Rows',
+                                ),
+                                column(width = 6,
+                                       selectInput("input_topscorer_choices_2", "Analysis 2:", choices),
 
-                                         h1('A Client-side Table'),
+                                       selectInput("input_topscorer_files_2", "Comparisons 2:", ""),
+                                       selectInput("input_topscorer_readtop2", "Read top n rows:", topRowsChoices)
 
-                                         fluidRow(
-                                           column(6, DT::dataTableOutput('x1')),
-                                           column(6, plotlyOutput('x2', height = 500))
-                                         ),
 
-                                         hr(),
-
-                                         h1('A Server-side Table'),
-
-                                         fluidRow(
-                                           column(9, DT::dataTableOutput('x3')),
-                                           column(3, verbatimTextOutput('x4'))
-                                         )
+                                )
+                              ),
 
 
 
 
-                                       #)# end  of  main panel
+                              fluidRow(
+
+
+
+                                column(width = 6,
+
+                                       actionButton('displayTopScorerBtn', 'Display',class="btn btn-primary btn-md"),
+                                       br(),
+                                       br(),
+                                       div(class="well",
+
+
+                                           dataTableOutput('output.topscorer.comparison_1'),
+                                           br()
+
+                                       ),
+                                       br()
+
+
+                                ),# end of column
+
+                                column(width = 6,
+
+                                       actionButton('displayTopScorerBtn2', 'Display',class="btn btn-primary btn-md"),
+                                       br(),
+                                       br(),
+
+                                       div(class="well",
+
+
+                                           dataTableOutput('output.topscorer.comparison_2'),
+                                           br()
+
+                                       ),
+                                       br()
+
+
+                                )# end of column
+
+
+                              ),# end  of  fluid row
+
+
+
+                              # showing merge tabe after merge button is pressed
+                              fluidRow(
+
+                                column(width = 6,
+
+
+
+                                       actionButton('displayTopScorerMergeBtn', 'Merge',class="btn btn-primary btn-md"),
+                                       br(),
+                                       br(),
+
+                                       div(class="well",
+
+
+                                           dataTableOutput('output.topscorer.mergedComparison'),
+                                           br()
+
+                                       ),
+                                       br()
+
+
+                                ),# end of column
+                                column(width = 6,
+
+
+
+                                       actionButton('displayTopScorerVennDiagramBtn', 'Display Overlap',class="btn btn-primary btn-md"),
+                                       br(),
+                                       br(),
+
+                                       div(class="",
+
+
+                                           plotOutput('output.ts.venn.plot'),
+                                           br()
+
+                                       ),
+                                       br()
+
+
+                                )# end of column
+
+
+                              ),# end  of  fluid row
+
+
+                              fluidRow(
+                                column(width = 12
+
+
+
+                                         # #plotlyOutput("p_plotly"),
+                                         #
+                                         # radioButtons("plotType", "Plot Type:", choices = c("ggplotly", "plotly")),
+                                         # plotlyOutput("plot"),
+                                         # verbatimTextOutput("hover"),
+                                         # verbatimTextOutput("click"),
+                                         # verbatimTextOutput("brush"),
+                                         # verbatimTextOutput("zoom"),
+                                         #
+                                         # br(),
+                                         #
+                                         #
+                                         # title = 'Select Table Rows',
+                                         #
+                                         # h1('A Client-side Table'),
+                                         #
+                                         # fluidRow(
+                                         #   column(6, DT::dataTableOutput('x1')),
+                                         #   column(6, plotlyOutput('x2', height = 500))
+                                         # ),
+                                         #
+                                         # hr(),
+                                         #
+                                         # h1('A Server-side Table'),
+                                         #
+                                         # fluidRow(
+                                         #   column(9, DT::dataTableOutput('x3')),
+                                         #   column(3, verbatimTextOutput('x4'))
+                                         # )
+
+
+
+
+
 
                                 ))# end  of  fluid row
 
