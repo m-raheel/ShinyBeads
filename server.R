@@ -49,6 +49,35 @@ qqman.qq <- qqman::qq    #EDIT
 #   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
 # }
 
+plotVennDiagram <- function(a, a1,a2,ca, a3, a12, a23, a13, a123) {
+
+  if (length(a) == 1) {
+    out <- draw.single.venn(area = a1, category = "Analysis 1")
+  }
+  if (length(a) == 2) {
+    out <- draw.pairwise.venn(area1 = a1 , area2 = a2 , cross.area = ca,
+                              category = c("Analysis 1", "Analysis 2"), lty = rep("blank",2),
+                              fill = c("light blue", "pink"), alpha = rep(0.5, 2), cat.pos = c(0,0),
+                              cat.dist = rep(0.025, 2), scaled = FALSE)
+  }
+  if (length(a) == 3) {
+    out <- draw.triple.venn(area1 = a1, area2 = a2, area3 = a3,
+                       n12 = a12, n23 = a23, n13 = a13,
+                       n123 = a123, category = c("Analysis 1", "Analysis 2", "Analysis 3"), lty = "blank",
+                       fill = c("skyblue", "pink1", "mediumorchid"))
+  }
+  if (length(a) == 4) {
+    out <- draw.quad.venn(likes(a[1]), likes(a[2]), likes(a[3]), likes(a[4]),
+                          likes(a[1:2]), likes(a[c(1, 3)]), likes(a[c(1, 4)]), likes(a[2:3]),
+                          likes(a[c(2, 4)]), likes(a[3:4]), likes(a[1:3]), likes(a[c(1, 2,
+                                                                                     4)]), likes(a[c(1, 3, 4)]), likes(a[2:4]), likes(a), ...)
+  }
+  if (!exists("out"))
+    out <- "Oops"
+  return(out)
+}
+
+
 
 readingPValues <- function(qq.value, qq.dir , comp.index , topRows) {
 
@@ -3302,16 +3331,15 @@ shinyServer(function(input, output, session) {
         print(a2)
         print(ca)
 
+        plotVennDiagram(c('a1' , 'a2'),a1,a2,ca,0,0,0,0)
         #draw.single.venn(area = a1, category = "Dog People")
 
-        draw.pairwise.venn(area1 = a1 , area2 = a2 , cross.area = ca,
-                         category = c("Analysis 1", "Analysis 2"),
-                         fill = c("skyblue", "pink1"))
+        # draw.pairwise.venn(area1 = a1 , area2 = a2 , cross.area = ca,
+        #                  category = c("Analysis 1", "Analysis 2"), lty = rep("blank",2),
+        #                  fill = c("light blue", "pink"), alpha = rep(0.5, 2), cat.pos = c(0,0),
+        #                  cat.dist = rep(0.025, 2), scaled = FALSE)
 
-        # draw.triple.venn(area1 = nrow(subset(hsb2, hw == 1)), area2 = nrow(subset(hsb2, hm == 1)), area3 = nrow(subset(hsb2, hr == 1)),
-        #                  n12 = nrow(subset(hsb2, hw == 1 & hm == 1 )), n23 = nrow(subset(hsb2, hm == 1 & hr == 1)), n13 = nrow(subset(hsb2, hw == 1 & hr == 1)),
-        #                  n123 = nrow(subset(hsb2, hw == 1 & hm == 1 & hr == 1)), category = c("Dog People", "Cat People", "Lizard People"), lty = "blank",
-        #                  fill = c("skyblue", "pink1", "mediumorchid"))
+
     })
 
 

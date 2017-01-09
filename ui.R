@@ -700,8 +700,10 @@ tabPanel("Integrative Visualization",
                               # showing merge tabe after merge button is pressed
                               fluidRow(
 
-                                column(width = 6,
+                                column(width = 8,
 
+                                       tags$h4(style="color:black;","Merge analysis data"),
+                                       tags$p(paste("Merge the above selected analysis data.")),
 
 
                                        actionButton('displayTopScorerMergeBtn', 'Merge',class="btn btn-primary btn-md"),
@@ -719,9 +721,10 @@ tabPanel("Integrative Visualization",
 
 
                                 ),# end of column
-                                column(width = 6,
+                                column(width = 4,
 
-
+                                       tags$h4(style="color:black;","Venn diagrams"),
+                                       tags$p(paste("Venn diagrams are a very commonly used graphing technique that illustrates levels of overlap between groups in data.")),
 
                                        actionButton('displayTopScorerVennDiagramBtn', 'Display Overlap',class="btn btn-primary btn-md"),
                                        br(),
