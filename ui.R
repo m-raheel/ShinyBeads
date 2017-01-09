@@ -1,30 +1,30 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-# #.libPaths(.libPaths()[-1])
-# library(DT)
-# library(shiny)
-#
-# library(shinyjs)
-# library(shinythemes)
-# library(plyr , lib.loc = '/opt/Rlib/3.4')
-# library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
-# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+#.libPaths(.libPaths()[-1])
+library(DT)
+library(shiny)
+
+library(shinyjs)
+library(shinythemes)
+library(plyr , lib.loc = '/opt/Rlib/3.4')
+library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
+library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 #####################################################################
 
 
 # local (comment while on the server)
 #####################################################################
 
-library(shiny)
-library(RnBeadsInterface)
-library(DT)
-library(shinyjs)
-library(shinythemes)
-library(plotly) #interactive graphics with D3
-#library(V8) # package for extended shinyJS
-#library(shinyFiles)
+# library(shiny)
+# library(RnBeadsInterface)
+# library(DT)
+# library(shinyjs)
+# library(shinythemes)
+# library(plotly) #interactive graphics with D3
+# #library(V8) # package for extended shinyJS
+# #library(shinyFiles)
 
 
 
@@ -620,8 +620,8 @@ tabPanel("Integrative Visualization",
                               tags$h2(style="color:black;","Top-scorer"),
                               tags$div(id = "ts_div_info", checked=NA,
 
-                                       tags$p(paste("Top-scorer is useful for filtering and sorting of the differential methylation comparison data, Select the RnBeads analysis and then you can filter the table with all the columns and you can download the results.",
-                                                    "Also you can upload external files having at least a target column whoes values are like cgxxxxxxx and the table will get filtered."
+                                       tags$p(paste("Top-scorer has some of the functionality in common with the table browser but it will provide you with more analysis functionality of the selected differential methylation comparison data, User can select multiple RnBeads analysis and then after selected top n rows you can filter the table , merge the two selected analysis and can also see the overlappings in your seleted data.",
+                                                    ""
                                        )
                                        )# end p tag
 
@@ -650,14 +650,64 @@ tabPanel("Integrative Visualization",
                                 )
                               ),
 
+                              # showing merge tabe after merge button is pressed
+                              fluidRow(
 
 
+                                column(width = 12,
+
+                                       tags$h4(style="color:black;","Venn diagrams"),
+                                       tags$p(paste("Venn diagrams are a very commonly used graphing technique that illustrates levels of overlap between groups in data. Click to see the overlap from the above selected analysis based on CpGs.")),
+
+                                       actionButton('displayTopScorerVennDiagramBtn', 'Display Overlap',class="btn btn-primary btn-md"),
+
+                                       br()
+
+
+                                )# end of column
+
+
+                              ),# end  of  fluid row
+
+
+                              fluidRow(
+
+                                column(width = 3
+
+
+
+
+                                ),# end of column
+                                column(width = 6,
+
+
+                                       div(class="",
+
+
+                                           plotOutput('output.ts.venn.plot'),
+                                           br()
+
+                                       ),
+                                       br()
+
+
+                                ),# end of column
+                                column(width = 3
+
+
+
+
+                                )# end of column
+
+                              ),# end  of  fluid row
 
                               fluidRow(
 
 
 
                                 column(width = 6,
+
+                                       tags$h4(style="color:black;","Analysis 1 comparison data"),
 
                                        actionButton('displayTopScorerBtn', 'Display',class="btn btn-primary btn-md"),
                                        br(),
@@ -675,6 +725,8 @@ tabPanel("Integrative Visualization",
                                 ),# end of column
 
                                 column(width = 6,
+
+                                       tags$h4(style="color:black;","Analysis 2 comparison data"),
 
                                        actionButton('displayTopScorerBtn2', 'Display',class="btn btn-primary btn-md"),
                                        br(),
@@ -700,7 +752,7 @@ tabPanel("Integrative Visualization",
                               # showing merge tabe after merge button is pressed
                               fluidRow(
 
-                                column(width = 8,
+                                column(width = 12,
 
                                        tags$h4(style="color:black;","Merge analysis data"),
                                        tags$p(paste("Merge the above selected analysis data.")),
@@ -720,30 +772,47 @@ tabPanel("Integrative Visualization",
                                        br()
 
 
-                                ),# end of column
-                                column(width = 4,
+                                )# end of column
 
-                                       tags$h4(style="color:black;","Venn diagrams"),
-                                       tags$p(paste("Venn diagrams are a very commonly used graphing technique that illustrates levels of overlap between groups in data.")),
 
-                                       actionButton('displayTopScorerVennDiagramBtn', 'Display Overlap',class="btn btn-primary btn-md"),
-                                       br(),
-                                       br(),
+
+                              ),# end  of  fluid row
+
+
+                              fluidRow(
+
+
+                                column(width = 12,
+                                       checkboxGroupInput("cb_ts_comp_venn", label = h3("Select analysis"),
+                                                          choices = list("",1),
+                                                          selected = 1),
+
+                                       actionButton('btnMultipleShowVenn', 'Display',class="btn btn-primary btn-md"),
+                                       br()
+                                )),
+
+
+                              fluidRow(
+                                column(width = 3),
+                                column(width = 6,
+
+
 
                                        div(class="",
 
 
-                                           plotOutput('output.ts.venn.plot'),
+                                           plotOutput('output.ts.multivenn.plot'),
                                            br()
 
                                        ),
+
                                        br()
 
+                                ),
 
-                                )# end of column
+                                column(width = 3)
 
-
-                              ),# end  of  fluid row
+                                ),# end  of  fluid row
 
 
                               fluidRow(

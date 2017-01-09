@@ -1,24 +1,24 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-# library(DT)
-# library(shiny)
-#
-# #library(RnBeads)
-# library(XML)
-# library(compare)
-# # libFolders <- .libPaths()
-# # .libPaths(.libPaths()[-1])
-#
-# # .libPaths(libFolders)
-# library(data.table) # using the function fread for reading large csv files
-# library(qqman)
-# library(tcltk)# OS independent file dir selection
-# library(lattice)# using qqunif.plot
-# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-# library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-# library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+library(DT)
+library(shiny)
+
+#library(RnBeads)
+library(XML)
+library(compare)
+# libFolders <- .libPaths()
+# .libPaths(.libPaths()[-1])
+
+# .libPaths(libFolders)
+library(data.table) # using the function fread for reading large csv files
+library(qqman)
+library(tcltk)# OS independent file dir selection
+library(lattice)# using qqunif.plot
+library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 
 
 #####################################################################
@@ -26,20 +26,20 @@
 
 # local (comment while on the server)
 #####################################################################
-library(shiny)
-library(RnBeadsInterface)
-#library(RnBeads)
-library(XML)
-library(compare)
-library(DT)
-library(data.table) # using the function fread for reading large csv files
-library(qqman)
-library(tcltk)# OS independent file dir selection
-library(lattice)# using qqunif.plot
-library(plotly) #interactive graphics with D3
-library(manhattanly)
-library(VennDiagram)
-
+# library(shiny)
+# library(RnBeadsInterface)
+# #library(RnBeads)
+# library(XML)
+# library(compare)
+# library(DT)
+# library(data.table) # using the function fread for reading large csv files
+# library(qqman)
+# library(tcltk)# OS independent file dir selection
+# library(lattice)# using qqunif.plot
+# library(plotly) #interactive graphics with D3
+# library(manhattanly)
+# library(VennDiagram)
+#
 
 qqman.qq <- qqman::qq    #EDIT
 
@@ -321,6 +321,14 @@ shinyServer(function(input, output, session) {
   updateSelectInput(session, "input_topscorer_choices_2",
                     label = paste("Analysis 2"),
                     choices = list.files(path = selectedDir))
+
+
+  # Can also set the label and select items
+  updateCheckboxGroupInput(session, "cb_ts_comp_venn",
+                           label = paste("Select analysis"),
+                           choices = list.files(path = selectedDir),
+                           selected = 1
+  )
 
 
 
@@ -2997,63 +3005,26 @@ shinyServer(function(input, output, session) {
 
       else {
 
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Reading data! please wait...", value = 50)
+
+
+        qq.value1 <- as.character(input$input_topscorer_choices_1)
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(input$input_topscorer_readtop1)
 
 
 
-        qq.value <- as.character(input$input_topscorer_choices_1)
+        dataset <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
 
-        qq.dir <- file.path(results.dir(), qq.value)
-
-
-        if (qq.value == "" || qq.value == "NA"){
-          dataset <- data.table( data = "No data available.")
-        }
-        else{
-
-
-
-          #index_list() contains the index of the selected file ffrom the dropdown
-          f = paste("diffMethTable_site_cmp",ts.comp.index_1(), ".csv",sep = '')
-
-          if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-            # Create a Progress object
-            progress <- shiny::Progress$new()
-
-            progress$set(message = "Reading data! please wait...", value = 50)
-
-
-            filename <- file.path(qq.dir, 'differential_methylation_data',f)
-
-
-            filename= as.character(filename)
-
-            nrows.value <- as.character(input$input_topscorer_readtop1)
-
-            if (nrows.value == 'ALL'){
-              nrows.value = -1
-            }
-
-            # fread function from the library data.table
-            comp.file <- fread(filename,sep = ",",nrows = nrows.value, select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
-            #comp.file <- fread(filename,sep = ",")
-
-            comp.file <- as.data.frame(comp.file)
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
 
 
 
 
-            dataset <- data.table( comp.file)
-
-            # Make sure it closes when we exit this reactive, even if there's an error
-            on.exit(progress$close())
-
-            dataset
-          }
-          else{
-            dataset <- data.table( data = "No data available.")
-          }
-        }
 
         dataset
 
@@ -3106,64 +3077,24 @@ shinyServer(function(input, output, session) {
 
       else {
 
+          # Create a Progress object
+          progress <- shiny::Progress$new()
+
+          progress$set(message = "Reading data! please wait...", value = 50)
+
+          qq.value2 <- as.character(input$input_topscorer_choices_2)
+          qq.dir2 <- file.path(results.dir(), qq.value2)
+          nrows.value2 <- as.character(input$input_topscorer_readtop2)
 
 
 
-        qq.value <- as.character(input$input_topscorer_choices_2)
+          dataset <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
 
-        qq.dir <- file.path(results.dir(), qq.value)
-
-
-        if (qq.value == "" || qq.value == "NA"){
-          dataset <- data.table( data = "No data available.")
-        }
-        else{
+          # Make sure it closes when we exit this reactive, even if there's an error
+          on.exit(progress$close())
 
 
-
-          #index_list() contains the index of the selected file ffrom the dropdown
-          f = paste("diffMethTable_site_cmp",ts.comp.index_2(), ".csv",sep = '')
-
-          if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-            # Create a Progress object
-            progress <- shiny::Progress$new()
-
-            progress$set(message = "Reading data! please wait...", value = 50)
-
-
-            filename <- file.path(qq.dir, 'differential_methylation_data',f)
-
-
-            filename= as.character(filename)
-
-            nrows.value <- as.character(input$input_topscorer_readtop2)
-            if (nrows.value == 'ALL'){
-              nrows.value = -1
-            }
-
-            # fread function from the library data.table
-            comp.file <- fread(filename,sep = ",", nrows = nrows.value, select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
-            #comp.file <- fread(filename,sep = ",")
-
-            comp.file <- as.data.frame(comp.file)
-
-
-
-
-            dataset <- data.table( comp.file)
-
-            # Make sure it closes when we exit this reactive, even if there's an error
-            on.exit(progress$close())
-
-            dataset
-          }
-          else{
-            dataset <- data.table( data = "No data available.")
-          }
-        }
-
-        dataset
+          dataset
 
       }
 
@@ -3243,7 +3174,7 @@ shinyServer(function(input, output, session) {
 
 
 
-        dataset <- merge(dataset1, dataset2 , by.x="cgid", by.y="cgid")
+        dataset <- merge(dataset1, dataset2 , by.x=c("cgid","Chromosome","Start","Strand"), by.y=c("cgid","Chromosome","Start","Strand") , all = T)
 
         # Make sure it closes when we exit this reactive, even if there's an error
         on.exit(progress$close())
@@ -3260,6 +3191,7 @@ shinyServer(function(input, output, session) {
 
     extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
     options = list(
+      scrollX = TRUE,
       scrollY = TRUE,
       dom = 'Blfrtip',
       buttons = list(
@@ -3327,17 +3259,63 @@ shinyServer(function(input, output, session) {
         ca <- nrow(subset(c3, hw  & hm  ))
 
 
-        print(a1)
-        print(a2)
-        print(ca)
-
         plotVennDiagram(c('a1' , 'a2'),a1,a2,ca,0,0,0,0)
-        #draw.single.venn(area = a1, category = "Dog People")
 
-        # draw.pairwise.venn(area1 = a1 , area2 = a2 , cross.area = ca,
-        #                  category = c("Analysis 1", "Analysis 2"), lty = rep("blank",2),
-        #                  fill = c("light blue", "pink"), alpha = rep(0.5, 2), cat.pos = c(0,0),
-        #                  cat.dist = rep(0.025, 2), scaled = FALSE)
+
+    })
+
+
+
+  })
+
+
+
+  observeEvent(input$btnMultipleShowVenn ,{
+
+
+
+    output$output.ts.multivenn.plot <- renderPlot({
+
+
+      cb.checked <- c(input$cb_ts_comp_venn)
+
+
+      qq.value1 <- as.character(input$input_topscorer_choices_1)
+      qq.dir1 <- file.path(results.dir(), qq.value1)
+      nrows.value <- as.character(input$input_topscorer_readtop1)
+
+
+
+      dataset1 <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
+
+
+      qq.value2 <- as.character(input$input_topscorer_choices_2)
+      qq.dir2 <- file.path(results.dir(), qq.value2)
+      nrows.value2 <- as.character(input$input_topscorer_readtop2)
+
+
+
+      dataset2 <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
+
+
+
+
+      hw1 <- substring(dataset1$cgid, 3)
+      hm1 <- substring(dataset2$cgid, 3)
+
+
+      hw <- hw1 %in% hm1
+      hm <- hm1 %in% hw1
+
+      c3 <- cbind(hw , hm )
+
+      #c3 <- vennCounts(c3)
+      a1 <- nrow(subset(c3, hw ))
+      a2 <- nrow(subset(c3, hm))
+      ca <- nrow(subset(c3, hw  & hm  ))
+
+
+      plotVennDiagram(c('a1' , 'a2'),a1,a2,ca,0,0,0,0)
 
 
     })
