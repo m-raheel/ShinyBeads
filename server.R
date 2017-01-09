@@ -18,6 +18,8 @@
 # library(lattice)# using qqunif.plot
 # library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 # library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+# library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+
 
 #####################################################################
 
@@ -37,7 +39,6 @@ library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
 library(manhattanly)
 library(VennDiagram)
-library(limma)
 
 
 qqman.qq <- qqman::qq    #EDIT
@@ -3282,18 +3283,19 @@ shinyServer(function(input, output, session) {
 
 
 
-        hw <- substring(dataset1$cgid, 3)
-        hm <- substring(dataset2$cgid, 3)
-
-        hw <- (hw >= 0)
-        hm <- (hm >= 0)
+        hw1 <- substring(dataset1$cgid, 3)
+        hm1 <- substring(dataset2$cgid, 3)
 
 
-        c3 <- cbind(hw, hm)
+        hw <- hw1 %in% hm1
+        hm <- hm1 %in% hw1
+
+        c3 <- cbind(hw , hm )
+
         #c3 <- vennCounts(c3)
-        a1 <- nrow(subset(c3, hw == 1))
-        a2 <- nrow(subset(c3, hm == 1))
-        ca <- nrow(subset(c3, hw == 1 & hm == 1 ))
+        a1 <- nrow(subset(c3, hw ))
+        a2 <- nrow(subset(c3, hm))
+        ca <- nrow(subset(c3, hw  & hm  ))
 
 
         print(a1)
