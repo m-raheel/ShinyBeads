@@ -1,30 +1,30 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-#.libPaths(.libPaths()[-1])
-library(DT)
-library(shiny)
-
-library(shinyjs)
-library(shinythemes)
-library(plyr , lib.loc = '/opt/Rlib/3.4')
-library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+# #.libPaths(.libPaths()[-1])
+# library(DT)
+# library(shiny)
+#
+# library(shinyjs)
+# library(shinythemes)
+# library(plyr , lib.loc = '/opt/Rlib/3.4')
+# library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
+# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 #####################################################################
 
 
 # local (comment while on the server)
 #####################################################################
 
-# library(shiny)
-# library(RnBeadsInterface)
-# library(DT)
-# library(shinyjs)
-# library(shinythemes)
-# library(plotly) #interactive graphics with D3
-# #library(V8) # package for extended shinyJS
-# #library(shinyFiles)
+library(shiny)
+library(RnBeadsInterface)
+library(DT)
+library(shinyjs)
+library(shinythemes)
+library(plotly) #interactive graphics with D3
+#library(V8) # package for extended shinyJS
+#library(shinyFiles)
 
 
 

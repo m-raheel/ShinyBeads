@@ -1,24 +1,24 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-library(DT)
-library(shiny)
-
-#library(RnBeads)
-library(XML)
-library(compare)
-# libFolders <- .libPaths()
-# .libPaths(.libPaths()[-1])
-
-# .libPaths(libFolders)
-library(data.table) # using the function fread for reading large csv files
-library(qqman)
-library(tcltk)# OS independent file dir selection
-library(lattice)# using qqunif.plot
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+# library(DT)
+# library(shiny)
+#
+# #library(RnBeads)
+# library(XML)
+# library(compare)
+# # libFolders <- .libPaths()
+# # .libPaths(.libPaths()[-1])
+#
+# # .libPaths(libFolders)
+# library(data.table) # using the function fread for reading large csv files
+# library(qqman)
+# library(tcltk)# OS independent file dir selection
+# library(lattice)# using qqunif.plot
+# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+# library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+# library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 
 
 #####################################################################
@@ -26,20 +26,20 @@ library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-librar
 
 # local (comment while on the server)
 #####################################################################
-# library(shiny)
-# library(RnBeadsInterface)
-# #library(RnBeads)
-# library(XML)
-# library(compare)
-# library(DT)
-# library(data.table) # using the function fread for reading large csv files
-# library(qqman)
-# library(tcltk)# OS independent file dir selection
-# library(lattice)# using qqunif.plot
-# library(plotly) #interactive graphics with D3
-# library(manhattanly)
-# library(VennDiagram)
-#
+library(shiny)
+library(RnBeadsInterface)
+#library(RnBeads)
+library(XML)
+library(compare)
+library(DT)
+library(data.table) # using the function fread for reading large csv files
+library(qqman)
+library(tcltk)# OS independent file dir selection
+library(lattice)# using qqunif.plot
+library(plotly) #interactive graphics with D3
+library(manhattanly)
+library(VennDiagram)
+
 
 qqman.qq <- qqman::qq    #EDIT
 
@@ -49,13 +49,13 @@ qqman.qq <- qqman::qq    #EDIT
 #   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
 # }
 
-plotVennDiagram <- function(a, a1,a2,ca, a3, a12, a23, a13, a123) {
+plotVennDiagram <- function(a, a1,a2,a3, a12, a23, a13, a123) {
 
   if (length(a) == 1) {
     out <- draw.single.venn(area = a1, category = "Analysis 1")
   }
   if (length(a) == 2) {
-    out <- draw.pairwise.venn(area1 = a1 , area2 = a2 , cross.area = ca,
+    out <- draw.pairwise.venn(area1 = a1 , area2 = a2 , cross.area = a3,
                               category = c("Analysis 1", "Analysis 2"), lty = rep("blank",2),
                               fill = c("light blue", "pink"), alpha = rep(0.5, 2), cat.pos = c(0,0),
                               cat.dist = rep(0.025, 2), scaled = FALSE)
@@ -3280,43 +3280,135 @@ shinyServer(function(input, output, session) {
       cb.checked <- c(input$cb_ts_comp_venn)
 
 
-      qq.value1 <- as.character(input$input_topscorer_choices_1)
-      qq.dir1 <- file.path(results.dir(), qq.value1)
-      nrows.value <- as.character(input$input_topscorer_readtop1)
+      print (cb.checked)
+
+      if (length(cb.checked) == 1){
+        qq.value1 <- as.character(cb.checked[1])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
 
 
 
-      dataset1 <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
+        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        hw1 <- substring(dataset1$cgid, 3)
+        hm1 <- substring(dataset1$cgid, 3)
+
+        hw <- hw1 %in% hm1
+        hm <- hm1 %in% hw1
+
+        c3 <- cbind(hw , hm )
+
+        #c3 <- vennCounts(c3)
+        a1 <- nrow(subset(c3, hw ))
+        a2 <- nrow(subset(c3, hm))
+        ca <- nrow(subset(c3, hw  & hm  ))
+
+        p <- plotVennDiagram(c('a1'),a1,0,0,0,0,0,0)
 
 
-      qq.value2 <- as.character(input$input_topscorer_choices_2)
-      qq.dir2 <- file.path(results.dir(), qq.value2)
-      nrows.value2 <- as.character(input$input_topscorer_readtop2)
+      }
+      else if(length(cb.checked) == 2){
+        qq.value1 <- as.character(cb.checked[1])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        qq.value1 <- as.character(cb.checked[2])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+        dataset2 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        hw1 <- substring(dataset1$cgid, 3)
+        hm1 <- substring(dataset2$cgid, 3)
+
+
+        hw <- hw1 %in% hm1
+        hm <- hm1 %in% hw1
+
+        c3 <- cbind(hw , hm )
+
+        #c3 <- vennCounts(c3)
+        a1 <- nrow(subset(c3, hw ))
+        a2 <- nrow(subset(c3, hm))
+        ca <- nrow(subset(c3, hw  & hm  ))
+
+        p <- plotVennDiagram(c('a1' , 'a2'),a1,a2,ca,0,0,0,0)
+
+
+      }
+      else if(length(cb.checked) == 3){
+        qq.value1 <- as.character(cb.checked[1])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        qq.value1 <- as.character(cb.checked[2])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+        dataset2 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        qq.value1 <- as.character(cb.checked[3])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+        dataset3 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        hw1 <- substring(dataset1$cgid, 3)
+        hm1 <- substring(dataset2$cgid, 3)
+        ht1 <- substring(dataset3$cgid, 3)
+
+        hw2 <- hw1 %in% hm1
+        hw3 <- hw1 %in% ht1
+
+        hm2 <- hm1 %in% hw1
+        hm3 <- hm1 %in% ht1
+
+        ht2 <- ht1 %in% hw1
+        ht3 <- ht1 %in% hm1
+
+        hw <- hw2 %in% hw3
+        hm <- hm2 %in% hm3
+        ht <- ht2 %in% ht3
+
+        c3 <- cbind(hw2 , hw3, hm2,hm3,ht2 , ht3)
+
+        print (c3)
+        #c3 <- vennCounts(c3)
+        a1 <- nrow(subset(c3, hw2 ))
+        a2 <- nrow(subset(c3, hm2))
+        a3 <- nrow(subset(c3, ht2))
+        a12 <- nrow(subset(c3, hw2  & hm2  ))
+        a23 <- nrow(subset(c3, hm2  & ht2  ))
+        a13 <- nrow(subset(c3, hw2  & ht2  ))
+        a123 <- nrow(subset(c3, hw2  & hm2 & ht2  ))
+
+        p <- plotVennDiagram(c('a1' , 'a2' , 'a3'),a1,a2,a3,a12,a23,a13,a123)
+
+      }
+
+      else if(length(cb.checked) == 2){
+        qq.value1 <- as.character(cb.checked[1])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        qq.value1 <- as.character(cb.checked[2])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+        dataset2 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+      }
+      else{
+
+
+      }
 
 
 
-      dataset2 <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
 
 
 
-
-      hw1 <- substring(dataset1$cgid, 3)
-      hm1 <- substring(dataset2$cgid, 3)
-
-
-      hw <- hw1 %in% hm1
-      hm <- hm1 %in% hw1
-
-      c3 <- cbind(hw , hm )
-
-      #c3 <- vennCounts(c3)
-      a1 <- nrow(subset(c3, hw ))
-      a2 <- nrow(subset(c3, hm))
-      ca <- nrow(subset(c3, hw  & hm  ))
-
-
-      plotVennDiagram(c('a1' , 'a2'),a1,a2,ca,0,0,0,0)
-
+      p
 
     })
 
