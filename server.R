@@ -793,8 +793,8 @@ shinyServer(function(input, output, session) {
          # data = gsub('<link rel="stylesheet" href="configuration/report.css" type="text/css" />',"",data)
          # print(data)
          # HTML(data)
-        browseURL(paste(wd_modules(),'index.html',sep="/"))
-        HTML('<p></p>')
+        #browseURL(paste(wd_modules(),'index.html',sep="/"))
+        HTML(paste('<p> </p>','<p class = "text-info">file://',paste(wd_modules(),'index.html',sep="/"),'</p>','<p >Copy this link and paste in a new tab in your browser to see the RnBeads reports. Note: Only for t7600 users!</p>',sep=""))
       })
 
 

@@ -262,14 +262,13 @@ shinyUI(
 
                                                  '<h2>Rnbeads Reports!</h2>',
 
-                                                 '<p class = "text-info">Select from the left menu to see the reports of other analysis!</p>',
+                                                 '<p>Select from the left menu and click Reports!</p>',
 
-                                                 '<p class = "text-info">Click on the report button to see the RnBeads generated reports of the selected analysis!</p>',
-                                                 br(),
 
-                                                 actionButton("view_rnbeads_reports", label = "RnBeads Reports", class="btn btn-primary"),
+                                                 actionButton("view_rnbeads_reports", label = "Reports", class=""),
                                                  br(),
                                                  uiOutput('rnbeadsReports'),
+
 
                                                  '</div>',
                                                  '</div>'
