@@ -1,30 +1,30 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-#.libPaths(.libPaths()[-1])
-library(DT)
-library(shiny)
-
-library(shinyjs)
-library(shinythemes)
-library(plyr , lib.loc = '/opt/Rlib/3.4')
-library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+# #.libPaths(.libPaths()[-1])
+# library(DT)
+# library(shiny)
+#
+# library(shinyjs)
+# library(shinythemes)
+# library(plyr , lib.loc = '/opt/Rlib/3.4')
+# library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
+# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 #####################################################################
 
 
 # local (comment while on the server)
 #####################################################################
 
-# library(shiny)
-# library(RnBeadsInterface)
-# library(DT)
-# library(shinyjs)
-# library(shinythemes)
-# library(plotly) #interactive graphics with D3
-# #library(V8) # package for extended shinyJS
-# #library(shinyFiles)
+library(shiny)
+library(RnBeadsInterface)
+library(DT)
+library(shinyjs)
+library(shinythemes)
+library(plotly) #interactive graphics with D3
+#library(V8) # package for extended shinyJS
+#library(shinyFiles)
 
 
 
@@ -631,6 +631,100 @@ tabPanel("Integrative Visualization",
                               ),
 
 
+                              fluidRow(
+
+                                column(width = 4,
+
+
+                                       tags$div(id = "ts_div_info", class="well",
+                                                tags$h4(style="color:black;","Analysis"),
+
+                                                uiOutput("cb"),
+                                                tags$h4(style="color:black;","Comparisons"),
+
+                                                uiOutput("si")
+
+
+
+                                       )
+
+
+
+
+                                ),
+                                column(width = 8,
+
+                                       tags$h4(style="color:black;","Multiple analysis Venn Diagram"),
+                                       tags$p(paste("Check the analysis on the left for which you want to see the overlapping. (Top 100 rows)")),
+
+
+                                       #checkboxGroupInput("cb_ts_comp_venn", label = h3("Select analysis"),
+                                       #                   choices = list("")),
+
+
+                                       fluidRow(
+                                         column(width = 5,
+
+                                                uiOutput("ts.columns")
+
+                                                ),
+                                         column(width = 2,
+
+                                                uiOutput("ts.columns.equality")
+
+
+
+                                         ),
+
+                                         column(width = 5,
+
+                                                uiOutput("ts.columns.range")
+
+                                                )
+
+                                       ),# end  of  fluid row
+
+
+
+
+
+                                       actionButton('btnMultipleShowVenn', 'Display',class="btn btn-primary btn-md"),
+                                       br(),
+
+                                       div(class="",
+
+
+
+                                           plotOutput('output.ts.multivenn.plot'),
+                                           br()
+
+                                       ),
+
+                                       br()
+
+
+                                )),
+
+
+
+
+
+
+
+                              fluidRow(
+                                column(width = 3),
+                                column(width = 6
+
+
+
+
+
+                                ),
+
+                                column(width = 3)
+
+                              ),# end  of  fluid row
+
 
 
                               fluidRow(
@@ -782,45 +876,6 @@ tabPanel("Integrative Visualization",
                               ),# end  of  fluid row
 
 
-                              fluidRow(
-
-
-                                column(width = 12,
-
-                                       tags$h4(style="color:black;","Multiple analysis Venn Diagram"),
-                                       tags$p(paste("Check the analysis for which you want to see the overlapping. (Top 100 rows)")),
-
-
-                                       checkboxGroupInput("cb_ts_comp_venn", label = h3("Select analysis"),
-                                                          choices = list("",1),
-                                                          selected = 1),
-
-                                       actionButton('btnMultipleShowVenn', 'Display',class="btn btn-primary btn-md"),
-                                       br()
-                                )),
-
-
-                              fluidRow(
-                                column(width = 3),
-                                column(width = 6,
-
-
-
-                                       div(class="",
-
-
-                                           plotOutput('output.ts.multivenn.plot'),
-                                           br()
-
-                                       ),
-
-                                       br()
-
-                                ),
-
-                                column(width = 3)
-
-                                ),# end  of  fluid row
 
 
                               fluidRow(

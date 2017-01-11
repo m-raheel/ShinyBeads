@@ -1,24 +1,24 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-library(DT)
-library(shiny)
-
-#library(RnBeads)
-library(XML)
-library(compare)
-# libFolders <- .libPaths()
-# .libPaths(.libPaths()[-1])
-
-# .libPaths(libFolders)
-library(data.table) # using the function fread for reading large csv files
-library(qqman)
-library(tcltk)# OS independent file dir selection
-library(lattice)# using qqunif.plot
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+# library(DT)
+# library(shiny)
+#
+# #library(RnBeads)
+# library(XML)
+# library(compare)
+# # libFolders <- .libPaths()
+# # .libPaths(.libPaths()[-1])
+#
+# # .libPaths(libFolders)
+# library(data.table) # using the function fread for reading large csv files
+# library(qqman)
+# library(tcltk)# OS independent file dir selection
+# library(lattice)# using qqunif.plot
+# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+# library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+# library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 
 
 #####################################################################
@@ -26,19 +26,20 @@ library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-librar
 
 # local (comment while on the server)
 #####################################################################
-# library(shiny)
-# library(RnBeadsInterface)
-# #library(RnBeads)
-# library(XML)
-# library(compare)
-# library(DT)
-# library(data.table) # using the function fread for reading large csv files
-# library(qqman)
-# library(tcltk)# OS independent file dir selection
-# library(lattice)# using qqunif.plot
-# library(plotly) #interactive graphics with D3
-# library(manhattanly)
-# library(VennDiagram)
+library(shiny)
+library(RnBeadsInterface)
+#library(RnBeads)
+library(XML)
+library(compare)
+library(DT)
+library(data.table) # using the function fread for reading large csv files
+library(qqman)
+library(tcltk)# OS independent file dir selection
+library(lattice)# using qqunif.plot
+library(plotly) #interactive graphics with D3
+library(manhattanly)
+library(VennDiagram)
+library(limma)
 
 
 qqman.qq <- qqman::qq    #EDIT
@@ -48,6 +49,27 @@ qqman.qq <- qqman::qq    #EDIT
 # createLink <- function(val) {
 #   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
 # }
+
+# For Top scorer tab
+getLogicalDataColumn <- function(dataset, column ,equality,range ) {
+
+  print("inside the get logical data colums")
+  print(equality)
+  print(column)
+  print(range)
+
+  if(equality == ">="){ d <- (subset(dataset, select = c(column) ) >= as.numeric( range))}
+  else if(equality == ">"){ d <- (subset(dataset, select = c(column) ) > as.numeric( range))}
+  else if(equality == "<="){d <- (subset(dataset, select = c(column) ) <= as.numeric( range))}
+  else if(equality == "<"){ d <- (subset(dataset, select = c(column) ) < as.numeric( range))}
+  else if(equality == "="){ d <- (subset(dataset, select = c(column) ) == as.numeric( range))}
+  else {d <- (subset(dataset, select = c(column) ) > as.numeric( range))}
+
+  print("inside the get logical data colums")
+  print(d)
+  return(d)
+}
+
 
 plotVennDiagram <- function(a, a1,a2,a3, a12, a23, a13, a123) {
 
@@ -79,54 +101,7 @@ plotVennDiagram <- function(a, a1,a2,a3, a12, a23, a13, a123) {
 
 
 
-readingPValues <- function(qq.value, qq.dir , comp.index , topRows) {
 
-  if (qq.value == "" || qq.value == "NA"){
-    dataset <- data.table( data = "No data available.")
-  }
-  else{
-
-
-
-    #index_list() contains the index of the selected file ffrom the dropdown
-    f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
-
-    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-
-      filename <- file.path(qq.dir, 'differential_methylation_data',f)
-
-
-      filename= as.character(filename)
-
-      nrows.value <- as.character(topRows)
-      if (nrows.value == 'ALL'){
-        nrows.value = -1
-      }
-
-      # fread function from the library data.table
-      comp.file <- fread(filename,sep = ",", nrows = nrows.value, select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
-      #comp.file <- fread(filename,sep = ",")
-
-      comp.file <- as.data.frame(comp.file)
-
-
-
-
-      dataset <- data.table( comp.file)
-
-
-
-      dataset
-    }
-    else{
-      dataset <- data.table( data = "No data available.")
-    }
-  }
-
-  return(dataset)
-
-}
 
 options(shiny.maxRequestSize=30*1024^2)
 
@@ -3240,7 +3215,7 @@ shinyServer(function(input, output, session) {
 
 
 
-        dataset1 <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
+        dataset1 <- readComparisonData(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
 
 
         qq.value2 <- as.character(input$input_topscorer_choices_2)
@@ -3249,7 +3224,7 @@ shinyServer(function(input, output, session) {
 
 
 
-        dataset2 <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
+        dataset2 <- readComparisonData(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
 
 
 
@@ -3280,6 +3255,97 @@ shinyServer(function(input, output, session) {
 
 
 
+  output$cb <- renderUI({
+
+    choices = list.files(path = selectedDir)
+
+
+      checkboxGroupInput(paste0("cb_ts_comp_venn"), "", choices)
+
+
+
+  })
+  output$si <- renderUI({
+
+
+    choices = list.files(path = selectedDir)
+    lapply(1:length(choices), function(i) {
+
+
+      input_choices <- as.character(choices[i])
+
+
+      qq.dir <- file.path(results.dir(), input_choices)
+
+
+      if (input_choices != "NA"){
+
+
+
+        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+          filename <- file.path(qq.dir,'differential_methylation.html')
+
+          differential.methylation.path <- filename
+
+
+          webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+          pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+          query = "//*/div[@id='section3']/ul/li"
+          dates = xpathSApply(pagetree, query, xmlValue)
+          dates
+          comp_names <- list()
+          comp_names_counter <- 1
+          for (i in 1:length(dates)) {
+
+            comp_names[comp_names_counter] <- dates[i]
+            comp_names_counter = comp_names_counter + 1
+
+
+          }
+
+          choices.list <- comp_names
+        }
+        else{
+          choices.list <- 'NA'
+        }
+      }
+      else{
+        choices.list <- 'NA'
+
+      }
+
+
+      selectInput(paste0("si",i), paste(input_choices,""), choices.list)
+    })
+
+  })
+
+
+
+  output$ts.columns <- renderUI({
+    selectInput("input_topscorer_columns",
+                label = paste(""),
+                choices = c("mean.diff","diffmeth.p.val"))
+  })
+
+  output$ts.columns.equality <- renderUI({
+    selectInput("input_topscorer_columns_equality",
+                label = paste(""),
+                choices = c(">","<", ">=","<=","="))
+  })
+
+  output$ts.columns.range <- renderUI({
+    selectInput("input_topscorer_columns_range",
+                label = paste(""),
+                choices = c("0.01","0.1", "0.05","0.5","0","1"))
+  })
+
+
+
+
   observeEvent(input$btnMultipleShowVenn ,{
 
 
@@ -3289,134 +3355,326 @@ shinyServer(function(input, output, session) {
 
       cb.checked <- c(input$cb_ts_comp_venn)
 
+      nrows.value <- as.character(100)
 
-      print (cb.checked)
+
+
+
+      #p <- multipleVennDiagram(cb.checked, results.dir(),nrows.value)
 
       if (length(cb.checked) == 1){
+
+
+
+        # dataset 1 of analysis 1
+
         qq.value1 <- as.character(cb.checked[1])
         qq.dir1 <- file.path(results.dir(), qq.value1)
         nrows.value <- as.character(100)
 
+        dataset1 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        dd1 <- getLogicalDataColumn(dataset1,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
 
 
-        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
-
-        hw1 <- substring(dataset1$cgid, 3)
-        hm1 <- substring(dataset1$cgid, 3)
-
-        hw <- hw1 %in% hm1
-        hm <- hm1 %in% hw1
-
-        c3 <- cbind(hw , hm )
-
-        #c3 <- vennCounts(c3)
-        a1 <- nrow(subset(c3, hw ))
-        a2 <- nrow(subset(c3, hm))
-        ca <- nrow(subset(c3, hw  & hm  ))
-
-        p <- plotVennDiagram(c(cb.checked[1]),a1,0,0,0,0,0,0)
+        print(dd1)
+        #print(hw)
+        c3 <- cbind(dd1)
+        a <- vennCounts(c3)
+        p <- vennDiagram(a, include = "both",
+                         names = cb.checked[1],
+                         cex = 1, counts.col = "red", circle.col = c("green"))
 
 
       }
       else if(length(cb.checked) == 2){
+
+        # dataset 1 of analysis 1
+
         qq.value1 <- as.character(cb.checked[1])
         qq.dir1 <- file.path(results.dir(), qq.value1)
         nrows.value <- as.character(100)
-        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        dataset1 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        dd1 <- getLogicalDataColumn(dataset1,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset 2 of analysis 2
 
         qq.value1 <- as.character(cb.checked[2])
         qq.dir1 <- file.path(results.dir(), qq.value1)
         nrows.value <- as.character(100)
-        dataset2 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
 
-        hw1 <- substring(dataset1$cgid, 3)
-        hm1 <- substring(dataset2$cgid, 3)
+        dataset2 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        dd2 <- getLogicalDataColumn(dataset2,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
 
 
-        hw <- hw1 %in% hm1
-        hm <- hm1 %in% hw1
+        c3 <- cbind(dd1, dd2)
+        a <- vennCounts(c3)
+        p <- vennDiagram(a, include = "both",
+                         names = c(cb.checked[1], cb.checked[2]),
+                         cex = 1, counts.col = "red", circle.col = c("green","blue"))
 
-        c3 <- cbind(hw , hm )
-
-        #c3 <- vennCounts(c3)
-        a1 <- nrow(subset(c3, hw ))
-        a2 <- nrow(subset(c3, hm))
-        ca <- nrow(subset(c3, hw  & hm  ))
-
-        p <- plotVennDiagram(c(cb.checked[1] , cb.checked[2]),a1,a2,ca,0,0,0,0)
 
 
       }
       else if(length(cb.checked) == 3){
+
+        # dataset 1 of analysis 1
+
         qq.value1 <- as.character(cb.checked[1])
         qq.dir1 <- file.path(results.dir(), qq.value1)
         nrows.value <- as.character(100)
-        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
 
+        dataset1 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d1 <- getLogicalDataColumn(dataset1,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 2
         qq.value1 <- as.character(cb.checked[2])
         qq.dir1 <- file.path(results.dir(), qq.value1)
         nrows.value <- as.character(100)
-        dataset2 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        dataset2 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d2 <- getLogicalDataColumn(dataset2,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 3
 
         qq.value1 <- as.character(cb.checked[3])
         qq.dir1 <- file.path(results.dir(), qq.value1)
         nrows.value <- as.character(100)
-        dataset3 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
 
-        hw1 <- substring(dataset1$cgid, 3)
-        hm1 <- substring(dataset2$cgid, 3)
-        ht1 <- substring(dataset3$cgid, 3)
+        dataset3 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
 
-        hw2 <- hw1 %in% hm1
-        hw3 <- hw1 %in% ht1
+        d3 <- getLogicalDataColumn(dataset3,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
 
-        hm2 <- hm1 %in% hw1
-        hm3 <- hm1 %in% ht1
 
-        ht2 <- ht1 %in% hw1
-        ht3 <- ht1 %in% hm1
 
-        hw <- hw2 %in% hw3
-        hm <- hm2 %in% hm3
-        ht <- ht2 %in% ht3
+        c3 <- cbind(dd1, dd2 , dd3)
 
-        c3 <- cbind(hw2 , hw3, hm2,hm3,ht2 , ht3)
+        a <- vennCounts(c3)
+        p <- vennDiagram(a, include = "both",
+                         names = c(cb.checked[1], cb.checked[2], cb.checked[3]),
+                         cex = 1, counts.col = "red", circle.col = c("green","blue", "orange"))
 
-        print (c3)
-        #c3 <- vennCounts(c3)
-        a1 <- nrow(subset(c3, hw2 ))
-        a2 <- nrow(subset(c3, hm2))
-        a3 <- nrow(subset(c3, ht2))
-        a12 <- nrow(subset(c3, hw2  & hm2  ))
-        a23 <- nrow(subset(c3, hm2  & ht2  ))
-        a13 <- nrow(subset(c3, hw2  & ht2  ))
-        a123 <- nrow(subset(c3, hw2  & hm2 & ht2  ))
 
-        p <- plotVennDiagram(c(cb.checked[1], cb.checked[2], cb.checked[3]),a1,a2,a3,a12,a23,a13,a123)
 
       }
 
-      else if(length(cb.checked) == 2){
+      else if(length(cb.checked) == 4){
+
+
+        # dataset 1 of analysis 1
+
         qq.value1 <- as.character(cb.checked[1])
         qq.dir1 <- file.path(results.dir(), qq.value1)
         nrows.value <- as.character(100)
-        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
 
+        dataset1 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d1 <- getLogicalDataColumn(dataset1,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 2
         qq.value1 <- as.character(cb.checked[2])
         qq.dir1 <- file.path(results.dir(), qq.value1)
         nrows.value <- as.character(100)
-        dataset2 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
+
+        dataset2 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d2 <- getLogicalDataColumn(dataset2,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 3
+
+        qq.value1 <- as.character(cb.checked[3])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset3 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d3 <- getLogicalDataColumn(dataset3,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+
+        # dataset of analysis 4
+
+        qq.value1 <- as.character(cb.checked[4])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset4 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d4 <- getLogicalDataColumn(dataset4,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+
+        c3 <- cbind(d1, d2, d3, d4)
+        a <- vennCounts(c3)
+        p <- vennDiagram(a, include = "both",
+                         names = c(cb.checked[1], cb.checked[2], cb.checked[3], cb.checked[4]),
+                         cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
+
 
       }
+
+      else if(length(cb.checked) == 5){
+
+
+        # dataset 1 of analysis 1
+
+        qq.value1 <- as.character(cb.checked[1])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset1 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d1 <- getLogicalDataColumn(dataset1,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 2
+        qq.value1 <- as.character(cb.checked[2])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset2 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d2 <- getLogicalDataColumn(dataset2,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 3
+
+        qq.value1 <- as.character(cb.checked[3])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset3 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d3 <- getLogicalDataColumn(dataset3,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+
+        # dataset of analysis 4
+
+        qq.value1 <- as.character(cb.checked[4])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset4 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d4 <- getLogicalDataColumn(dataset4,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 5
+
+        qq.value1 <- as.character(cb.checked[5])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset5 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d5 <- getLogicalDataColumn(dataset5,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+
+
+        c3 <- cbind(d1, d2, d3, d4, d5)
+
+        a <- vennCounts(c3)
+        p <- vennDiagram(a, include = "both",
+                         names = c(cb.checked[1], cb.checked[2], cb.checked[3], cb.checked[4], cb.checked[5]),
+                         cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
+
+
+      }
+
+      else if(length(cb.checked) == 6){
+
+
+        # dataset 1 of analysis 1
+
+        qq.value1 <- as.character(cb.checked[1])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset1 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d1 <- getLogicalDataColumn(dataset1,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 2
+        qq.value1 <- as.character(cb.checked[2])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset2 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d2 <- getLogicalDataColumn(dataset2,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 3
+
+        qq.value1 <- as.character(cb.checked[3])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset3 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d3 <- getLogicalDataColumn(dataset3,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+
+        # dataset of analysis 4
+
+        qq.value1 <- as.character(cb.checked[4])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset4 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d4 <- getLogicalDataColumn(dataset4,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 5
+
+        qq.value1 <- as.character(cb.checked[5])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset5 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d5 <- getLogicalDataColumn(dataset5,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+        # dataset of analysis 6
+
+        qq.value1 <- as.character(cb.checked[6])
+        qq.dir1 <- file.path(results.dir(), qq.value1)
+        nrows.value <- as.character(100)
+
+        dataset6 <- readComparisonData(qq.value1,qq.dir1,1, nrows.value)
+
+        d6 <- getLogicalDataColumn(dataset6,input$input_topscorer_columns,input$input_topscorer_columns_equality,input$input_topscorer_columns_range)
+
+
+
+        c3 <- cbind(d1, d2, d3, d4, d5, d6)
+
+        a <- vennCounts(c3)
+        p <- vennDiagram(a, include = "both",
+                         names = c(cb.checked[1], cb.checked[2], cb.checked[3], cb.checked[4], cb.checked[5], cb.checked[6]),
+                         cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
+
+
+      }
+
       else{
 
+        hsb2 <- read.csv("http://www.ats.ucla.edu/stat/data/hsb2.csv")
+        attach(hsb2)
+
+        hw <- (write >= 60)
+        hm <- (math >= 60)
+        hr <- (read >= 60)
+        sc <- (science >= 60)
+        ss <- (socst >= 60)
+
+        c3 <- cbind(hw, hm, hr, sc, ss)
+        a <- vennCounts(c3)
+        p <- vennDiagram(a, include = "both",
+                         names = c("High Writing", "High Math", "High Reading", "science", "social studies"),
+                         cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow" ,"pink"))
+
 
       }
-
-
-
-
-
 
       p
 
