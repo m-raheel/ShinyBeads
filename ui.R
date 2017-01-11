@@ -582,6 +582,10 @@ tabPanel("Integrative Visualization",
                                          br(),
 
                                          div(id="id_tb_filterPlot_Btn",
+
+                                           selectInput("input_tablebrowser_x_axis", "Select x-axis:", ''),
+                                           selectInput("input_tablebrowser_y_axis", "Select y-axis:", ''),
+
                                            actionButton('displayPlotBtn', 'Filter Plot', class="btn btn-primary btn-md"),
                                            div(id="id_tb_filterPlot",
 

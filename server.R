@@ -2164,13 +2164,20 @@ shinyServer(function(input, output, session) {
                 }
 
                 # fread function from the library data.table
-                comp.file <- fread(filename,sep = ",", nrows = nrows.value ,select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+                comp.file <- fread(filename,sep = ",", nrows = nrows.value )
                 #comp.file <- fread(filename,sep = ",")
 
                 comp.file <- as.data.frame(comp.file)
 
 
 
+                updateSelectInput(session, "input_tablebrowser_x_axis",
+                                  label = paste("Select x-axis:"),
+                                  choices = as.character(as.vector(names(comp.file))))
+
+                updateSelectInput(session, "input_tablebrowser_y_axis",
+                                  label = paste("Select y-axis:"),
+                                  choices = as.character(as.vector(names(comp.file))))
 
                 dataset <- data.table( comp.file)
 
@@ -2214,6 +2221,8 @@ shinyServer(function(input, output, session) {
 
       extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
       options = list(
+        scrollX = TRUE,
+        scrollY = TRUE,
         dom = 'Blfrtip',
         buttons = list(
           'copy',
@@ -2342,18 +2351,19 @@ shinyServer(function(input, output, session) {
                 filename= as.character(filename)
 
                 # fread function from the library data.table
-                comp.file <- fread(filename,sep = ",", select = c("id","cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
+                comp.file <- fread(filename,sep = ",")
                 #comp.file <- fread(filename,sep = ",")
 
                 comp.file <- as.data.frame(comp.file)
 
 
-                key <- colnames(comp.file) <- c("id","cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val")
+                filtered <- comp.file[filtered_data, , drop = FALSE]
+                key <- colnames(comp.file) <- names(comp.file)
                 print(key)
-                p <- plot_ly(comp.file[filtered_data, , drop = FALSE],
+                p <- plot_ly(filtered,
                              type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
-                             x = ~mean.diff,               # more about scatter's "x": /r/reference/#scatter-x
-                             y = ~diffmeth.p.val,            # more about scatter's "y": /r/reference/#scatter-y
+                             x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                             y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
                              name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
                              marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
                                color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
@@ -2371,10 +2381,10 @@ shinyServer(function(input, output, session) {
                   layout(                        # all of layout's properties: /r/reference/#layout
                     title = "Plot", # layout's title: /r/reference/#layout-title
                     xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
-                      title = "mean.diff",      # xaxis's title: /r/reference/#layout-xaxis-title
+                      title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
                       showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
                     yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
-                      title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
+                      title = input$input_tablebrowser_y_axis)     # yaxis's title: /r/reference/#layout-yaxis-title
                   )
 
                 # Make sure it closes when we exit this reactive, even if there's an error
