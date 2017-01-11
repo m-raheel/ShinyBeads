@@ -1,24 +1,24 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-# library(DT)
-# library(shiny)
-#
-# #library(RnBeads)
-# library(XML)
-# library(compare)
-# # libFolders <- .libPaths()
-# # .libPaths(.libPaths()[-1])
-#
-# # .libPaths(libFolders)
-# library(data.table) # using the function fread for reading large csv files
-# library(qqman)
-# library(tcltk)# OS independent file dir selection
-# library(lattice)# using qqunif.plot
-# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-# library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-# library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
+library(DT)
+library(shiny)
+
+#library(RnBeads)
+library(XML)
+library(compare)
+# libFolders <- .libPaths()
+# .libPaths(.libPaths()[-1])
+
+# .libPaths(libFolders)
+library(data.table) # using the function fread for reading large csv files
+library(qqman)
+library(tcltk)# OS independent file dir selection
+library(lattice)# using qqunif.plot
+library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 
 
 #####################################################################
@@ -26,19 +26,19 @@
 
 # local (comment while on the server)
 #####################################################################
-library(shiny)
-library(RnBeadsInterface)
-#library(RnBeads)
-library(XML)
-library(compare)
-library(DT)
-library(data.table) # using the function fread for reading large csv files
-library(qqman)
-library(tcltk)# OS independent file dir selection
-library(lattice)# using qqunif.plot
-library(plotly) #interactive graphics with D3
-library(manhattanly)
-library(VennDiagram)
+# library(shiny)
+# library(RnBeadsInterface)
+# #library(RnBeads)
+# library(XML)
+# library(compare)
+# library(DT)
+# library(data.table) # using the function fread for reading large csv files
+# library(qqman)
+# library(tcltk)# OS independent file dir selection
+# library(lattice)# using qqunif.plot
+# library(plotly) #interactive graphics with D3
+# library(manhattanly)
+# library(VennDiagram)
 
 
 qqman.qq <- qqman::qq    #EDIT
@@ -52,18 +52,18 @@ qqman.qq <- qqman::qq    #EDIT
 plotVennDiagram <- function(a, a1,a2,a3, a12, a23, a13, a123) {
 
   if (length(a) == 1) {
-    out <- draw.single.venn(area = a1, category = "Analysis 1")
+    out <- draw.single.venn(area = a1, category = a[1],fill = "skyblue")
   }
   if (length(a) == 2) {
     out <- draw.pairwise.venn(area1 = a1 , area2 = a2 , cross.area = a3,
-                              category = c("Analysis 1", "Analysis 2"), lty = rep("blank",2),
+                              category = c(a[1], a[2]), lty = rep("blank",2),
                               fill = c("light blue", "pink"), alpha = rep(0.5, 2), cat.pos = c(0,0),
                               cat.dist = rep(0.025, 2), scaled = FALSE)
   }
   if (length(a) == 3) {
     out <- draw.triple.venn(area1 = a1, area2 = a2, area3 = a3,
                        n12 = a12, n23 = a23, n13 = a13,
-                       n123 = a123, category = c("Analysis 1", "Analysis 2", "Analysis 3"), lty = "blank",
+                       n123 = a123, category = c(a[1], a[2], a[3]), lty = "blank",
                        fill = c("skyblue", "pink1", "mediumorchid"))
   }
   if (length(a) == 4) {
@@ -3269,7 +3269,7 @@ shinyServer(function(input, output, session) {
         ca <- nrow(subset(c3, hw  & hm  ))
 
 
-        plotVennDiagram(c('a1' , 'a2'),a1,a2,ca,0,0,0,0)
+        plotVennDiagram(c(input$input_topscorer_choices_1 , input$input_topscorer_choices_2),a1,a2,ca,0,0,0,0)
 
 
     })
@@ -3314,7 +3314,7 @@ shinyServer(function(input, output, session) {
         a2 <- nrow(subset(c3, hm))
         ca <- nrow(subset(c3, hw  & hm  ))
 
-        p <- plotVennDiagram(c('a1'),a1,0,0,0,0,0,0)
+        p <- plotVennDiagram(c(cb.checked[1]),a1,0,0,0,0,0,0)
 
 
       }
@@ -3343,7 +3343,7 @@ shinyServer(function(input, output, session) {
         a2 <- nrow(subset(c3, hm))
         ca <- nrow(subset(c3, hw  & hm  ))
 
-        p <- plotVennDiagram(c('a1' , 'a2'),a1,a2,ca,0,0,0,0)
+        p <- plotVennDiagram(c(cb.checked[1] , cb.checked[2]),a1,a2,ca,0,0,0,0)
 
 
       }
@@ -3392,7 +3392,7 @@ shinyServer(function(input, output, session) {
         a13 <- nrow(subset(c3, hw2  & ht2  ))
         a123 <- nrow(subset(c3, hw2  & hm2 & ht2  ))
 
-        p <- plotVennDiagram(c('a1' , 'a2' , 'a3'),a1,a2,a3,a12,a23,a13,a123)
+        p <- plotVennDiagram(c(cb.checked[1], cb.checked[2], cb.checked[3]),a1,a2,a3,a12,a23,a13,a123)
 
       }
 
