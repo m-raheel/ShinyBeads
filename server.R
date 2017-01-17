@@ -1,44 +1,44 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-# library(DT)
-# library(shiny)
-#
-# #library(RnBeads)
-# library(XML)
-# library(compare)
-# # libFolders <- .libPaths()
-# # .libPaths(.libPaths()[-1])
-#
-# # .libPaths(libFolders)
-# library(data.table) # using the function fread for reading large csv files
-# library(qqman)
-# library(tcltk)# OS independent file dir selection
-# library(lattice)# using qqunif.plot
-# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-# library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-# library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(DT)
+library(shiny)
 
+#library(RnBeads)
+library(XML)
+library(compare)
+# libFolders <- .libPaths()
+# .libPaths(.libPaths()[-1])
+
+# .libPaths(libFolders)
+library(data.table) # using the function fread for reading large csv files
+library(qqman)
+library(tcltk)# OS independent file dir selection
+library(lattice)# using qqunif.plot
+library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(plyr)
 
 #####################################################################
 
 
 # local (comment while on the server)
 #####################################################################
-library(shiny)
-library(RnBeadsInterface)
-#library(RnBeads)
-library(XML)
-library(compare)
-library(DT)
-library(data.table) # using the function fread for reading large csv files
-library(qqman)
-library(tcltk)# OS independent file dir selection
-library(lattice)# using qqunif.plot
-library(plotly) #interactive graphics with D3
-library(manhattanly)
-library(VennDiagram)
+# library(shiny)
+# library(RnBeadsInterface)
+# #library(RnBeads)
+# library(XML)
+# library(compare)
+# library(DT)
+# library(data.table) # using the function fread for reading large csv files
+# library(qqman)
+# library(tcltk)# OS independent file dir selection
+# library(lattice)# using qqunif.plot
+# library(plotly) #interactive graphics with D3
+# library(manhattanly)
+# library(VennDiagram)
 library(limma)
 
 
@@ -49,6 +49,156 @@ qqman.qq <- qqman::qq    #EDIT
 # createLink <- function(val) {
 #   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
 # }
+
+readComparisonData <- function(qq.value, qq.dir , comp.index , topRows) {
+
+  if (qq.value == "" || qq.value == "NA"){
+    dataset <- data.table( data = "No data available.")
+  }
+  else{
+
+
+
+    #index_list() contains the index of the selected file ffrom the dropdown
+    f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
+
+    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+
+      filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+      filename= as.character(filename)
+
+      nrows.value <- as.character(topRows)
+      if (nrows.value == 'ALL'){
+        nrows.value = -1
+      }
+
+      # fread function from the library data.table
+      comp.file <- fread(filename,sep = ",", nrows = nrows.value)
+      #comp.file <- fread(filename,sep = ",")
+
+      comp.file <- as.data.frame(comp.file)
+
+
+
+
+      dataset <- data.table( comp.file)
+
+
+
+      dataset
+    }
+    else{
+      dataset <- data.table( data = "No data available.")
+    }
+  }
+
+  return(dataset)
+
+}
+
+readingCustomComparisonData <- function(qq.value, qq.dir , comp.index , topRows, columnSelected) {
+
+  if (qq.value == "" || qq.value == "NA"){
+    dataset <- data.table( data = "No data available.")
+  }
+  else{
+
+
+
+    #index_list() contains the index of the selected file ffrom the dropdown
+    f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
+
+    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+
+      filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+      filename= as.character(filename)
+
+      nrows.value <- as.character(topRows)
+      if (nrows.value == 'ALL'){
+        nrows.value = -1
+      }
+
+      # fread function from the library data.table
+      comp.file <- fread(filename,sep = ",", nrows = nrows.value , select = c('cgid','Chromosome','Start','Strand',columnSelected))
+      #comp.file <- fread(filename,sep = ",")
+
+      comp.file <- as.data.frame(comp.file)
+
+
+
+
+      dataset <- data.table( comp.file)
+
+
+
+      dataset
+    }
+    else{
+      dataset <- data.table( data = "No data available.")
+    }
+  }
+
+  return(dataset)
+
+}
+
+
+
+readingPValues <- function(qq.value, qq.dir , comp.index , topRows) {
+
+  if (qq.value == "" || qq.value == "NA"){
+    dataset <- data.table( data = "No data available.")
+  }
+  else{
+
+
+
+    #index_list() contains the index of the selected file ffrom the dropdown
+    f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
+
+    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+
+      filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+      filename= as.character(filename)
+
+      nrows.value <- as.character(topRows)
+      if (nrows.value == 'ALL'){
+        nrows.value = -1
+      }
+
+      # fread function from the library data.table
+      comp.file <- fread(filename,sep = ",", nrows = nrows.value)
+      #comp.file <- fread(filename,sep = ",")
+
+      comp.file <- as.data.frame(comp.file)
+
+
+
+
+      dataset <- data.table( comp.file)
+
+
+
+      dataset
+    }
+    else{
+      dataset <- data.table( data = "No data available.")
+    }
+  }
+
+  return(dataset)
+
+}
+
 
 # For Top scorer tab
 getLogicalDataColumn <- function(dataset, column ,equality,range ) {
@@ -2713,375 +2863,516 @@ shinyServer(function(input, output, session) {
   # Top scorer implementation of the input select comparisons
   ############################################################################################
 
-  ts.comp1.visible <- reactiveValues(data = TRUE)
+#   ts.comp1.visible <- reactiveValues(data = TRUE)
+#
+#   # for Repository 1
+#   observeEvent(input$input_topscorer_choices_1,{
+#
+#     ts.comp1.visible$data <- FALSE
+#
+#     input_choices <- as.character(input$input_topscorer_choices_1)
+#
+#     qq.dir <- file.path(results.dir(), input_choices)
+#
+#
+#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+#
+#     if (input_choices != "NA"){
+#
+#
+#
+#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+#
+#         filename <- file.path(qq.dir,'differential_methylation.html')
+#
+#         differential.methylation.path <- filename
+#
+#
+#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+#
+#
+#         query = "//*/div[@id='section3']/ul/li"
+#         dates = xpathSApply(pagetree, query, xmlValue)
+#         dates
+#         comp_names <- list()
+#         comp_names_counter <- 1
+#         for (i in 1:length(dates)) {
+#
+#           comp_names[comp_names_counter] <- dates[i]
+#           comp_names_counter = comp_names_counter + 1
+#
+#
+#         }
+#
+#         choices.list <- comp_names
+#       }
+#       else{
+#         choices.list <- 'NA'
+#       }
+#     }
+#     else{
+#       choices.list <- 'NA'
+#
+#     }
+#
+#
+#     updateSelectInput(session, "input_topscorer_files_1",
+#                       label = paste("Comparison 1", ""),
+#                       choices = choices.list)
+#
+#
+#
+#
+#   })
+#
+#
+#   # returns the index of selected comparison file in top scorer 1
+#   ts.comp.index_1 <- eventReactive(input$input_topscorer_files_1, {
+#
+#
+#
+#     input_choices <- as.character(input$input_topscorer_choices_1)
+#
+#     qq.dir <- file.path(results.dir(), input_choices)
+#
+#
+#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+#
+#     choice.index <- '1'
+#
+#     if (input_choices != "NA"){
+#
+#
+#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+#
+#         filename <- file.path(qq.dir,'differential_methylation.html')
+#
+#         differential.methylation.path <- filename
+#
+#
+#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+#
+#         query = "//*/div[@id='section3']/ul/li"
+#         dates = xpathSApply(pagetree, query, xmlValue)
+#
+#
+#         for (i in 1:length(dates)) {
+#           if (identical(input$input_topscorer_files_1, dates[i])){
+#
+#             choice.index <- as.character(i)
+#             break
+#
+#
+#           }
+#
+#
+#         }
+#
+#       }
+#       else{
+#         choice.index <- '1'
+#
+#       }
+#     }
+#     else{
+#       choice.index <- '1'
+#
+#
+#     }
+#
+#     return(choice.index)
+#   })
+#
+#   ################################################
+#
+#   # for Repository 2
+#
+#   ts.comp2.visible <- reactiveValues(data = TRUE)
+#
+#   observeEvent(input$input_topscorer_choices_2,{
+#     ts.comp2.visible$data <- FALSE
+#
+#     input_choices <- as.character(input$input_topscorer_choices_2)
+#
+#     qq.dir <- file.path(results.dir(), input_choices)
+#
+#
+#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+#
+#     if (input_choices != "NA"){
+#
+#
+#
+#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+#
+#         filename <- file.path(qq.dir,'differential_methylation.html')
+#
+#         differential.methylation.path <- filename
+#
+#
+#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+#
+#
+#         query = "//*/div[@id='section3']/ul/li"
+#         dates = xpathSApply(pagetree, query, xmlValue)
+#         dates
+#         comp_names <- list()
+#         comp_names_counter <- 1
+#         for (i in 1:length(dates)) {
+#
+#           comp_names[comp_names_counter] <- dates[i]
+#           comp_names_counter = comp_names_counter + 1
+#
+#
+#         }
+#
+#         choices.list <- comp_names
+#       }
+#       else{
+#         choices.list <- 'NA'
+#       }
+#     }
+#     else{
+#       choices.list <- 'NA'
+#
+#     }
+#
+#
+#     updateSelectInput(session, "input_topscorer_files_2",
+#                       label = paste("Comparison 2", ""),
+#                       choices = choices.list)
+#
+#
+#
+#
+#   })
+#
+#
+#   # returns the index of selected comparison file 2
+#   ts.comp.index_2 <- eventReactive(input$input_topscorer_files_2, {
+#
+#
+#
+#     input_choices <- as.character(input$input_topscorer_choices_2)
+#
+#     qq.dir <- file.path(results.dir(), input_choices)
+#
+#
+#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+#
+#     choice.index <- '1'
+#
+#     if (input_choices != "NA"){
+#
+#
+#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+#
+#         filename <- file.path(qq.dir,'differential_methylation.html')
+#
+#         differential.methylation.path <- filename
+#
+#
+#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+#
+#         query = "//*/div[@id='section3']/ul/li"
+#         dates = xpathSApply(pagetree, query, xmlValue)
+#
+#
+#         for (i in 1:length(dates)) {
+#
+#           #if statement is not vectorized. For vectorized if statements you should use ifelse
+#           #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
+#
+#           if (identical(input$input_topscorer_files_2, dates[i])){
+#
+#
+#             choice.index <- as.character(i)
+#
+#
+#
+#
+#             break
+#
+#
+#           }
+#
+#
+#         }
+#
+#       }
+#       else{
+#         choice.index <- '1'
+#
+#       }
+#     }
+#     else{
+#       choice.index <- '1'
+#
+#
+#     }
+#
+#     return(choice.index)
+#   })
+#
+#   # Display button 1 of comparisons in the Top scorer tab
+#
+#   observeEvent(input$displayTopScorerBtn,{
+#
+#
+#     ts.comp1.visible$data <- TRUE
+#
+#     output$output.topscorer.comparison_1 <- renderDataTable({
+#
+#
+#       if (is.null(ts.comp1.visible$data)) {
+#         print (ts.comp1.visible$data)
+#         return()
+#       }
+#
+#       else if (identical(ts.comp1.visible$data, FALSE)) {
+#         print (ts.comp1.visible$data)
+#         return()
+#       }
+#
+#       else {
+#
+#         # Create a Progress object
+#         progress <- shiny::Progress$new()
+#
+#         progress$set(message = "Reading data! please wait...", value = 50)
+#
+#
+#         qq.value1 <- as.character(input$input_topscorer_choices_1)
+#         qq.dir1 <- file.path(results.dir(), qq.value1)
+#         nrows.value <- as.character(input$input_topscorer_readtop1)
+#
+#
+#
+#         dataset <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
+#
+#         # Make sure it closes when we exit this reactive, even if there's an error
+#         on.exit(progress$close())
+#
+#
+#
+#
+#
+#         dataset
+#
+#       }
+#
+#     },selection = 'single', filter = 'top',
+#
+#     extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+#     options = list(
+#       scrollX = TRUE,
+#       scrollY = TRUE,
+#       dom = 'Blfrtip',
+#       buttons = list(
+#         'copy',
+#         'print',
+#         list(
+#           extend = 'collection',
+#           buttons = c('csv', 'excel', 'pdf'),
+#           text = 'Download'
+#         ),
+#         I('colvis')
+#
+#       ),
+#       br(),
+#       keys = TRUE
+#
+#     ), escape = TRUE)
+#
+#
+#   })
+#
+#   # Display button 2 of comparisons in the Top scorer tab
+#
+#   observeEvent(input$displayTopScorerBtn2,{
+#
+#     ts.comp2.visible$data <- TRUE
+#
+#     output$output.topscorer.comparison_2 <- renderDataTable({
+#
+#
+#       if (is.null(ts.comp2.visible$data)) {
+#         print (ts.comp2.visible$data)
+#         return()
+#       }
+#
+#       else if (identical(ts.comp2.visible$data, FALSE)) {
+#         print (ts.comp2.visible$data)
+#         return()
+#       }
+#
+#       else {
+#
+#           # Create a Progress object
+#           progress <- shiny::Progress$new()
+#
+#           progress$set(message = "Reading data! please wait...", value = 50)
+#
+#           qq.value2 <- as.character(input$input_topscorer_choices_2)
+#           qq.dir2 <- file.path(results.dir(), qq.value2)
+#           nrows.value2 <- as.character(input$input_topscorer_readtop2)
+#
+#
+#
+#           dataset <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
+#
+#           # Make sure it closes when we exit this reactive, even if there's an error
+#           on.exit(progress$close())
+#
+#
+#           dataset
+#
+#       }
+#
+#     },selection = 'single', filter = 'top',
+#
+#     extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+#     options = list(
+#       scrollX = TRUE,
+#       scrollY = TRUE,
+#       dom = 'Blfrtip',
+#       buttons = list(
+#         'copy',
+#         'print',
+#         list(
+#           extend = 'collection',
+#           buttons = c('csv', 'excel', 'pdf'),
+#           text = 'Download'
+#         ),
+#         I('colvis')
+#
+#       ),
+#       br(),
+#       keys = TRUE
+#
+#     ), escape = TRUE)
+#
+#
+#
+#   })
 
-  # for Repository 1
-  observeEvent(input$input_topscorer_choices_1,{
-
-    ts.comp1.visible$data <- FALSE
-
-    input_choices <- as.character(input$input_topscorer_choices_1)
-
-    qq.dir <- file.path(results.dir(), input_choices)
-
-
-    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-
-    if (input_choices != "NA"){
-
-
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-
-        filename <- file.path(qq.dir,'differential_methylation.html')
-
-        differential.methylation.path <- filename
-
-
-        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-
-        query = "//*/div[@id='section3']/ul/li"
-        dates = xpathSApply(pagetree, query, xmlValue)
-        dates
-        comp_names <- list()
-        comp_names_counter <- 1
-        for (i in 1:length(dates)) {
-
-          comp_names[comp_names_counter] <- dates[i]
-          comp_names_counter = comp_names_counter + 1
-
-
-        }
-
-        choices.list <- comp_names
-      }
-      else{
-        choices.list <- 'NA'
-      }
-    }
-    else{
-      choices.list <- 'NA'
-
-    }
-
-
-    updateSelectInput(session, "input_topscorer_files_1",
-                      label = paste("Comparison 1", ""),
-                      choices = choices.list)
-
-
-
-
-  })
-
-
-  # returns the index of selected comparison file in top scorer 1
-  ts.comp.index_1 <- eventReactive(input$input_topscorer_files_1, {
-
-
-
-    input_choices <- as.character(input$input_topscorer_choices_1)
-
-    qq.dir <- file.path(results.dir(), input_choices)
-
-
-    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-
-    choice.index <- '1'
-
-    if (input_choices != "NA"){
-
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-
-        filename <- file.path(qq.dir,'differential_methylation.html')
-
-        differential.methylation.path <- filename
-
-
-        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-        query = "//*/div[@id='section3']/ul/li"
-        dates = xpathSApply(pagetree, query, xmlValue)
-
-
-        for (i in 1:length(dates)) {
-          if (identical(input$input_topscorer_files_1, dates[i])){
-
-            choice.index <- as.character(i)
-            break
-
-
-          }
-
-
-        }
-
-      }
-      else{
-        choice.index <- '1'
-
-      }
-    }
-    else{
-      choice.index <- '1'
-
-
-    }
-
-    return(choice.index)
-  })
-
-  ################################################
-
-  # for Repository 2
-
-  ts.comp2.visible <- reactiveValues(data = TRUE)
-
-  observeEvent(input$input_topscorer_choices_2,{
-    ts.comp2.visible$data <- FALSE
-
-    input_choices <- as.character(input$input_topscorer_choices_2)
-
-    qq.dir <- file.path(results.dir(), input_choices)
-
-
-    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-
-    if (input_choices != "NA"){
-
-
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-
-        filename <- file.path(qq.dir,'differential_methylation.html')
-
-        differential.methylation.path <- filename
-
-
-        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-
-        query = "//*/div[@id='section3']/ul/li"
-        dates = xpathSApply(pagetree, query, xmlValue)
-        dates
-        comp_names <- list()
-        comp_names_counter <- 1
-        for (i in 1:length(dates)) {
-
-          comp_names[comp_names_counter] <- dates[i]
-          comp_names_counter = comp_names_counter + 1
-
-
-        }
-
-        choices.list <- comp_names
-      }
-      else{
-        choices.list <- 'NA'
-      }
-    }
-    else{
-      choices.list <- 'NA'
-
-    }
-
-
-    updateSelectInput(session, "input_topscorer_files_2",
-                      label = paste("Comparison 2", ""),
-                      choices = choices.list)
-
-
-
-
-  })
-
-
-  # returns the index of selected comparison file 2
-  ts.comp.index_2 <- eventReactive(input$input_topscorer_files_2, {
-
-
-
-    input_choices <- as.character(input$input_topscorer_choices_2)
-
-    qq.dir <- file.path(results.dir(), input_choices)
-
-
-    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-
-    choice.index <- '1'
-
-    if (input_choices != "NA"){
-
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-
-        filename <- file.path(qq.dir,'differential_methylation.html')
-
-        differential.methylation.path <- filename
-
-
-        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-        query = "//*/div[@id='section3']/ul/li"
-        dates = xpathSApply(pagetree, query, xmlValue)
-
-
-        for (i in 1:length(dates)) {
-
-          #if statement is not vectorized. For vectorized if statements you should use ifelse
-          #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
-
-          if (identical(input$input_topscorer_files_2, dates[i])){
-
-
-            choice.index <- as.character(i)
-
-
-
-
-            break
-
-
-          }
-
-
-        }
-
-      }
-      else{
-        choice.index <- '1'
-
-      }
-    }
-    else{
-      choice.index <- '1'
-
-
-    }
-
-    return(choice.index)
-  })
-
-  # Display button 1 of comparisons in the Top scorer tab
-
-  observeEvent(input$displayTopScorerBtn,{
-
-
-    ts.comp1.visible$data <- TRUE
-
-    output$output.topscorer.comparison_1 <- renderDataTable({
-
-
-      if (is.null(ts.comp1.visible$data)) {
-        print (ts.comp1.visible$data)
-        return()
-      }
-
-      else if (identical(ts.comp1.visible$data, FALSE)) {
-        print (ts.comp1.visible$data)
-        return()
-      }
-
-      else {
-
-        # Create a Progress object
-        progress <- shiny::Progress$new()
-
-        progress$set(message = "Reading data! please wait...", value = 50)
-
-
-        qq.value1 <- as.character(input$input_topscorer_choices_1)
-        qq.dir1 <- file.path(results.dir(), qq.value1)
-        nrows.value <- as.character(input$input_topscorer_readtop1)
-
-
-
-        dataset <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
-
-        # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
-
-
-
-
-
-        dataset
-
-      }
-
-    },selection = 'single', filter = 'top',
-
-    extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-    options = list(
-      scrollX = TRUE,
-      scrollY = TRUE,
-      dom = 'Blfrtip',
-      buttons = list(
-        'copy',
-        'print',
-        list(
-          extend = 'collection',
-          buttons = c('csv', 'excel', 'pdf'),
-          text = 'Download'
-        ),
-        I('colvis')
-
-      ),
-      br(),
-      keys = TRUE
-
-    ), escape = TRUE)
-
-
-  })
 
   # Display button 2 of comparisons in the Top scorer tab
 
-  observeEvent(input$displayTopScorerBtn2,{
-
-    ts.comp2.visible$data <- TRUE
-
-    output$output.topscorer.comparison_2 <- renderDataTable({
+  observeEvent(input$displayTopScorerOverlappingBtn,{
 
 
-      if (is.null(ts.comp2.visible$data)) {
-        print (ts.comp2.visible$data)
-        return()
+
+    output$output.topscorer.overlappingComparison <- renderDataTable({
+
+
+      #       if (is.null(ts.comp1.visible$data) && is.null(ts.comp2.visible$data)) {
+      #
+      #         return()
+      #       }
+      #
+      #       else if (identical(ts.comp1.visible$data, FALSE) && identical(ts.comp2.visible$data, FALSE)) {
+      #
+      #         return()
+      #       }
+      #
+      #       else {
+
+
+
+      # Create a Progress object
+      progress <- shiny::Progress$new()
+
+      progress$set(message = "Reading data! please wait...", value = 50)
+
+
+      cb.checked <- c(input$cb_ts_comp_venn)
+
+
+      column_selected = as.character(input$input_topscorer_columns)
+      equality = as.character(input$input_topscorer_columns_equality)
+      range_selected = as.numeric(input$input_topscorer_columns_range)
+
+
+      qq.value1 <- as.character(cb.checked[1])
+      qq.dir1 <- file.path(results.dir(), qq.value1)
+      nrows.value <- as.character(100)
+
+
+      dataset1 <- readingCustomComparisonData(qq.value1,qq.dir1,1, nrows.value,column_selected)
+
+      qq.value2 <- as.character(cb.checked[2])
+      qq.dir2 <- file.path(results.dir(), qq.value2)
+      nrows.value2 <- as.character(100)
+
+      dataset2 <- readingCustomComparisonData(qq.value2,qq.dir2,1, nrows.value2,column_selected)
+
+
+
+
+
+
+
+      if(column_selected == "diffmeth.p.val"){
+        colselected1 <- dataset1$diffmeth.p.val
+        colselected2 <- dataset2$diffmeth.p.val
+      }
+      else if(equality == "mean.diff"){
+        colselected1 <- dataset1$mean.diff
+        colselected2 <- dataset2$mean.diff
+      }
+      else{
+        colselected1 <- dataset1$mean.diff
+        colselected2 <- dataset2$mean.diff
       }
 
-      else if (identical(ts.comp2.visible$data, FALSE)) {
-        print (ts.comp2.visible$data)
-        return()
-      }
 
+
+      if(equality == ">="){
+        filtered1 <- dataset1[colselected1 >= range_selected,]
+        filtered2 <- dataset2[colselected2 > range_selected,]
+      }
+      else if(equality == ">"){
+        filtered1 <- dataset1[colselected1 > range_selected,]
+        filtered2 <- dataset2[colselected2 > range_selected,]
+      }
+      else if(equality == "<="){
+
+        filtered1 <- dataset1[colselected1 <= range_selected,]
+        filtered2 <- dataset2[colselected2 <= range_selected,]
+      }
+      else if(equality == "<"){
+        filtered1 <- dataset1[colselected1 < range_selected,]
+        filtered2 <- dataset2[colselected2 < range_selected,]
+      }
+      else if(equality == "="){
+
+        filtered1 <- dataset1[colselected1 == range_selected,]
+        filtered2 <- dataset2[colselected2 == range_selected,]
+      }
       else {
-
-          # Create a Progress object
-          progress <- shiny::Progress$new()
-
-          progress$set(message = "Reading data! please wait...", value = 50)
-
-          qq.value2 <- as.character(input$input_topscorer_choices_2)
-          qq.dir2 <- file.path(results.dir(), qq.value2)
-          nrows.value2 <- as.character(input$input_topscorer_readtop2)
-
-
-
-          dataset <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
-
-          # Make sure it closes when we exit this reactive, even if there's an error
-          on.exit(progress$close())
-
-
-          dataset
-
+        filtered1 <- dataset1[colselected1 > range_selected,]
+        filtered2 <- dataset2[colselected2 > range_selected,]
       }
+
+
+
+      common1 <- filtered1[filtered1$cgid %in% filtered2$cgid]
+      common2 <- filtered2[filtered2$cgid %in% filtered1$cgid]
+      #dataset <- data.table( common)
+
+      dataset <- merge(common1, common2 , by = c("cgid","Chromosome","Start","Strand") , all = T)
+
+      # Make sure it closes when we exit this reactive, even if there's an error
+      on.exit(progress$close())
+
+      dataset
+
+      #       }
 
     },selection = 'single', filter = 'top',
 
@@ -3109,6 +3400,7 @@ shinyServer(function(input, output, session) {
 
 
   })
+
 
   # Display button 2 of comparisons in the Top scorer tab
 
@@ -3119,17 +3411,17 @@ shinyServer(function(input, output, session) {
     output$output.topscorer.mergedComparison <- renderDataTable({
 
 
-      if (is.null(ts.comp1.visible$data) && is.null(ts.comp2.visible$data)) {
-
-        return()
-      }
-
-      else if (identical(ts.comp1.visible$data, FALSE) && identical(ts.comp2.visible$data, FALSE)) {
-
-        return()
-      }
-
-      else {
+#       if (is.null(ts.comp1.visible$data) && is.null(ts.comp2.visible$data)) {
+#
+#         return()
+#       }
+#
+#       else if (identical(ts.comp1.visible$data, FALSE) && identical(ts.comp2.visible$data, FALSE)) {
+#
+#         return()
+#       }
+#
+#       else {
 
 
 
@@ -3139,23 +3431,25 @@ shinyServer(function(input, output, session) {
         progress$set(message = "Reading data! please wait...", value = 50)
 
 
-        qq.value1 <- as.character(input$input_topscorer_choices_1)
+        cb.checked <- c(input$cb_ts_comp_venn)
+
+        qq.value1 <- as.character(cb.checked[1])
         qq.dir1 <- file.path(results.dir(), qq.value1)
-        nrows.value <- as.character(input$input_topscorer_readtop1)
+        nrows.value <- as.character(100)
 
 
 
-        dataset1 <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
+        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
 
 
 
-        qq.value2 <- as.character(input$input_topscorer_choices_2)
+        qq.value2 <- as.character(cb.checked[2])
         qq.dir2 <- file.path(results.dir(), qq.value2)
-        nrows.value2 <- as.character(input$input_topscorer_readtop2)
+        nrows.value2 <- as.character(100)
 
 
 
-        dataset2 <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
+        dataset2 <- readingPValues(qq.value2,qq.dir2,1, nrows.value2)
 
 
 
@@ -3170,7 +3464,7 @@ shinyServer(function(input, output, session) {
 
         dataset
 
-      }
+  #       }
 
     },selection = 'single', filter = 'top',
 
@@ -3199,59 +3493,59 @@ shinyServer(function(input, output, session) {
 
   })
 
-  observeEvent(input$displayTopScorerVennDiagramBtn,{
-
-
-
-    output$output.ts.venn.plot <- renderPlot({
-
-        ts.comp1.values <- input$output.topscorer.comparison_1_rows_all
-        ts.comp2.values <- input$output.topscorer.comparison_2_rows_all
-
-
-        qq.value1 <- as.character(input$input_topscorer_choices_1)
-        qq.dir1 <- file.path(results.dir(), qq.value1)
-        nrows.value <- as.character(input$input_topscorer_readtop1)
-
-
-
-        dataset1 <- readComparisonData(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
-
-
-        qq.value2 <- as.character(input$input_topscorer_choices_2)
-        qq.dir2 <- file.path(results.dir(), qq.value2)
-        nrows.value2 <- as.character(input$input_topscorer_readtop2)
-
-
-
-        dataset2 <- readComparisonData(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
-
-
-
-
-        hw1 <- substring(dataset1$cgid, 3)
-        hm1 <- substring(dataset2$cgid, 3)
-
-
-        hw <- hw1 %in% hm1
-        hm <- hm1 %in% hw1
-
-        c3 <- cbind(hw , hm )
-
-        #c3 <- vennCounts(c3)
-        a1 <- nrow(subset(c3, hw ))
-        a2 <- nrow(subset(c3, hm))
-        ca <- nrow(subset(c3, hw  & hm  ))
-
-
-        plotVennDiagram(c(input$input_topscorer_choices_1 , input$input_topscorer_choices_2),a1,a2,ca,0,0,0,0)
-
-
-    })
-
-
-
-  })
+#   observeEvent(input$displayTopScorerVennDiagramBtn,{
+#
+#
+#
+#     output$output.ts.venn.plot <- renderPlot({
+#
+#         ts.comp1.values <- input$output.topscorer.comparison_1_rows_all
+#         ts.comp2.values <- input$output.topscorer.comparison_2_rows_all
+#
+#
+#         qq.value1 <- as.character(input$input_topscorer_choices_1)
+#         qq.dir1 <- file.path(results.dir(), qq.value1)
+#         nrows.value <- as.character(input$input_topscorer_readtop1)
+#
+#
+#
+#         dataset1 <- readComparisonData(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
+#
+#
+#         qq.value2 <- as.character(input$input_topscorer_choices_2)
+#         qq.dir2 <- file.path(results.dir(), qq.value2)
+#         nrows.value2 <- as.character(input$input_topscorer_readtop2)
+#
+#
+#
+#         dataset2 <- readComparisonData(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
+#
+#
+#
+#
+#         hw1 <- substring(dataset1$cgid, 3)
+#         hm1 <- substring(dataset2$cgid, 3)
+#
+#
+#         hw <- hw1 %in% hm1
+#         hm <- hm1 %in% hw1
+#
+#         c3 <- cbind(hw , hm )
+#
+#         #c3 <- vennCounts(c3)
+#         a1 <- nrow(subset(c3, hw ))
+#         a2 <- nrow(subset(c3, hm))
+#         ca <- nrow(subset(c3, hw  & hm  ))
+#
+#
+#         plotVennDiagram(c(input$input_topscorer_choices_1 , input$input_topscorer_choices_2),a1,a2,ca,0,0,0,0)
+#
+#
+#     })
+#
+#
+#
+#   })
 
 
 
@@ -3452,7 +3746,7 @@ shinyServer(function(input, output, session) {
 
 
 
-        c3 <- cbind(dd1, dd2 , dd3)
+        c3 <- cbind(d1, d2 , d3)
 
         a <- vennCounts(c3)
         p <- vennDiagram(a, include = "both",

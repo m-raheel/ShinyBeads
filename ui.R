@@ -1,30 +1,30 @@
 
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
-# library(RnBeadsInterface, lib.loc = '/projects/factorization/extraRlibs')
-# #.libPaths(.libPaths()[-1])
-# library(DT)
-# library(shiny)
-#
-# library(shinyjs)
-# library(shinythemes)
-# library(plyr , lib.loc = '/opt/Rlib/3.4')
-# library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
-# library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+#library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+#.libPaths(.libPaths()[-1])
+library(DT)
+library(shiny)
+
+library(shinyjs)
+library(shinythemes)
+library(plyr , lib.loc = '/opt/Rlib/3.4')
+library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
+library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 #####################################################################
 
 
 # local (comment while on the server)
 #####################################################################
 
-library(shiny)
-library(RnBeadsInterface)
-library(DT)
-library(shinyjs)
-library(shinythemes)
-library(plotly) #interactive graphics with D3
-#library(V8) # package for extended shinyJS
-#library(shinyFiles)
+# library(shiny)
+# library(RnBeadsInterface)
+# library(DT)
+# library(shinyjs)
+# library(shinythemes)
+# library(plotly) #interactive graphics with D3
+# #library(V8) # package for extended shinyJS
+# #library(shinyFiles)
 
 
 
@@ -623,7 +623,7 @@ tabPanel("Integrative Visualization",
                               tags$h2(style="color:black;","Top-scorer"),
                               tags$div(id = "ts_div_info", checked=NA,
 
-                                       tags$p(paste("Top-scorer has some of the functionality in common with the table browser but it will provide you with more analysis functionality of the selected differential methylation comparison data, User can select multiple RnBeads analysis and then after selected top n rows you can filter the table , merge the two selected analysis and can also see the overlappings in your seleted data.",
+                                       tags$p(paste("User can select multiple RnBeads analysis and filter the data based on top scores and see the overlappings in your seleted analysis in the form of Venn Diagram and also view the overlapping CpGs in table form.",
                                                     ""
                                        )
                                        )# end p tag
@@ -700,173 +700,66 @@ tabPanel("Integrative Visualization",
 
                                        ),
 
-                                       br()
 
 
-                                )),
+                                       tags$h4(style="color:black;","Overlapping CpGs"),
+                                       tags$p(paste("")),
 
 
-
-
-
-
-
-                              fluidRow(
-                                column(width = 3),
-                                column(width = 6
-
-
-
-
-
-                                ),
-
-                                column(width = 3)
-
-                              ),# end  of  fluid row
-
-
-
-                              fluidRow(
-                                column(width = 6,
-                                       selectInput("input_topscorer_choices_1", "Analysis 1:", choices),
-
-
-                                       selectInput("input_topscorer_files_1", "Comaprisons 1:", ""),
-                                       selectInput("input_topscorer_readtop1", "Read top n rows:", topRowsChoices)
-
-
-                                ),
-                                column(width = 6,
-                                       selectInput("input_topscorer_choices_2", "Analysis 2:", choices),
-
-                                       selectInput("input_topscorer_files_2", "Comparisons 2:", ""),
-                                       selectInput("input_topscorer_readtop2", "Read top n rows:", topRowsChoices)
-
-
-                                )
-                              ),
-
-                              # showing merge tabe after merge button is pressed
-                              fluidRow(
-
-
-                                column(width = 12,
-
-                                       tags$h4(style="color:black;","Venn diagrams"),
-                                       tags$p(paste("Venn diagrams are a very commonly used graphing technique that illustrates levels of overlap between groups in data. Click to see the overlap from the above selected analysis based on CpGs.")),
-
-                                       actionButton('displayTopScorerVennDiagramBtn', 'Display Overlap',class="btn btn-primary btn-md"),
-
-                                       br()
-
-
-                                )# end of column
-
-
-                              ),# end  of  fluid row
-
-
-                              fluidRow(
-
-                                column(width = 3
-
-
-
-
-                                ),# end of column
-                                column(width = 6,
-
+                                       actionButton('displayTopScorerOverlappingBtn', 'Display',class="btn btn-primary btn-md"),
+                                       br(),
+                                       br(),
 
                                        div(class="",
 
 
-                                           plotOutput('output.ts.venn.plot'),
+                                           dataTableOutput('output.topscorer.overlappingComparison'),
                                            br()
 
                                        ),
                                        br()
 
 
-                                ),# end of column
-                                column(width = 3
+                                )),# end  of  fluid row
 
 
 
-
-                                )# end of column
-
-                              ),# end  of  fluid row
-
+                              # showing the overlapping data Cpgs
                               fluidRow(
 
+                                column(width = 12
 
 
-                                column(width = 6,
-
-                                       tags$h4(style="color:black;","Analysis 1 comparison data"),
-
-                                       actionButton('displayTopScorerBtn', 'Display',class="btn btn-primary btn-md"),
-                                       br(),
-                                       br(),
-                                       div(class="well",
-
-
-                                           dataTableOutput('output.topscorer.comparison_1'),
-                                           br()
-
-                                       ),
-                                       br()
-
-
-                                ),# end of column
-
-                                column(width = 6,
-
-                                       tags$h4(style="color:black;","Analysis 2 comparison data"),
-
-                                       actionButton('displayTopScorerBtn2', 'Display',class="btn btn-primary btn-md"),
-                                       br(),
-                                       br(),
-
-                                       div(class="well",
-
-
-                                           dataTableOutput('output.topscorer.comparison_2'),
-                                           br()
-
-                                       ),
-                                       br()
 
 
                                 )# end of column
 
 
-                              ),# end  of  fluid row
 
+                              ),# end  of  fluid row
 
 
                               # showing merge tabe after merge button is pressed
                               fluidRow(
 
-                                column(width = 12,
+                                column(width = 12
 
-                                       tags$h4(style="color:black;","Merge analysis data"),
-                                       tags$p(paste("Merge the above selected analysis data.")),
-
-
-                                       actionButton('displayTopScorerMergeBtn', 'Merge',class="btn btn-primary btn-md"),
-                                       br(),
-                                       br(),
-
-                                       div(class="well",
-
-
-                                           dataTableOutput('output.topscorer.mergedComparison'),
-                                           br()
-
-                                       ),
-                                       br()
+#                                        tags$h4(style="color:black;","Merge analysis data"),
+#                                        tags$p(paste("Merge the above selected analysis data.")),
+#
+#
+#                                        actionButton('displayTopScorerMergeBtn', 'Merge',class="btn btn-primary btn-md"),
+#                                        br(),
+#                                        br(),
+#
+#                                        div(class="well",
+#
+#
+#                                            dataTableOutput('output.topscorer.mergedComparison'),
+#                                            br()
+#
+#                                        ),
+#                                        br()
 
 
                                 )# end of column
