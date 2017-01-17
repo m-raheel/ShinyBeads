@@ -301,11 +301,24 @@ tabPanel("Individual data set",
 
                               br(),
 
+                              fluidRow(
+                                column(width = 12,
+                                       selectInput("dd_ids_datasets", "Datasets:", choices),
+
+
+                                       wellPanel(
+                                         tags$strong("Sample Annotations.")
+                                       ),
+
+                                       dataTableOutput(paste0('annotation')),
+                                       br()
+                                )
+                              ),
+
 
                               fluidRow(
 
                                 column(width = 7,
-                                         selectInput("dd_ids_datasets", "Datasets:", choices),
 
 
 
@@ -324,7 +337,7 @@ tabPanel("Individual data set",
                                        ),
 
                                 column(width = 5,
-
+                                       br(),
                                        plotlyOutput('common_dataset_pie')
 
                                   )#end of column
@@ -333,18 +346,6 @@ tabPanel("Individual data set",
                             ),#end of fluid row
 
 
-                              fluidRow(
-                                column(width = 12,
-                                       br(),
-
-                                       wellPanel(
-                                         tags$strong("Dataset Sample sheet file content.")
-                                       ),
-
-                                       dataTableOutput(paste0('annotation')),
-                                       br()
-                                )
-                              ),
 
                               br()
 
@@ -656,6 +657,7 @@ tabPanel("Integrative Visualization",
 
                                        tags$h4(style="color:black;","Multiple analysis Venn Diagram"),
                                        tags$p(paste("Check the analysis on the left for which you want to see the overlapping. (Top 100 rows)")),
+                                       tags$p(paste("Note: Please select atleast 1 and atmost 6 analysis to draw Venn Diagram!")),
 
 
                                        #checkboxGroupInput("cb_ts_comp_venn", label = h3("Select analysis"),
@@ -690,6 +692,7 @@ tabPanel("Integrative Visualization",
 
                                        actionButton('btnMultipleShowVenn', 'Display',class="btn btn-primary btn-md"),
                                        br(),
+
 
                                        div(class="",
 

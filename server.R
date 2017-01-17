@@ -405,7 +405,9 @@ shinyServer(function(input, output, session) {
   # #select working directory
 
 
-  updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
+  #updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
+
+  updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
 
 
 
@@ -972,7 +974,28 @@ shinyServer(function(input, output, session) {
           dataset <- a.file()
           dataset
 
-        })
+        },selection = 'single', filter = 'top',
+
+        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+        options = list(
+          scrollX = TRUE,
+          scrollY = TRUE,
+          dom = 'Blfrtip',
+          buttons = list(
+            'copy',
+            'print',
+            list(
+              extend = 'collection',
+              buttons = c('csv', 'excel', 'pdf'),
+              text = 'Download'
+            ),
+            I('colvis')
+
+          ),
+          br(),
+          keys = TRUE
+
+        ), escape = TRUE)
 
         output$h1_datasettab <- renderText({
           paste("Dataset_",last_character)
@@ -991,7 +1014,28 @@ shinyServer(function(input, output, session) {
             dataset <- a.file()
             dataset
 
-          })
+          },selection = 'single', filter = 'top',
+
+          extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+          options = list(
+            scrollX = TRUE,
+            scrollY = TRUE,
+            dom = 'Blfrtip',
+            buttons = list(
+              'copy',
+              'print',
+              list(
+                extend = 'collection',
+                buttons = c('csv', 'excel', 'pdf'),
+                text = 'Download'
+              ),
+              I('colvis')
+
+            ),
+            br(),
+            keys = TRUE
+
+          ), escape = TRUE)
 
           output$h1_datasettab <- renderText({
             paste("Dataset_",last_character)
@@ -3293,79 +3337,90 @@ shinyServer(function(input, output, session) {
       cb.checked <- c(input$cb_ts_comp_venn)
 
 
+
       column_selected = as.character(input$input_topscorer_columns)
       equality = as.character(input$input_topscorer_columns_equality)
       range_selected = as.numeric(input$input_topscorer_columns_range)
 
 
-      qq.value1 <- as.character(cb.checked[1])
-      qq.dir1 <- file.path(results.dir(), qq.value1)
-      nrows.value <- as.character(100)
+      filtered.dataset.list <- list()
+      for (i in 1:length(cb.checked)) {
 
+        analysis.selected <- as.character(cb.checked[i])
+        analysis.path <- file.path(results.dir(), analysis.selected)
+        nrows.value <- as.character(100)
 
-      dataset1 <- readingCustomComparisonData(qq.value1,qq.dir1,1, nrows.value,column_selected)
+        dataset <- readingCustomComparisonData(analysis.selected,analysis.path,1, nrows.value,column_selected)
 
-      qq.value2 <- as.character(cb.checked[2])
-      qq.dir2 <- file.path(results.dir(), qq.value2)
-      nrows.value2 <- as.character(100)
+        if(column_selected == "diffmeth.p.val"){
+          colselected <- dataset$diffmeth.p.val
 
-      dataset2 <- readingCustomComparisonData(qq.value2,qq.dir2,1, nrows.value2,column_selected)
+        }
 
+        else{
+          colselected <- dataset$mean.diff
 
+        }
 
+        if(equality == ">="){
+          filtered.dataset.list[[i]] <- dataset[colselected >= range_selected,]
 
+        }
+        else if(equality == ">"){
+          filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
+        }
+        else if(equality == "<="){
 
+          filtered.dataset.list[[i]] <- dataset[colselected <= range_selected,]
+        }
+        else if(equality == "<"){
+          filtered.dataset.list[[i]] <- dataset[colselected < range_selected,]
+        }
+        else if(equality == "="){
 
+          filtered.dataset.list[[i]] <- dataset[colselected == range_selected,]
+        }
+        else {
+          filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
+        }
 
-      if(column_selected == "diffmeth.p.val"){
-        colselected1 <- dataset1$diffmeth.p.val
-        colselected2 <- dataset2$diffmeth.p.val
+      }#end of forloop
+
+      #dataset <- data.table( common1)
+
+      if (length(cb.checked)== 1){
+        dataset <- filtered.dataset.list[[1]]
       }
-      else if(equality == "mean.diff"){
-        colselected1 <- dataset1$mean.diff
-        colselected2 <- dataset2$mean.diff
+      else if (length(cb.checked)== 2){
+
+        common12 <- filtered.dataset.list[[1]][filtered.dataset.list[[1]]$cgid %in% filtered.dataset.list[[2]]$cgid]
+
+        common21 <- filtered.dataset.list[[2]][filtered.dataset.list[[2]]$cgid %in% filtered.dataset.list[[1]]$cgid]
+
+        dataset <- merge(common12, common21, by = c("cgid","Chromosome","Start","Strand") , all = T)
+
+      }
+      else if (length(cb.checked)== 3){
+
+        common12 <- filtered.dataset.list[[1]][filtered.dataset.list[[1]]$cgid %in% filtered.dataset.list[[2]]$cgid]
+        common13 <- filtered.dataset.list[[1]][filtered.dataset.list[[1]]$cgid %in% filtered.dataset.list[[3]]$cgid]
+
+        common21 <- filtered.dataset.list[[2]][filtered.dataset.list[[2]]$cgid %in% filtered.dataset.list[[1]]$cgid]
+        common23 <- filtered.dataset.list[[2]][filtered.dataset.list[[2]]$cgid %in% filtered.dataset.list[[3]]$cgid]
+
+        common31 <- filtered.dataset.list[[3]][filtered.dataset.list[[3]]$cgid %in% filtered.dataset.list[[1]]$cgid]
+        common32 <- filtered.dataset.list[[3]][filtered.dataset.list[[3]]$cgid %in% filtered.dataset.list[[2]]$cgid]
+
+        dataset <- merge(common12,common13, by = c("cgid","Chromosome","Start","Strand") , all = T)
+
       }
       else{
-        colselected1 <- dataset1$mean.diff
-        colselected2 <- dataset2$mean.diff
+
+        dataset <- data.table(c(''))
+
       }
 
 
-
-      if(equality == ">="){
-        filtered1 <- dataset1[colselected1 >= range_selected,]
-        filtered2 <- dataset2[colselected2 > range_selected,]
-      }
-      else if(equality == ">"){
-        filtered1 <- dataset1[colselected1 > range_selected,]
-        filtered2 <- dataset2[colselected2 > range_selected,]
-      }
-      else if(equality == "<="){
-
-        filtered1 <- dataset1[colselected1 <= range_selected,]
-        filtered2 <- dataset2[colselected2 <= range_selected,]
-      }
-      else if(equality == "<"){
-        filtered1 <- dataset1[colselected1 < range_selected,]
-        filtered2 <- dataset2[colselected2 < range_selected,]
-      }
-      else if(equality == "="){
-
-        filtered1 <- dataset1[colselected1 == range_selected,]
-        filtered2 <- dataset2[colselected2 == range_selected,]
-      }
-      else {
-        filtered1 <- dataset1[colselected1 > range_selected,]
-        filtered2 <- dataset2[colselected2 > range_selected,]
-      }
-
-
-
-      common1 <- filtered1[filtered1$cgid %in% filtered2$cgid]
-      common2 <- filtered2[filtered2$cgid %in% filtered1$cgid]
-      #dataset <- data.table( common)
-
-      dataset <- merge(common1, common2 , by = c("cgid","Chromosome","Start","Strand") , all = T)
 
       # Make sure it closes when we exit this reactive, even if there's an error
       on.exit(progress$close())
@@ -3641,6 +3696,7 @@ shinyServer(function(input, output, session) {
 
 
   observeEvent(input$btnMultipleShowVenn ,{
+
 
 
 
@@ -3951,21 +4007,6 @@ shinyServer(function(input, output, session) {
       }
 
       else{
-
-        hsb2 <- read.csv("http://www.ats.ucla.edu/stat/data/hsb2.csv")
-        attach(hsb2)
-
-        hw <- (write >= 60)
-        hm <- (math >= 60)
-        hr <- (read >= 60)
-        sc <- (science >= 60)
-        ss <- (socst >= 60)
-
-        c3 <- cbind(hw, hm, hr, sc, ss)
-        a <- vennCounts(c3)
-        p <- vennDiagram(a, include = "both",
-                         names = c("High Writing", "High Math", "High Reading", "science", "social studies"),
-                         cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow" ,"pink"))
 
 
       }
