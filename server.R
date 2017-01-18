@@ -3389,6 +3389,14 @@ shinyServer(function(input, output, session) {
 
         }
 
+        else if(column_selected == "diffmeth.p.adj.fdr"){
+          colselected <- dataset$diffmeth.p.adj.fdr
+
+        }
+        else if(column_selected == "mean.quot.log2"){
+          colselected <- dataset$mean.quot.log2
+
+        }
         else{
           colselected <- dataset$mean.diff
 
@@ -3709,7 +3717,7 @@ shinyServer(function(input, output, session) {
   output$ts.columns <- renderUI({
     selectInput("input_topscorer_columns",
                 label = paste(""),
-                choices = c("mean.diff","diffmeth.p.val"))
+                choices = c("mean.diff","diffmeth.p.val","diffmeth.p.adj.fdr","mean.quot.log2"))
   })
 
   output$ts.columns.equality <- renderUI({
