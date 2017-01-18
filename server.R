@@ -903,40 +903,62 @@ shinyServer(function(input, output, session) {
 
   # displaying rnbeads reports index.html file content
   ############################################################################################
+  observeEvent(input$select_ia,{
+    output$rnbeadsReports <- renderUI({
+
+      value.modules <- reactive({as.character(input$select_ia) })
+      wd_modules <- reactive({file.path(results.dir(), value.modules()) })
+
+      if ( file.exists( isolate({ paste(wd_modules(),'index.html',sep="/") }) ) ){
+
+          #browseURL(paste('http://internal.genetik.uni-sb.de/dataT7600','as.character(input$select_ia)','index.html',sep="/"))
+          HTML(paste('<a class = "btn btn-primary" target = "_blank" href = "http://internal.genetik.uni-sb.de/dataT7600/',paste(as.character(input$select_ia),'index.html"',sep="/"),'>View Reports','</a>',sep=""))
 
 
-  observeEvent(input$view_rnbeads_reports,{
+      }
+      else{
+          HTML('<p>No reports exist!</p>')
 
-    value.modules <- reactive({as.character(input$select_ia) })
-    wd_modules <- reactive({file.path(results.dir(), value.modules()) })
+      }
 
-    if ( file.exists( isolate({ paste(wd_modules(),'index.html',sep="/") }) ) ){
-
-
-      output$rnbeadsReports <- renderUI({
-
-         # data = includeHTML(paste(wd_modules(),'index.html',sep="/"))
-         #
-         # data = gsub('<link rel="stylesheet" href="configuration/report.css" type="text/css" />',"",data)
-         # print(data)
-         # HTML(data)
-        #browseURL(paste(wd_modules(),'index.html',sep="/"))
-        HTML(paste('<p> </p>','<p class = "text-info">file://',paste(wd_modules(),'index.html',sep="/"),'</p>','<p >Copy this link and paste in a new tab in your browser to see the RnBeads reports. Note: Only for t7600 users!</p>',sep=""))
-      })
-
-
-
-    }
-    else{
-
-      output$rnbeadsReports <- renderUI({
-
-        HTML('<p>No index.html exists!</p>')
-      })
-
-    }
-
+    })
   })
+
+
+#   observeEvent(input$view_rnbeads_reports,{
+#
+#     value.modules <- reactive({as.character(input$select_ia) })
+#     wd_modules <- reactive({file.path(results.dir(), value.modules()) })
+#
+#     if ( file.exists( isolate({ paste(wd_modules(),'index.html',sep="/") }) ) ){
+#
+#
+#       output$rnbeadsReports <- renderUI({
+#
+#          # data = includeHTML(paste(wd_modules(),'index.html',sep="/"))
+#          #
+#          # data = gsub('<link rel="stylesheet" href="configuration/report.css" type="text/css" />',"",data)
+#          # print(data)
+#          # HTML(data)
+#         browseURL(paste('http://internal.genetik.uni-sb.de/dataT7600','as.character(input$select_ia)','index.html',sep="/"))
+#         #HTML(paste('<p> </p>','<p class = "text-info">file://',paste(wd_modules(),'index.html',sep="/"),'</p>','<p >Copy this link and paste in a new tab in your browser to see the RnBeads reports. Note: Only for t7600 users!</p>',sep=""))
+#       })
+#
+#
+#
+#
+#
+#     }
+#     else{
+#
+#       output$rnbeadsReports <- renderUI({
+#
+#         HTML('<p>No index.html exists!</p>')
+#       })
+#
+#     }
+#
+#   })
 
 
   ############################################################################################

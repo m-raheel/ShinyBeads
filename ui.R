@@ -236,6 +236,34 @@ shinyUI(
 
 
                  tabsetPanel(id = "analysis_option",
+
+                             tabPanel("RnBeads Reports",
+
+                                      HTML(paste('<div class="">',
+                                                 '<div class="container">',
+
+                                                 '<h2>Rnbeads Reports!</h2>',
+
+                                                 '<p>Select from the left menu and click View Reports!</p>',
+
+
+                                                 #                                                  actionButton("view_rnbeads_reports", label = "Reports", class=""),
+                                                 #                                                  br(),
+                                                 uiOutput('rnbeadsReports'),
+
+
+                                                 '</div>',
+                                                 '</div>'
+
+
+
+
+                                      )
+                                      ),
+
+                                      br()
+
+                             ),
                              tabPanel("Analysis options",
 
                                       br(),
@@ -254,34 +282,8 @@ shinyUI(
                                   tableOutput("list_module"),
                                   br()
 
-                             ),
-                             tabPanel("RnBeads Reports",
-
-                                      HTML(paste('<div class="">',
-                                                 '<div class="container">',
-
-                                                 '<h2>Rnbeads Reports!</h2>',
-
-                                                 '<p>Select from the left menu and click Reports!</p>',
-
-
-                                                 actionButton("view_rnbeads_reports", label = "Reports", class=""),
-                                                 br(),
-                                                 uiOutput('rnbeadsReports'),
-
-
-                                                 '</div>',
-                                                 '</div>'
-
-
-
-
-                                                 )
-                                      ),
-
-                                      br()
-
                              )
+
 
                   )#end of tabsetpanel
 
