@@ -1260,6 +1260,11 @@ shinyServer(function(input, output, session) {
 
   observeEvent(input$input_dmcomp_choices,{
 
+
+
+
+    shinyjs::hide(id = "id_qqplot")
+
     input_choices <- as.character(input$input_dmcomp_choices)
 
     qq.dir <- file.path(results.dir(), input_choices)
@@ -1400,50 +1405,50 @@ shinyServer(function(input, output, session) {
   })
 
 
-  list.pvalues <- reactive({
-
-    qq.value <- as.character(input$input_dmcomp_choices)
-
-    qq.dir <- file.path(results.dir(), qq.value)
-
-    #qq.value <- as.character(input$input_dmcomp_files)
-
-
-
-    if (qq.value == "" || qq.value == "NA"){
-      x <- list()
-      x
-    }
-    else{
-
-      #fucntion from the RnBeadsInterface package
-
-      #index_list() contains the index of the selected file ffrom the dropdown
-      f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-        comparison_plot(qq.dir , f)
-
-
-
-        # # Increment the progress bar, and update the detail text.
-        # progress$inc(detail = paste("Please wait..."))
-        #
-        # # Pause for 0.1 seconds to simulate a long computation.
-        # Sys.sleep(0.1)
-
-
-      }
-      else{
-        x <- list()
-        x
-      }
-    }
-
-
-  })
-
+#   list.pvalues <- reactive({
+#
+#     qq.value <- as.character(input$input_dmcomp_choices)
+#
+#     qq.dir <- file.path(results.dir(), qq.value)
+#
+#     #qq.value <- as.character(input$input_dmcomp_files)
+#
+#
+#
+#     if (qq.value == "" || qq.value == "NA"){
+#       x <- list()
+#       x
+#     }
+#     else{
+#
+#       #fucntion from the RnBeadsInterface package
+#
+#       #index_list() contains the index of the selected file ffrom the dropdown
+#       f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+#
+#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+#
+#         comparison_plot(qq.dir , f)
+#
+#
+#
+#         # # Increment the progress bar, and update the detail text.
+#         # progress$inc(detail = paste("Please wait..."))
+#         #
+#         # # Pause for 0.1 seconds to simulate a long computation.
+#         # Sys.sleep(0.1)
+#
+#
+#       }
+#       else{
+#         x <- list()
+#         x
+#       }
+#     }
+#
+#
+#   })
+#
 
 
   # output$p_values2 <- renderDataTable({
@@ -1461,96 +1466,13 @@ shinyServer(function(input, output, session) {
   # })
 
 
-  plotInput <- reactive({
 
-    qq.value <- as.character(input$input_dmcomp_choices)
-
-    qq.dir <- file.path(results.dir(), qq.value)
-
-    f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
-
-    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
-    {
-      #y <- dist(ppoints(length(list.pvalues())))
-      #qqline(y,list.pvalues())
-      #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
-
-      #qqman.qq(list.pvalues(),main="Q-Q plot of p-values")
-
-      #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
-
-      ##from package lattice
-
-      #qqunif.plot(list.pvalues())
-
-      filename <- file.path(qq.dir, 'differential_methylation_data',f)
-
-
-      filename= as.character(filename)
-
-      # fread function from the library data.table
-      comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr"))
-
-
-#       comp.file <- data.frame(comp.file)
-#       qqrObject <- qqr(comp.file , p = "diffmeth.p.val" , snp = "cgid" )
-      qqly(HapMap)
-#       qqrObject <- qqr(comp.file , p = "diffmeth.p.val" , snp = "cgid" )
-#
-#       qqly(qqrObject, col = "#6087ea", size = 1, type = 20, abline_col = "pink",
-#             abline_size = 0.5, abline_type = 1, highlight = NULL,
-#             highlight_color = "#00FF00", xlab = "Expected -log10(p)",
-#             ylab = "Observed -log10(p)", title = "")
-
-
-
-
-    }
-
-    else {
-
-      # print error/ warning message
-      # qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-      # text(1,1,"No data available or no comparison file exist")
-
-      Primates <- c('No Data Avaiable')
-      Bodywt <- c(0.5 )
-      Brainwt <- c(0.5)
-
-      data <- data.frame(Primates, Bodywt, Brainwt)
-
-
-      p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
-                   mode = 'text', text = ~Primates, textposition = 'middle center',
-                   textfont = list(color = '#000000', size = 16))%>%
-        layout(title = 'Q-Q Plot',
-               xaxis = list(title = 'Expected -log10(p)',
-                            zeroline = TRUE,
-                            range = c(0, 1)),
-               yaxis = list(title = 'Observed -log10(p)',
-                            range = c(0,1)))
-
-
-    }
-
-
-  })
-
-  output$compqqplotly <- renderPlotly({
-    pdf(NULL)
-    plotInput()
-
-
-  })
 
   observeEvent(input$displayQQPlotBtn,{
 
-    #shinyjs::show(id = "id_qqplot")
+    shinyjs::show(id = "id_qqplot")
 
-    output$compqqplot <- renderPlot({
-
-      #plotInput()
-
+    plotInput <- function(){
 
       qq.value <- as.character(input$input_dmcomp_choices)
 
@@ -1560,6 +1482,12 @@ shinyServer(function(input, output, session) {
 
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
       {
+
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Makind QQ Plot", value = 50)
+
         #y <- dist(ppoints(length(list.pvalues())))
         #qqline(y,list.pvalues())
         #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
@@ -1570,30 +1498,128 @@ shinyServer(function(input, output, session) {
 
         ##from package lattice
 
-        # Create a Progress object
-        progress <- shiny::Progress$new()
+        #qqunif.plot(list.pvalues())
 
-        progress$set(message = "Makind QQ Plot", value = 50)
+        filename <- file.path(qq.dir, 'differential_methylation_data',f)
 
-        q <- qqunif.plot(list.pvalues())
+
+        filename= as.character(filename)
+
+        # fread function from the library data.table
+        comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr"))
+
+
+        setnames(comp.file, "diffmeth.p.val", "P")
+        comp.file <- data.frame(comp.file[1:1000,])
+        qqrObject <- qqr(comp.file)
+
+#         qqrObject <- qqr(HapMap[1:100,])
+#         qqly(qqrObject)
+        #       qqrObject <- qqr(comp.file , p = "diffmeth.p.val" , snp = "cgid" )
+        #
+        p <- qqly(qqrObject, col = "#6087ea", size = 1, type = 20, abline_col = "pink",
+                  abline_size = 0.5, abline_type = 1, highlight = NULL,
+                  highlight_color = "#00FF00", xlab = "Expected -log10(p)",
+                  ylab = "Observed -log10(p)", title = "")
 
         # Make sure it closes when we exit this reactive, even if there's an error
         on.exit(progress$close())
 
-        q
+        p
+
       }
 
       else {
 
         # print error/ warning message
-        qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-        text(1,1,"No data available or no comparison file exist")
+        # qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+        # text(1,1,"No data available or no comparison file exist")
+
+        Primates <- c('No Data Avaiable')
+        Bodywt <- c(0.5 )
+        Brainwt <- c(0.5)
+
+        data <- data.frame(Primates, Bodywt, Brainwt)
+
+
+        p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                     mode = 'text', text = ~Primates, textposition = 'middle center',
+                     textfont = list(color = '#000000', size = 16))%>%
+          layout(title = 'Q-Q Plot',
+                 xaxis = list(title = 'Expected -log10(p)',
+                              zeroline = TRUE,
+                              range = c(0, 1)),
+                 yaxis = list(title = 'Observed -log10(p)',
+                              range = c(0,1)))
 
 
       }
-    })
 
+
+      return(p)
+    }
+
+    output$compqqplotly <- renderPlotly({
+      pdf(NULL)
+      p <- plotInput()
+      dev.off()
+      p
+    })
   })
+
+#   observeEvent(input$displayQQPlotBtn,{
+#
+#     #shinyjs::show(id = "id_qqplot")
+#
+#     output$compqqplot <- renderPlot({
+#
+#       #plotInput()
+#
+#
+#       qq.value <- as.character(input$input_dmcomp_choices)
+#
+#       qq.dir <- file.path(results.dir(), qq.value)
+#
+#       f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+#
+#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
+#       {
+#         #y <- dist(ppoints(length(list.pvalues())))
+#         #qqline(y,list.pvalues())
+#         #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
+#
+#         #qqman.qq(list.pvalues(),main="Q-Q plot of p-values")
+#
+#         #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
+#
+#
+#
+#         ##from package lattice
+#
+#         # Create a Progress object
+#         progress <- shiny::Progress$new()
+#
+#         progress$set(message = "Makind QQ Plot", value = 50)
+#
+#         q <- qqunif.plot(list.pvalues())
+#
+#         # Make sure it closes when we exit this reactive, even if there's an error
+#         on.exit(progress$close())
+#
+#         q
+#       }
+#
+#       else {
+#
+#         # print error/ warning message
+#         qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+#         text(1,1,"No data available or no comparison file exist")
+#
+#
+#       }
+#     })
+#
+#   })
 
 
   ############################################################################################
@@ -2419,6 +2445,9 @@ shinyServer(function(input, output, session) {
     shinyjs::show(id = "id_tb_filterPlot")
 
     output$x5 <- renderPlotly({
+
+
+
       if (is.null(checkDisplay$data2)) {
 
 
@@ -2451,6 +2480,7 @@ shinyServer(function(input, output, session) {
           data <- data.frame(Primates, Bodywt, Brainwt)
 
 
+          pdf(NULL)
           p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
                        mode = 'text', text = ~Primates, textposition = 'middle center',
                        textfont = list(color = '#000000', size = 16))%>%
@@ -2462,7 +2492,7 @@ shinyServer(function(input, output, session) {
               yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
                 title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
             )
-
+          dev.off()
           p
         }
         else if (length(filtered_data) > 50000)
@@ -2473,7 +2503,7 @@ shinyServer(function(input, output, session) {
 
           data <- data.frame(Primates, Bodywt, Brainwt)
 
-
+          pdf(NULL)
           p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
                        mode = 'text', text = ~Primates, textposition = 'middle center',
                        textfont = list(color = '#000000', size = 14))%>%
@@ -2485,7 +2515,7 @@ shinyServer(function(input, output, session) {
               yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
                 title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
             )
-
+          dev.off()
           p
 
         }
@@ -2529,6 +2559,8 @@ shinyServer(function(input, output, session) {
                 filtered <- comp.file[filtered_data, , drop = FALSE]
                 key <- colnames(comp.file) <- names(comp.file)
                 print(key)
+
+                pdf(NULL)
                 p <- plot_ly(filtered,
                              type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
                              x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
@@ -2558,7 +2590,7 @@ shinyServer(function(input, output, session) {
 
                 # Make sure it closes when we exit this reactive, even if there's an error
                 on.exit(progress$close())
-
+                dev.off()
 
                 p
               }

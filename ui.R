@@ -426,8 +426,8 @@ tabPanel("Integrative Visualization",
                                                               div(id="id_qqplot",
                                                                   fluidRow(
                                                                     column(width = 8,
-                                                                           #plotlyOutput('compqqplotly'),
-                                                                           plotOutput('compqqplot')
+                                                                           plotlyOutput('compqqplotly')
+                                                                           #plotOutput('compqqplot')
                                                                     ))# end  of  fluid row
 
                                                               ),
@@ -582,11 +582,19 @@ tabPanel("Integrative Visualization",
                                          br(),
 
                                          div(id="id_tb_filterPlot_Btn",
+                                             tags$h2(style="color:black;","Filtered Plot"),
+                                             tags$p("Customize the plot by selecting x-axis and y-axis from the options. The plot will contains data from the above table."),
 
-                                           selectInput("input_tablebrowser_x_axis", "Select x-axis:", ''),
-                                           selectInput("input_tablebrowser_y_axis", "Select y-axis:", ''),
+                                             fluidRow(
+                                               column(width = 4,
+                                                       selectInput("input_tablebrowser_x_axis", "Select x-axis:", '')
+                                               ),
+                                               column(width = 4,
+                                                       selectInput("input_tablebrowser_y_axis", "Select y-axis:", '')
+                                               )
+                                             ),
 
-                                           actionButton('displayPlotBtn', 'Filter Plot', class="btn btn-primary btn-md"),
+                                           actionButton('displayPlotBtn', 'Display Plot', class="btn btn-primary btn-md"),
                                            div(id="id_tb_filterPlot",
 
                                                br(),
