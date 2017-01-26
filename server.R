@@ -3201,16 +3201,18 @@ shinyServer(function(input, output, session) {
 
       if (length(cb.checked) == 1){
 
-        p <- vennDiagram(dataset.venn.count.list[[1]], include = "both",
-                         names = paste (paste("A = ",cb.checked[1])),
-                         cex = 1, counts.col = "red", circle.col = c("green"))
-
-
         output$output.ts.table.multivenn.plot.labels <- renderTable({
           Selected_analysis= c(paste("A = ",cb.checked[1]))
           result <- data.frame(Selected_analysis)
           data.table(result)
         })
+
+        p <- vennDiagram(dataset.venn.count.list[[1]], include = "both",
+                         names = paste (paste("A = ",cb.checked[1])),
+                         cex = 1, counts.col = "red", circle.col = c("green"))
+
+
+
 
         output$ts.selector.overlapping.value <- renderUI({
           selectInput("input_ts_selector_overlapping_value",
@@ -3255,17 +3257,19 @@ shinyServer(function(input, output, session) {
       }
       else if(length(cb.checked) == 2){
 
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
+
         # drawing venn diagram
         p <- vennDiagram(dataset.venn.count.list[[2]], include = "both",
                          names = c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2])),
                          cex = 1, counts.col = "red", circle.col = c("green","blue"))
 
 
-        output$output.ts.table.multivenn.plot.labels <- renderTable({
-          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]))
-          result <- data.frame(Selected_analysis)
-          data.table(result)
-        })
+
 
         # updating  the count numbers of the venn diagram under venn count selector option
 
@@ -3341,15 +3345,17 @@ shinyServer(function(input, output, session) {
       else if(length(cb.checked) == 3){
 
 
-        p <- vennDiagram(dataset.venn.count.list[[3]], include = "both",
-                         names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3])),
-                         cex = 1, counts.col = "red", circle.col = c("green","blue", "orange"))
-
         output$output.ts.table.multivenn.plot.labels <- renderTable({
           Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]))
           result <- data.frame(Selected_analysis)
           data.table(result)
         })
+
+        p <- vennDiagram(dataset.venn.count.list[[3]], include = "both",
+                         names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3])),
+                         cex = 1, counts.col = "red", circle.col = c("green","blue", "orange"))
+
+
 
 
         # updating  the count numbers of the venn diagram under venn count selector option
@@ -3425,17 +3431,18 @@ shinyServer(function(input, output, session) {
       else if(length(cb.checked) == 4){
 
 
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]), paste("D = ",cb.checked[4]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
 
         p <- vennDiagram(dataset.venn.count.list[[4]], include = "both",
                          names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3]),paste ("D = ",cb.checked[4])),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
 
 
-        output$output.ts.table.multivenn.plot.labels <- renderTable({
-          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]), paste("D = ",cb.checked[4]))
-          result <- data.frame(Selected_analysis)
-          data.table(result)
-        })
+
 
         # updating  the count numbers of the venn diagram under venn count selector option
         choices.vector <- list()
@@ -3513,18 +3520,18 @@ shinyServer(function(input, output, session) {
 
       else if(length(cb.checked) == 5){
 
-
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]), paste("D = ",cb.checked[4]), paste("E = ",cb.checked[5]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
 
         p <- vennDiagram(dataset.venn.count.list[[5]], include = "both",
                          names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3]),paste ("D = ",cb.checked[4]),paste ("E = ",cb.checked[5])),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
 
 
-        output$output.ts.table.multivenn.plot.labels <- renderTable({
-          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]), paste("D = ",cb.checked[4]), paste("E = ",cb.checked[5]))
-          result <- data.frame(Selected_analysis)
-          data.table(result)
-        })
+
 
         # updating  the count numbers of the venn diagram under venn count selector option
         choices.vector <- list()
