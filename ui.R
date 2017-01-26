@@ -718,6 +718,17 @@ tabPanel("Integrative Visualization",
                                        tags$h4(style="color:black;","Overlapping CpGs"),
                                        tags$p(paste("")),
 
+                                       div(class="",
+
+                                           textOutput("ts.table.overlapping.value3" ),
+                                           tableOutput("ts.table.overlapping.value" ),
+                                           tableOutput("ts.table.overlapping.value2" ),
+                                           uiOutput("ts.selector.overlapping.value" ),
+                                           br()
+
+                                       ),
+
+
 
                                        actionButton('displayTopScorerOverlappingBtn', 'Display',class="btn btn-primary btn-md"),
                                        br(),
