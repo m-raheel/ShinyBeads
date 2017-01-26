@@ -2961,404 +2961,6 @@ shinyServer(function(input, output, session) {
   # Top scorer implementation of the input select comparisons
   ############################################################################################
 
-#   ts.comp1.visible <- reactiveValues(data = TRUE)
-#
-#   # for Repository 1
-#   observeEvent(input$input_topscorer_choices_1,{
-#
-#     ts.comp1.visible$data <- FALSE
-#
-#     input_choices <- as.character(input$input_topscorer_choices_1)
-#
-#     qq.dir <- file.path(results.dir(), input_choices)
-#
-#
-#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-#
-#     if (input_choices != "NA"){
-#
-#
-#
-#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-#
-#         filename <- file.path(qq.dir,'differential_methylation.html')
-#
-#         differential.methylation.path <- filename
-#
-#
-#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-#
-#
-#         query = "//*/div[@id='section3']/ul/li"
-#         dates = xpathSApply(pagetree, query, xmlValue)
-#         dates
-#         comp_names <- list()
-#         comp_names_counter <- 1
-#         for (i in 1:length(dates)) {
-#
-#           comp_names[comp_names_counter] <- dates[i]
-#           comp_names_counter = comp_names_counter + 1
-#
-#
-#         }
-#
-#         choices.list <- comp_names
-#       }
-#       else{
-#         choices.list <- 'NA'
-#       }
-#     }
-#     else{
-#       choices.list <- 'NA'
-#
-#     }
-#
-#
-#     updateSelectInput(session, "input_topscorer_files_1",
-#                       label = paste("Comparison 1", ""),
-#                       choices = choices.list)
-#
-#
-#
-#
-#   })
-#
-#
-#   # returns the index of selected comparison file in top scorer 1
-#   ts.comp.index_1 <- eventReactive(input$input_topscorer_files_1, {
-#
-#
-#
-#     input_choices <- as.character(input$input_topscorer_choices_1)
-#
-#     qq.dir <- file.path(results.dir(), input_choices)
-#
-#
-#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-#
-#     choice.index <- '1'
-#
-#     if (input_choices != "NA"){
-#
-#
-#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-#
-#         filename <- file.path(qq.dir,'differential_methylation.html')
-#
-#         differential.methylation.path <- filename
-#
-#
-#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-#
-#         query = "//*/div[@id='section3']/ul/li"
-#         dates = xpathSApply(pagetree, query, xmlValue)
-#
-#
-#         for (i in 1:length(dates)) {
-#           if (identical(input$input_topscorer_files_1, dates[i])){
-#
-#             choice.index <- as.character(i)
-#             break
-#
-#
-#           }
-#
-#
-#         }
-#
-#       }
-#       else{
-#         choice.index <- '1'
-#
-#       }
-#     }
-#     else{
-#       choice.index <- '1'
-#
-#
-#     }
-#
-#     return(choice.index)
-#   })
-#
-#   ################################################
-#
-#   # for Repository 2
-#
-#   ts.comp2.visible <- reactiveValues(data = TRUE)
-#
-#   observeEvent(input$input_topscorer_choices_2,{
-#     ts.comp2.visible$data <- FALSE
-#
-#     input_choices <- as.character(input$input_topscorer_choices_2)
-#
-#     qq.dir <- file.path(results.dir(), input_choices)
-#
-#
-#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-#
-#     if (input_choices != "NA"){
-#
-#
-#
-#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-#
-#         filename <- file.path(qq.dir,'differential_methylation.html')
-#
-#         differential.methylation.path <- filename
-#
-#
-#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-#
-#
-#         query = "//*/div[@id='section3']/ul/li"
-#         dates = xpathSApply(pagetree, query, xmlValue)
-#         dates
-#         comp_names <- list()
-#         comp_names_counter <- 1
-#         for (i in 1:length(dates)) {
-#
-#           comp_names[comp_names_counter] <- dates[i]
-#           comp_names_counter = comp_names_counter + 1
-#
-#
-#         }
-#
-#         choices.list <- comp_names
-#       }
-#       else{
-#         choices.list <- 'NA'
-#       }
-#     }
-#     else{
-#       choices.list <- 'NA'
-#
-#     }
-#
-#
-#     updateSelectInput(session, "input_topscorer_files_2",
-#                       label = paste("Comparison 2", ""),
-#                       choices = choices.list)
-#
-#
-#
-#
-#   })
-#
-#
-#   # returns the index of selected comparison file 2
-#   ts.comp.index_2 <- eventReactive(input$input_topscorer_files_2, {
-#
-#
-#
-#     input_choices <- as.character(input$input_topscorer_choices_2)
-#
-#     qq.dir <- file.path(results.dir(), input_choices)
-#
-#
-#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-#
-#     choice.index <- '1'
-#
-#     if (input_choices != "NA"){
-#
-#
-#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-#
-#         filename <- file.path(qq.dir,'differential_methylation.html')
-#
-#         differential.methylation.path <- filename
-#
-#
-#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-#
-#         query = "//*/div[@id='section3']/ul/li"
-#         dates = xpathSApply(pagetree, query, xmlValue)
-#
-#
-#         for (i in 1:length(dates)) {
-#
-#           #if statement is not vectorized. For vectorized if statements you should use ifelse
-#           #ifelse(length(comp_names)>0,choices.list <- comp_names, choices.list <- 'NA')
-#
-#           if (identical(input$input_topscorer_files_2, dates[i])){
-#
-#
-#             choice.index <- as.character(i)
-#
-#
-#
-#
-#             break
-#
-#
-#           }
-#
-#
-#         }
-#
-#       }
-#       else{
-#         choice.index <- '1'
-#
-#       }
-#     }
-#     else{
-#       choice.index <- '1'
-#
-#
-#     }
-#
-#     return(choice.index)
-#   })
-#
-#   # Display button 1 of comparisons in the Top scorer tab
-#
-#   observeEvent(input$displayTopScorerBtn,{
-#
-#
-#     ts.comp1.visible$data <- TRUE
-#
-#     output$output.topscorer.comparison_1 <- renderDataTable({
-#
-#
-#       if (is.null(ts.comp1.visible$data)) {
-#         print (ts.comp1.visible$data)
-#         return()
-#       }
-#
-#       else if (identical(ts.comp1.visible$data, FALSE)) {
-#         print (ts.comp1.visible$data)
-#         return()
-#       }
-#
-#       else {
-#
-#         # Create a Progress object
-#         progress <- shiny::Progress$new()
-#
-#         progress$set(message = "Reading data! please wait...", value = 50)
-#
-#
-#         qq.value1 <- as.character(input$input_topscorer_choices_1)
-#         qq.dir1 <- file.path(results.dir(), qq.value1)
-#         nrows.value <- as.character(input$input_topscorer_readtop1)
-#
-#
-#
-#         dataset <- readingPValues(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
-#
-#         # Make sure it closes when we exit this reactive, even if there's an error
-#         on.exit(progress$close())
-#
-#
-#
-#
-#
-#         dataset
-#
-#       }
-#
-#     },selection = 'single', filter = 'top',
-#
-#     extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-#     options = list(
-#       scrollX = TRUE,
-#       scrollY = TRUE,
-#       dom = 'Blfrtip',
-#       buttons = list(
-#         'copy',
-#         'print',
-#         list(
-#           extend = 'collection',
-#           buttons = c('csv', 'excel', 'pdf'),
-#           text = 'Download'
-#         ),
-#         I('colvis')
-#
-#       ),
-#       br(),
-#       keys = TRUE
-#
-#     ), escape = TRUE)
-#
-#
-#   })
-#
-#   # Display button 2 of comparisons in the Top scorer tab
-#
-#   observeEvent(input$displayTopScorerBtn2,{
-#
-#     ts.comp2.visible$data <- TRUE
-#
-#     output$output.topscorer.comparison_2 <- renderDataTable({
-#
-#
-#       if (is.null(ts.comp2.visible$data)) {
-#         print (ts.comp2.visible$data)
-#         return()
-#       }
-#
-#       else if (identical(ts.comp2.visible$data, FALSE)) {
-#         print (ts.comp2.visible$data)
-#         return()
-#       }
-#
-#       else {
-#
-#           # Create a Progress object
-#           progress <- shiny::Progress$new()
-#
-#           progress$set(message = "Reading data! please wait...", value = 50)
-#
-#           qq.value2 <- as.character(input$input_topscorer_choices_2)
-#           qq.dir2 <- file.path(results.dir(), qq.value2)
-#           nrows.value2 <- as.character(input$input_topscorer_readtop2)
-#
-#
-#
-#           dataset <- readingPValues(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
-#
-#           # Make sure it closes when we exit this reactive, even if there's an error
-#           on.exit(progress$close())
-#
-#
-#           dataset
-#
-#       }
-#
-#     },selection = 'single', filter = 'top',
-#
-#     extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-#     options = list(
-#       scrollX = TRUE,
-#       scrollY = TRUE,
-#       dom = 'Blfrtip',
-#       buttons = list(
-#         'copy',
-#         'print',
-#         list(
-#           extend = 'collection',
-#           buttons = c('csv', 'excel', 'pdf'),
-#           text = 'Download'
-#         ),
-#         I('colvis')
-#
-#       ),
-#       br(),
-#       keys = TRUE
-#
-#     ), escape = TRUE)
-#
-#
-#
-#   })
-
-
   output$cb <- renderUI({
 
     choices = list.files(path = selectedDir)
@@ -3459,7 +3061,9 @@ shinyServer(function(input, output, session) {
 
     output$output.ts.multivenn.plot <- renderPlot({
 
-
+      output$ts.venn.overlapping.error.value <- renderText({
+        paste("")
+      })
       # preparing data to display in Venn diagram and in data table
       cb.checked <- c(input$cb_ts_comp_venn)
 
@@ -3579,19 +3183,16 @@ shinyServer(function(input, output, session) {
           clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]], filtered.logical.dataset.list[[3]], filtered.logical.dataset.list[[4]])
 
         }
-
         else if (i == 5){
-          clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]])
-
-        }
-
-        else if (i == 6){
           clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]], filtered.logical.dataset.list[[3]], filtered.logical.dataset.list[[4]], filtered.logical.dataset.list[[5]])
 
         }
-        else{
+        else if (i == 6){
           clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]], filtered.logical.dataset.list[[3]], filtered.logical.dataset.list[[4]], filtered.logical.dataset.list[[5]], filtered.logical.dataset.list[[6]])
 
+        }
+        else {
+          clogicaldf <- cbind(filtered.logical.dataset.list[[1]])
         }
 
         dataset.venn.count.list[[i]] <- vennCounts(clogicaldf)
@@ -3601,10 +3202,15 @@ shinyServer(function(input, output, session) {
       if (length(cb.checked) == 1){
 
         p <- vennDiagram(dataset.venn.count.list[[1]], include = "both",
-                         names = paste ("A = ",cb.checked[1]),
+                         names = paste (paste("A = ",cb.checked[1])),
                          cex = 1, counts.col = "red", circle.col = c("green"))
 
 
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
 
         output$ts.selector.overlapping.value <- renderUI({
           selectInput("input_ts_selector_overlapping_value",
@@ -3651,9 +3257,15 @@ shinyServer(function(input, output, session) {
 
         # drawing venn diagram
         p <- vennDiagram(dataset.venn.count.list[[2]], include = "both",
-                         names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2])),
+                         names = c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2])),
                          cex = 1, counts.col = "red", circle.col = c("green","blue"))
 
+
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
 
         # updating  the count numbers of the venn diagram under venn count selector option
 
@@ -3733,6 +3345,13 @@ shinyServer(function(input, output, session) {
                          names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3])),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange"))
 
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
+
+
         # updating  the count numbers of the venn diagram under venn count selector option
         choices.vector <- list()
         combination <- c("!ABC = ","C = ","B = ","BC = ","A = ","AC = ","AB = ","ABC = ")
@@ -3807,18 +3426,88 @@ shinyServer(function(input, output, session) {
 
 
 
-        p <- vennDiagram(a, include = "both",
+        p <- vennDiagram(dataset.venn.count.list[[4]], include = "both",
                          names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3]),paste ("D = ",cb.checked[4])),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
 
 
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]), paste("D = ",cb.checked[4]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
 
+        # updating  the count numbers of the venn diagram under venn count selector option
+        choices.vector <- list()
+        combination <- c("!ABCD = ","D = ","C = ","DC = ","B = ","BD = ","BC = ","BCD = ","A = ","AD = ","AC = ","ACD = ","AB = ","ABD = ","ABC = ","ABCD = ")
+        combinationLogicalA <- c("FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE", "TRUE","TRUE","TRUE","TRUE" ,"TRUE","TRUE","TRUE","TRUE")
+        combinationLogicalB <- c("FALSE","FALSE","FALSE","FALSE","TRUE","TRUE","TRUE","TRUE","FALSE","FALSE","FALSE","FALSE","TRUE","TRUE","TRUE","TRUE")
+        combinationLogicalC <- c("FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE")
+        combinationLogicalD <- c("FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE")
+        for (i in 1:16) {
+          choices.vector[i] = paste(combination[i] , dataset.venn.count.list[[4]][i,5])
 
+        }
         output$ts.selector.overlapping.value <- renderUI({
           selectInput("input_ts_selector_overlapping_value",
                       label = paste("Select CpGs contents based on Venn Diagram numbers."),
-                      choices = c(paste("A"," and ","B" , " and ","C" ," = " , a)) , selected = -1 , width = validateCssUnit("100%"))
+                      choices = choices.vector , selected = -1 , width = validateCssUnit("100%"))
         })
+
+        output$ts.table.overlapping.value3 <- renderText({
+          dataset.venn.count.list[[4]]
+        })
+
+        # updating the table and showing content
+
+        # output the datatable according to the venn diagram count number selected
+        output$output.topscorer.overlappingComparison <- renderDataTable({
+
+          # Create a Progress object
+          progress <- shiny::Progress$new()
+
+          progress$set(message = "Reading data! please wait...", value = 50)
+
+
+          selected_value = input$input_ts_selector_overlapping_value
+
+
+          for (i in 1:16) {
+            if(identical(as.character(selected_value) , as.character(paste(combination[i] , dataset.venn.count.list[[4]][i,5]))))
+            {
+              c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == as.character(combinationLogicalA[i]) ) ]
+              c2 = original.dataset.list[[2]] [(original.dataset.list[[2]]$logical == as.character(combinationLogicalB[i]) ) ]
+              c3 = original.dataset.list[[3]] [(original.dataset.list[[3]]$logical == as.character(combinationLogicalC[i]) ) ]
+              c4 = original.dataset.list[[4]] [(original.dataset.list[[4]]$logical == as.character(combinationLogicalD[i]) ) ]
+
+              c1$logical      <- NULL
+              c2$logical      <- NULL
+              c3$logical      <- NULL
+              c4$logical      <- NULL
+              #outputTableData <- Reduce(function(x, y) merge(x, y, by = c("cgid","Chromosome","Start","Strand"), all=F), list(c1, c2))
+              c12 <- merge(c1, c2, by = c("cgid","Chromosome","Start","Strand") , all = F)
+              c34 <- merge(c3, c4, by = c("cgid","Chromosome","Start","Strand") , all = F)
+              c1234 <- merge(c12, c34, by = c("cgid","Chromosome","Start","Strand") , all = F)
+
+              outputTableData <- c1234
+
+              break
+            }
+          }
+
+
+
+
+          # Make sure it closes when we exit this reactive, even if there's an error
+          on.exit(progress$close())
+
+          outputTableData
+
+
+        },selection = 'single', filter = 'top',
+        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+        options = list( scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+        ), escape = TRUE)
 
       }
 
@@ -3826,18 +3515,94 @@ shinyServer(function(input, output, session) {
 
 
 
-        p <- vennDiagram(a, include = "both",
+        p <- vennDiagram(dataset.venn.count.list[[5]], include = "both",
                          names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3]),paste ("D = ",cb.checked[4]),paste ("E = ",cb.checked[5])),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
 
 
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]), paste("D = ",cb.checked[4]), paste("E = ",cb.checked[5]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
 
+        # updating  the count numbers of the venn diagram under venn count selector option
+        choices.vector <- list()
+        combination <- c("!ABCDE = ","E = ","D = ","ED = ","C = ","CE = ","CD = ","CDE = ","B = ","BE = ","BD = ","BDE = ","BC = ","BCE = ","BCD = ","BCDE = ","A = ","AE = ","AD = ","ADE = ","AC = ","ACE = ","ACD = ","ACDE = ","AB = ","ABE = ","ABD = ","ABDE = ","ABC = ","ABCE = ","ABCD = ","ABCDE = ")
+        combinationLogicalA <- c("FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE", "FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE", "TRUE","TRUE","TRUE","TRUE" ,"TRUE","TRUE","TRUE","TRUE" , "TRUE","TRUE","TRUE","TRUE" ,"TRUE","TRUE","TRUE","TRUE")
+        combinationLogicalB <- c("FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE", "TRUE","TRUE","TRUE","TRUE" ,"TRUE","TRUE","TRUE","TRUE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE", "TRUE","TRUE","TRUE","TRUE" ,"TRUE","TRUE","TRUE","TRUE")
+        combinationLogicalC <- c("FALSE","FALSE","FALSE","FALSE","TRUE","TRUE","TRUE","TRUE","FALSE","FALSE","FALSE","FALSE","TRUE","TRUE","TRUE","TRUE","FALSE","FALSE","FALSE","FALSE","TRUE","TRUE","TRUE","TRUE","FALSE","FALSE","FALSE","FALSE","TRUE","TRUE","TRUE","TRUE")
+        combinationLogicalD <- c("FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE","FALSE","FALSE","TRUE","TRUE")
+        combinationLogicalE <- c("FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE","FALSE","TRUE")
 
+        for (i in 1:32) {
+          choices.vector[i] = paste(combination[i] , dataset.venn.count.list[[5]][i,6])
+
+        }
         output$ts.selector.overlapping.value <- renderUI({
           selectInput("input_ts_selector_overlapping_value",
                       label = paste("Select CpGs contents based on Venn Diagram numbers."),
-                      choices = c(paste("A"," and ","B" , " and ","C" ," = " , a)) , selected = -1 , width = validateCssUnit("100%"))
+                      choices = choices.vector , selected = -1 , width = validateCssUnit("100%"))
         })
+
+        output$ts.table.overlapping.value3 <- renderText({
+          dataset.venn.count.list[[5]]
+        })
+
+        # updating the table and showing content
+
+        # output the datatable according to the venn diagram count number selected
+        output$output.topscorer.overlappingComparison <- renderDataTable({
+
+          # Create a Progress object
+          progress <- shiny::Progress$new()
+
+          progress$set(message = "Reading data! please wait...", value = 50)
+
+
+          selected_value = input$input_ts_selector_overlapping_value
+
+
+          for (i in 1:32) {
+            if(identical(as.character(selected_value) , as.character(paste(combination[i] , dataset.venn.count.list[[5]][i,6]))))
+            {
+              c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == as.character(combinationLogicalA[i]) ) ]
+              c2 = original.dataset.list[[2]] [(original.dataset.list[[2]]$logical == as.character(combinationLogicalB[i]) ) ]
+              c3 = original.dataset.list[[3]] [(original.dataset.list[[3]]$logical == as.character(combinationLogicalC[i]) ) ]
+              c4 = original.dataset.list[[4]] [(original.dataset.list[[4]]$logical == as.character(combinationLogicalD[i]) ) ]
+              c5 = original.dataset.list[[5]] [(original.dataset.list[[5]]$logical == as.character(combinationLogicalE[i]) ) ]
+
+              c1$logical      <- NULL
+              c2$logical      <- NULL
+              c3$logical      <- NULL
+              c4$logical      <- NULL
+              c5$logical      <- NULL
+
+              #outputTableData <- Reduce(function(x, y) merge(x, y, by = c("cgid","Chromosome","Start","Strand"), all=F), list(c1, c2))
+              c12 <- merge(c1, c2, by = c("cgid","Chromosome","Start","Strand") , all = F)
+              c34 <- merge(c3, c4, by = c("cgid","Chromosome","Start","Strand") , all = F)
+              c1234 <- merge(c12, c34, by = c("cgid","Chromosome","Start","Strand") , all = F)
+              c12345 <- merge(c1234, c5, by = c("cgid","Chromosome","Start","Strand") , all = F)
+
+              outputTableData <- c12345
+
+              break
+            }
+          }
+
+
+
+
+          # Make sure it closes when we exit this reactive, even if there's an error
+          on.exit(progress$close())
+
+          outputTableData
+
+
+        },selection = 'single', filter = 'top',
+        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+        options = list( scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+        ), escape = TRUE)
 
       }
 
@@ -3845,22 +3610,29 @@ shinyServer(function(input, output, session) {
 
 
 
-        p <- vennDiagram(a, include = "both",
+        p <- vennDiagram(dataset.venn.count.list[[6]] , include = "both",
                          names = c(cb.checked[1], cb.checked[2], cb.checked[3], cb.checked[4], cb.checked[5], cb.checked[6]),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
 
 
+        output$output.ts.table.multivenn.plot.labels <- renderTable({
+          Selected_analysis= c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2]), paste("C = ",cb.checked[3]), paste("D = ",cb.checked[4]), paste("E = ",cb.checked[5]), paste("F = ",cb.checked[6]))
+          result <- data.frame(Selected_analysis)
+          data.table(result)
+        })
 
         output$ts.selector.overlapping.value <- renderUI({
           selectInput("input_ts_selector_overlapping_value",
-                      label = paste("Select CpGs contents based on Venn Diagram numbers."),
-                      choices = c(paste("A"," and ","B" , " and ","C" ," = " , a)) , selected = -1 , width = validateCssUnit("100%"))
+                      label = paste("Sorry can not display table"),
+                      choices = c("") , selected = -1 , width = validateCssUnit("100%"))
         })
 
       }
 
       else{
-
+        output$ts.venn.overlapping.error.value <- renderText({
+          paste("Please select atleast 6 analysis to draw venn diagram!")
+        })
 
       }
 
@@ -3869,428 +3641,6 @@ shinyServer(function(input, output, session) {
     })
 
   })
-
-
-  # Display button 2 of comparisons in the Top scorer tab
-
-  observeEvent(input$displayTopScorerOverlappingBtn,{
-
-
-
-#     output$output.topscorer.overlappingComparison <- renderDataTable({
-#
-#
-#       #       if (is.null(ts.comp1.visible$data) && is.null(ts.comp2.visible$data)) {
-#       #
-#       #         return()
-#       #       }
-#       #
-#       #       else if (identical(ts.comp1.visible$data, FALSE) && identical(ts.comp2.visible$data, FALSE)) {
-#       #
-#       #         return()
-#       #       }
-#       #
-#       #       else {
-#
-#
-#
-#       # Create a Progress object
-#       progress <- shiny::Progress$new()
-#
-#       progress$set(message = "Reading data! please wait...", value = 50)
-#
-#
-#       cb.checked <- c(input$cb_ts_comp_venn)
-#
-#
-#
-#       column_selected = as.character(input$input_topscorer_columns)
-#       equality = as.character(input$input_topscorer_columns_equality)
-#       range_selected = as.numeric(input$input_topscorer_columns_range)
-#
-#
-#       original.dataset.list <- list()
-#       filtered.dataset.list <- list()
-#       filtered.logical.dataset.list <- list()
-#       for (i in 1:length(cb.checked)) {
-#
-#         analysis.selected <- as.character(cb.checked[i])
-#         analysis.path <- file.path(results.dir(), analysis.selected)
-#         nrows.value <- as.character(100)
-#
-#         dataset <- readingCustomComparisonData(analysis.selected,analysis.path,1, nrows.value,column_selected)
-#
-#         if(column_selected == "diffmeth.p.val"){
-#           colselected <- dataset$diffmeth.p.val
-#         }
-#
-#         else if(column_selected == "diffmeth.p.adj.fdr"){
-#           colselected <- dataset$diffmeth.p.adj.fdr
-#         }
-#         else if(column_selected == "mean.quot.log2"){
-#           colselected <- dataset$mean.quot.log2
-#         }
-#         else{
-#           colselected <- dataset$mean.diff
-#         }
-#
-#
-#         #c2$mean.diff <- sprintf("%.3f", c2$mean.diff)
-#
-#         # filtering the dataframe and also using the logical column dataset to use in venn diagram counts
-#         # and finally display the cg values based on the numbers generated by venn counts using apended
-#         # logical column in orginal dataset
-#         if(equality == ">="){
-#           original.dataset.list[[i]] <- dataset
-#           filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
-#           filtered.logical.dataset.list[[i]] <- (subset(dataset, select = c(column_selected) ) > as.numeric( range_selected))
-#           original.dataset.list[[i]][,"logical"] <- filtered.logical.dataset.list[[i]]
-#
-#         }
-#         else if(equality == ">"){
-#           original.dataset.list[[i]] <- dataset
-#           filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
-#           filtered.logical.dataset.list[[i]] <- (subset(dataset, select = c(column_selected) ) > as.numeric( range_selected))
-#           original.dataset.list[[i]][,"logical"] <- filtered.logical.dataset.list[[i]]
-#
-#         }
-#         else if(equality == "<="){
-#
-#           original.dataset.list[[i]] <- dataset
-#           filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
-#           filtered.logical.dataset.list[[i]] <- (subset(dataset, select = c(column_selected) ) > as.numeric( range_selected))
-#           original.dataset.list[[i]][,"logical"] <- filtered.logical.dataset.list[[i]]
-#
-#         }
-#         else if(equality == "<"){
-#           original.dataset.list[[i]] <- dataset
-#           filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
-#           filtered.logical.dataset.list[[i]] <- (subset(dataset, select = c(column_selected) ) > as.numeric( range_selected))
-#           original.dataset.list[[i]][,"logical"] <- filtered.logical.dataset.list[[i]]
-#
-#         }
-#         else if(equality == "="){
-#
-#           original.dataset.list[[i]] <- dataset
-#           filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
-#           filtered.logical.dataset.list[[i]] <- (subset(dataset, select = c(column_selected) ) > as.numeric( range_selected))
-#           original.dataset.list[[i]][,"logical"] <- filtered.logical.dataset.list[[i]]
-#
-#         }
-#         else {
-#           original.dataset.list[[i]] <- dataset
-#           filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
-#           filtered.logical.dataset.list[[i]] <- (subset(dataset, select = c(column_selected) ) > as.numeric( range_selected))
-#           original.dataset.list[[i]][,"logical"] <- filtered.logical.dataset.list[[i]]
-#
-#         }
-#
-#         if(column_selected == "diffmeth.p.val"){
-#           original.dataset.list[[i]]$diffmeth.p.val <- sprintf("%.3f", original.dataset.list[[i]]$diffmeth.p.val)
-#
-#         }
-#
-#         else if(column_selected == "diffmeth.p.adj.fdr"){
-#           original.dataset.list[[i]]$diffmeth.p.adj.fdr <- sprintf("%.3f", original.dataset.list[[i]]$diffmeth.p.adj.fdr)
-#
-#         }
-#         else if(column_selected == "mean.quot.log2"){
-#           original.dataset.list[[i]]$mean.quot.log2 <- sprintf("%.3f", original.dataset.list[[i]]$mean.quot.log2)
-#
-#         }
-#         else{
-#           original.dataset.list[[i]]$mean.diff <- sprintf("%.3f", original.dataset.list[[i]]$mean.diff)
-#
-#         }
-#
-#       }#end of forloop
-#
-#       #dataset <- data.table( common1)
-#
-#       if (length(cb.checked)== 1){
-#
-#         c3 <- cbind(filtered.logical.dataset.list[[1]])
-#         a <- vennCounts(c3)
-#
-#         selected_value = input$input_ts_selector_overlapping_value
-#
-#         if(identical(as.character(selected_value) , as.character(paste("!A", " = " , a[1,2])))){
-#           c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "FALSE" ) ]
-#
-#
-#
-#         }
-#         else if(identical(as.character(selected_value) , as.character(paste("A", " = " , a[2,2])))){
-#
-#           c1 = original.dataset.list[[1]] [ (original.dataset.list[[1]]$logical == "TRUE" )]
-#
-#         }
-#
-#         else{
-#           c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "FALSE" ) ]
-#
-#
-#         }
-#
-#
-#         c1$logical <- NULL
-#
-#         dataset <- c1
-#
-#
-#       }
-#       else if (length(cb.checked)== 2){
-#
-#         c3 <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]])
-#         a <- vennCounts(c3)
-#
-#         selected_value = input$input_ts_selector_overlapping_value
-#
-#         if(identical(as.character(selected_value) , as.character(paste("!AB", " = " , a[1,3])))){
-#           c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "FALSE" ) ]
-#
-#           c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "FALSE" )]
-#
-#         }
-#         else if(identical(as.character(selected_value) , as.character(paste("B", " = " , a[2,3])))){
-#           c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "FALSE" ) ]
-#
-#           c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "TRUE" )]
-#
-#         }
-#         else if(identical(as.character(selected_value) , as.character(paste("A", " = " , a[3,3])))){
-#           c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "TRUE" ) ]
-#
-#           c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "FALSE" )]
-#
-#         }
-#         else if(identical(as.character(selected_value) , as.character(paste("AB", " = " , a[4,3])))){
-#           c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "TRUE" ) ]
-#
-#           c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "TRUE" )]
-#
-#         }
-#         else{
-#           c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "FALSE" ) ]
-#
-#           c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "FALSE" )]
-#
-#         }
-#
-#
-#         output$ts.table.overlapping.value3 <- renderText({
-#           a
-#         })
-#
-#         c1$logical      <- NULL
-#         c2$logical      <- NULL
-#
-#         dataset <- merge(c1, c2, by = c("cgid","Chromosome","Start","Strand") , all = F)
-#
-#
-#       }
-#       else if (length(cb.checked)== 3){
-#
-#         common12 <- filtered.dataset.list[[1]][filtered.dataset.list[[1]]$cgid %in% filtered.dataset.list[[2]]$cgid]
-#         common13 <- filtered.dataset.list[[1]][filtered.dataset.list[[1]]$cgid %in% filtered.dataset.list[[3]]$cgid]
-#
-#         common21 <- filtered.dataset.list[[2]][filtered.dataset.list[[2]]$cgid %in% filtered.dataset.list[[1]]$cgid]
-#         common23 <- filtered.dataset.list[[2]][filtered.dataset.list[[2]]$cgid %in% filtered.dataset.list[[3]]$cgid]
-#
-#         common31 <- filtered.dataset.list[[3]][filtered.dataset.list[[3]]$cgid %in% filtered.dataset.list[[1]]$cgid]
-#         common32 <- filtered.dataset.list[[3]][filtered.dataset.list[[3]]$cgid %in% filtered.dataset.list[[2]]$cgid]
-#
-#         dataset <- merge(common12,common13, by = c("cgid","Chromosome","Start","Strand") , all = T)
-#
-#       }
-#       else{
-#
-#         dataset <- data.table(c(''))
-#
-#       }
-#
-#
-#
-#       # Make sure it closes when we exit this reactive, even if there's an error
-#       on.exit(progress$close())
-#
-#       dataset
-#
-#       #       }
-#
-#     },selection = 'single', filter = 'top',
-#
-#     extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-#     options = list(
-#       scrollX = TRUE,
-#       scrollY = TRUE,
-#       dom = 'Blfrtip',
-#       buttons = list(
-#         'copy',
-#         'print',
-#         list(
-#           extend = 'collection',
-#           buttons = c('csv', 'excel', 'pdf'),
-#           text = 'Download'
-#         ),
-#         I('colvis')
-#
-#       ),
-#       br(),
-#       keys = TRUE
-#
-#     ), escape = TRUE)
-
-
-
-  })
-
-
-  # Display button 2 of comparisons in the Top scorer tab
-
-  observeEvent(input$displayTopScorerMergeBtn,{
-
-
-
-    output$output.topscorer.mergedComparison <- renderDataTable({
-
-
-#       if (is.null(ts.comp1.visible$data) && is.null(ts.comp2.visible$data)) {
-#
-#         return()
-#       }
-#
-#       else if (identical(ts.comp1.visible$data, FALSE) && identical(ts.comp2.visible$data, FALSE)) {
-#
-#         return()
-#       }
-#
-#       else {
-
-
-
-        # Create a Progress object
-        progress <- shiny::Progress$new()
-
-        progress$set(message = "Reading data! please wait...", value = 50)
-
-
-        cb.checked <- c(input$cb_ts_comp_venn)
-
-        qq.value1 <- as.character(cb.checked[1])
-        qq.dir1 <- file.path(results.dir(), qq.value1)
-        nrows.value <- as.character(100)
-
-
-
-        dataset1 <- readingPValues(qq.value1,qq.dir1,1, nrows.value)
-
-
-
-        qq.value2 <- as.character(cb.checked[2])
-        qq.dir2 <- file.path(results.dir(), qq.value2)
-        nrows.value2 <- as.character(100)
-
-
-
-        dataset2 <- readingPValues(qq.value2,qq.dir2,1, nrows.value2)
-
-
-
-        dataset <- merge(dataset1, dataset2 , by.x=c("cgid","Chromosome","Start","Strand"), by.y=c("cgid","Chromosome","Start","Strand") , all = T)
-
-        # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
-
-
-
-
-
-        dataset
-
-  #       }
-
-    },selection = 'single', filter = 'top',
-
-    extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-    options = list(
-      scrollX = TRUE,
-      scrollY = TRUE,
-      dom = 'Blfrtip',
-      buttons = list(
-        'copy',
-        'print',
-        list(
-          extend = 'collection',
-          buttons = c('csv', 'excel', 'pdf'),
-          text = 'Download'
-        ),
-        I('colvis')
-
-      ),
-      br(),
-      keys = TRUE
-
-    ), escape = TRUE)
-
-
-
-  })
-
-#   observeEvent(input$displayTopScorerVennDiagramBtn,{
-#
-#
-#
-#     output$output.ts.venn.plot <- renderPlot({
-#
-#         ts.comp1.values <- input$output.topscorer.comparison_1_rows_all
-#         ts.comp2.values <- input$output.topscorer.comparison_2_rows_all
-#
-#
-#         qq.value1 <- as.character(input$input_topscorer_choices_1)
-#         qq.dir1 <- file.path(results.dir(), qq.value1)
-#         nrows.value <- as.character(input$input_topscorer_readtop1)
-#
-#
-#
-#         dataset1 <- readComparisonData(qq.value1,qq.dir1,ts.comp.index_1(), nrows.value)
-#
-#
-#         qq.value2 <- as.character(input$input_topscorer_choices_2)
-#         qq.dir2 <- file.path(results.dir(), qq.value2)
-#         nrows.value2 <- as.character(input$input_topscorer_readtop2)
-#
-#
-#
-#         dataset2 <- readComparisonData(qq.value2,qq.dir2,ts.comp.index_2(), nrows.value2)
-#
-#
-#
-#
-#         hw1 <- substring(dataset1$cgid, 3)
-#         hm1 <- substring(dataset2$cgid, 3)
-#
-#
-#         hw <- hw1 %in% hm1
-#         hm <- hm1 %in% hw1
-#
-#         c3 <- cbind(hw , hm )
-#
-#         #c3 <- vennCounts(c3)
-#         a1 <- nrow(subset(c3, hw ))
-#         a2 <- nrow(subset(c3, hm))
-#         ca <- nrow(subset(c3, hw  & hm  ))
-#
-#
-#         plotVennDiagram(c(input$input_topscorer_choices_1 , input$input_topscorer_choices_2),a1,a2,ca,0,0,0,0)
-#
-#
-#     })
-#
-#
-#
-#   })
-
 
 
 

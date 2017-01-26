@@ -707,8 +707,9 @@ tabPanel("Integrative Visualization",
                                        div(class="",
 
 
-
+                                           tags$p(textOutput("ts.venn.overlapping.error.value"  )),
                                            plotOutput('output.ts.multivenn.plot'),
+                                           tableOutput('output.ts.table.multivenn.plot.labels'),
                                            br()
 
                                        ),
@@ -720,19 +721,11 @@ tabPanel("Integrative Visualization",
 
                                        div(class="",
 
-                                           textOutput("ts.table.overlapping.value3" ),
-                                           tableOutput("ts.table.overlapping.value" ),
-                                           tableOutput("ts.table.overlapping.value2" ),
+
                                            uiOutput("ts.selector.overlapping.value" ),
                                            br()
 
                                        ),
-
-
-
-                                       actionButton('displayTopScorerOverlappingBtn', 'Display',class="btn btn-primary btn-md"),
-                                       br(),
-                                       br(),
 
                                        div(class="",
 
@@ -745,54 +738,6 @@ tabPanel("Integrative Visualization",
 
 
                                 )),# end  of  fluid row
-
-
-
-                              # showing the overlapping data Cpgs
-                              fluidRow(
-
-                                column(width = 12
-
-
-
-
-                                )# end of column
-
-
-
-                              ),# end  of  fluid row
-
-
-                              # showing merge tabe after merge button is pressed
-                              fluidRow(
-
-                                column(width = 12
-
-#                                        tags$h4(style="color:black;","Merge analysis data"),
-#                                        tags$p(paste("Merge the above selected analysis data.")),
-#
-#
-#                                        actionButton('displayTopScorerMergeBtn', 'Merge',class="btn btn-primary btn-md"),
-#                                        br(),
-#                                        br(),
-#
-#                                        div(class="well",
-#
-#
-#                                            dataTableOutput('output.topscorer.mergedComparison'),
-#                                            br()
-#
-#                                        ),
-#                                        br()
-
-
-                                )# end of column
-
-
-
-                              ),# end  of  fluid row
-
-
 
 
                               fluidRow(
