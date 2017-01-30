@@ -365,108 +365,123 @@ tabPanel("Integrative Visualization",
 
 
          tabsetPanel("visualization",
+
+
                      tabPanel("QQ-Plots",
-                              br(),
+
+                              tags$h2(style="color:black;","QQ-Plots"),
+                               tags$div(id = "qq_div_info", class="", checked=NA,
+
+                                        tags$p(paste("Quantile-quantile plots (qq-plots) can be useful for verifying that a set of values",
+                                                     "come from a certain distribution.")
+                                        ),
+
+
+                                        tags$p(paste("For example in a genome-wide association study,",
+                                                     "we expect that most of the SNPs we are testing not to be associated with the disease.",
+                                                     "Under the null, this means that the p-values we get from tests where no true",
+                                                     "association exists should follow a uniform(0,1) distribution. Since we're usually most",
+                                                     "interested in really small p-values, we generally transform the p-values by -log10 so",
+                                                     "that the smallest values near zero become the larger values and are thus easier to see.")
+                                        )
+
+                               ),
 
                               fluidRow(
                                 column(width = 12,
-                                       sidebarPanel(
-                                         selectInput("input_dmcomp_choices", "Select analysis folder:", choices),
-                                         br(),
-                                         tags$h3(style="color:black;","Quantile-quantile plots (qq-plots)"),
-                                         tags$div(id = "iv_div_info", class="text text-info", checked=NA,
 
-                                                  tags$p(paste("Quantile-quantile plots (qq-plots) can be useful for verifying that a set of values",
-                                                               "come from a certain distribution.")
-                                                  ),
-
-                                                  br(),
-                                                  tags$p(paste("For example in a genome-wide association study,",
-                                                               "we expect that most of the SNPs we are testing not to be associated with the disease.",
-                                                               "Under the null, this means that the p-values we get from tests where no true",
-                                                               "association exists should follow a uniform(0,1) distribution. Since we're usually most",
-                                                               "interested in really small p-values, we generally transform the p-values by -log10 so",
-                                                               "that the smallest values near zero become the larger values and are thus easier to see.")
-                                                  ),
-                                                  br()
-                                         )
-
-                                       ),
-
-
-                                       mainPanel(
                                          tabsetPanel("sub_visuallization",
+
 
                                                      tabPanel("QQ-Plot",
 
-                                                              br(),
-
-                                                              selectInput("input_dmcomp_files", "comparisons:", ""),
-
-
-                                                              # shinyjs::hidden(
-                                                              #   div(id = "hide_input",
-                                                              #       selectInput("input_dmcomp_files_index", "comparisons:", "")
-                                                              #
-                                                              #   )
-                                                              # ),
-
-
-                                                              tags$p("The qqplot of diffmethy p values from the above selected comparison is shown below:"),
-                                                              # radioButtons("dist", "Distribution type:",
-                                                              #              c(
-                                                              #                "Uniform" = "unif",
-                                                              #                "Normal" = "norm")
-                                                              #                # "Log-normal" = "lnorm",
-                                                              #                # "Exponential" = "exp")
-                                                              #                ),
-
-                                                              actionButton('displayQQPlotBtn', 'Display',class="btn btn-primary btn-md"),
-
-
-
-                                                              div(id="id_qqplot",
-                                                                  fluidRow(
-                                                                    column(width = 8,
-                                                                           plotlyOutput('compqqplotly')
-                                                                           #plotOutput('compqqplot')
-                                                                    ))# end  of  fluid row
-
-                                                              ),
-
-                                                              br()
-
-
-                                                     ),
-
-                                                     tabPanel("QQ-Plot Comparison",
-
-                                                              br(),
-                                                              h3("Select comparison among two RnBeads analysis"),
                                                               fluidRow(
-                                                                column(width = 6,
-                                                                       selectInput("input_dmcomp_choices_1", "Analysis 1:", choices),
+                                                                column(width = 4,
                                                                        br(),
+                                                                       div(class = "well",
+                                                                           selectInput("input_dmcomp_choices", "Select analysis folder:", choices),
+                                                                           selectInput("input_dmcomp_files", "comparisons:", ""),
+                                                                           selectInput("input_qqplot_readtop", "Read top n rows:", topRowsChoices),
 
-                                                                       selectInput("input_dmcomp_files_1", "Comaprisons 1:", "")
+                                                                           br()
+                                                                           #tags$h3(style="color:black;","Quantile-quantile plots (qq-plots)")
+                                                                        )
 
                                                                 ),
-                                                                column(width = 6,
-                                                                       selectInput("input_dmcomp_choices_2", "Analysis 2:", choices),
+
+                                                                column(width = 8,
                                                                        br(),
-                                                                       selectInput("input_dmcomp_files_2", "Comparisons 2:", "")
+
+                                                                       # shinyjs::hidden(
+                                                                       #   div(id = "hide_input",
+                                                                       #       selectInput("input_dmcomp_files_index", "comparisons:", "")
+                                                                       #
+                                                                       #   )
+                                                                       # ),
+
+
+                                                                       tags$p("Select the analysis and the comparison from the left menu and click display:"),
+                                                                       # radioButtons("dist", "Distribution type:",
+                                                                       #              c(
+                                                                       #                "Uniform" = "unif",
+                                                                       #                "Normal" = "norm")
+                                                                       #                # "Log-normal" = "lnorm",
+                                                                       #                # "Exponential" = "exp")
+                                                                       #                ),
+
+                                                                       actionButton('displayQQPlotBtn', 'Display',class="btn btn-primary btn-md"),
+
+
+
+                                                                       div(id="id_qqplot",
+                                                                           fluidRow(
+                                                                             column(width = 8,
+                                                                                    plotlyOutput('compqqplotly')
+                                                                                    #plotOutput('compqqplot')
+                                                                             ))# end  of  fluid row
+
+                                                                       ),
+
+                                                                       br()
 
                                                                 )
-                                                              ),
+                                                              )
+                                                     ),
+
+                                                     tabPanel("Multi-analysis QQ-Plot ",
+
+                                                              fluidRow(
+                                                                column(width = 4,
+                                                                       br(),
+                                                                       div(class = "well",
+                                                                           h5("Select comparison among two RnBeads analysis"),
+
+                                                                           selectInput("input_dmcomp_choices_1", "Analysis 1:", choices),
+                                                                           selectInput("input_dmcomp_files_1", "Comaprisons 1:", ""),
+                                                                           br(),
+
+                                                                           selectInput("input_dmcomp_choices_2", "Analysis 2:", choices),
+                                                                           selectInput("input_dmcomp_files_2", "Comparisons 2:", ""),
+                                                                           br(),
+
+                                                                           selectInput("input_multiqqplot_readtop", "Read top n rows:", topRowsChoices),
+
+                                                                           actionButton('displayBtn', 'Display',class="btn btn-primary btn-md")
+
+                                                                       )
+                                                                ),
+                                                                column(width = 8,
+                                                                       br(),
+                                                                       plotOutput('multicompqqplot'),
+                                                                       br()
+
+
+                                                                )
+                                                              )# end of fluid row
 
 
 
-                                                              actionButton('displayBtn', 'Display',class="btn btn-primary btn-md"),
-                                                              plotOutput('multicompqqplot'),
-                                                              br()
-
-
-                                                     )
+                                                     )# end of tab panel
 
                                                      #   tabPanel("QQ-Plots 3",
                                                      #
@@ -485,7 +500,7 @@ tabPanel("Integrative Visualization",
                                          )# tab set panel
 
 
-                                       )# end  of  main panel
+
 
                                 ))# end  of  fluid row
 
@@ -706,7 +721,7 @@ tabPanel("Integrative Visualization",
 
                                        div(class="",
 
-
+                                           tags$p(textOutput("comparison.check")),
                                            tags$p(textOutput("ts.venn.overlapping.error.value"  )),
                                            plotOutput('output.ts.multivenn.plot'),
                                            tableOutput('output.ts.table.multivenn.plot.labels'),

@@ -1527,12 +1527,22 @@ shinyServer(function(input, output, session) {
 
         filename= as.character(filename)
 
+        nrows.value <- as.character(input$input_qqplot_readtop)
+
+        if (nrows.value == 'ALL'){
+          nrows.value = 100
+        }
+        else if (nrows.value > 1000){
+          nrows.value = 1000
+        }
+
+
         # fread function from the library data.table
         comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr"))
 
 
         setnames(comp.file, "diffmeth.p.val", "P")
-        comp.file <- data.frame(comp.file[1:1000,])
+        comp.file <- data.frame(comp.file[1:nrows.value,])
         qqrObject <- qqr(comp.file)
 
 #         qqrObject <- qqr(HapMap[1:100,])
@@ -2971,65 +2981,6 @@ shinyServer(function(input, output, session) {
 
 
   })
-  output$si <- renderUI({
-
-
-    choices = list.files(path = selectedDir)
-    lapply(1:length(choices), function(i) {
-
-
-      input_choices <- as.character(choices[i])
-
-
-      qq.dir <- file.path(results.dir(), input_choices)
-
-
-      if (input_choices != "NA"){
-
-
-
-        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-
-          filename <- file.path(qq.dir,'differential_methylation.html')
-
-          differential.methylation.path <- filename
-
-
-          webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-          pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-
-          query = "//*/div[@id='section3']/ul/li"
-          dates = xpathSApply(pagetree, query, xmlValue)
-          dates
-          comp_names <- list()
-          comp_names_counter <- 1
-          for (i in 1:length(dates)) {
-
-            comp_names[comp_names_counter] <- dates[i]
-            comp_names_counter = comp_names_counter + 1
-
-
-          }
-
-          choices.list <- comp_names
-        }
-        else{
-          choices.list <- 'NA'
-        }
-      }
-      else{
-        choices.list <- 'NA'
-
-      }
-
-
-      selectInput(paste0("si",i), paste(input_choices,""), choices.list)
-    })
-
-  })
-
-
 
   output$ts.columns <- renderUI({
     selectInput("input_topscorer_columns",
@@ -3051,6 +3002,42 @@ shinyServer(function(input, output, session) {
 
 
 
+# returns the index of selected comparison file in table browser section
+get.choice.index <- eventReactive(input$si1, {
+
+  # preparing data to display in Venn diagram and in data table
+  cb.checked <- c(input$cb_ts_comp_venn)
+
+  choice.index <- '1'
+
+  choices = cb.checked
+  lapply(1:length(choices), function(i) {
+
+
+    input_choices <- as.character(choices[i])
+    qq.dir <- file.path(results.dir(), input_choices)
+
+    choice.index <- '1'
+
+
+    comp = data.frame(input$si1)
+    for (j in 1:length(input$si1)) {
+
+        choice.index <- as.character(j)
+        break
+
+    }
+
+
+  })
+
+
+
+  return(choice.index)
+})
+
+
+
   # display venn diagram
 
   observeEvent(input$btnMultipleShowVenn ,{
@@ -3064,8 +3051,70 @@ shinyServer(function(input, output, session) {
       output$ts.venn.overlapping.error.value <- renderText({
         paste("")
       })
+
+      output$comparison.check <- renderText({
+        paste("Cho",get.choice.index())
+      })
+
+
       # preparing data to display in Venn diagram and in data table
       cb.checked <- c(input$cb_ts_comp_venn)
+
+
+      output$si <- renderUI({
+
+
+        choices = cb.checked
+        lapply(1:length(choices), function(i) {
+
+
+          input_choices <- as.character(choices[i])
+          qq.dir <- file.path(results.dir(), input_choices)
+
+
+          if (input_choices != "NA"){
+            if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+              filename <- file.path(qq.dir,'differential_methylation.html')
+
+              differential.methylation.path <- filename
+
+
+              webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+              pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+              query = "//*/div[@id='section3']/ul/li"
+              dates = xpathSApply(pagetree, query, xmlValue)
+              dates
+              comp_names <- list()
+              comp_names_counter <- 1
+              for (j in 1:length(dates)) {
+
+                comp_names[comp_names_counter] <- dates[j]
+                comp_names_counter = comp_names_counter + 1
+
+              }
+
+              choices.list <- comp_names
+            }
+            else{
+              choices.list <- 'NA'
+
+            }
+          }
+          else{
+            choices.list <- 'NA'
+
+
+          }
+          selectInput("si1", paste(input_choices,""), choices.list)
+        })
+
+      })
+
+
+
 
       column_selected = as.character(input$input_topscorer_columns)
       equality = as.character(input$input_topscorer_columns_equality)
