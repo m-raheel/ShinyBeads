@@ -1508,7 +1508,7 @@ shinyServer(function(input, output, session) {
         # Create a Progress object
         progress <- shiny::Progress$new()
 
-        progress$set(message = "Makind QQ Plot", value = 50)
+        progress$set(message = "Making QQ Plot", value = 50)
 
         #y <- dist(ppoints(length(list.pvalues())))
         #qqline(y,list.pvalues())
@@ -1527,19 +1527,21 @@ shinyServer(function(input, output, session) {
 
         filename= as.character(filename)
 
-        nrows.value <- as.character(input$input_qqplot_readtop)
+        nrows.value <- as.integer(input$input_qqplot_readtop)
 
-        if (nrows.value == 'ALL'){
+
+
+
+        # fread function from the library data.table
+        comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr"), nrows = nrows.value)
+
+
+        if (nrows.value == -1){
           nrows.value = 100
         }
         else if (nrows.value > 1000){
           nrows.value = 1000
         }
-
-
-        # fread function from the library data.table
-        comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr"))
-
 
         setnames(comp.file, "diffmeth.p.val", "P")
         comp.file <- data.frame(comp.file[1:nrows.value,])
@@ -1810,14 +1812,35 @@ shinyServer(function(input, output, session) {
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
         # Create a Progress object
-        progress <- shiny::Progress$new()
+#         progress <- shiny::Progress$new()
+#
+#         progress$set(message = "Making QQ Plot", value = 50)
 
-        progress$set(message = "Makind QQ Plot", value = 50)
+        #x <- comparison_plot(qq.dir , f)
 
-        x <- comparison_plot(qq.dir , f)
+        filename <- file.path(qq.dir, 'differential_methylation_data',f)
+        filename= as.character(filename)
+        nrows.value <- as.integer(input$input_multiqqplot_readtop)
+
+
+        comp.file <- fread(filename,sep = ",", select = c("diffmeth.p.val"), nrows = nrows.value)
+
+
+        if (nrows.value == -1){
+          nrows.value = 100
+        }
+        else if (nrows.value > 1000){
+          nrows.value = 1000
+        }
+
+
+        setnames(comp.file, "diffmeth.p.val", "P")
+        comp.file <- data.frame(comp.file[1:nrows.value,])
+        x <- qqr(comp.file)
+
 
         # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
+        #on.exit(progress$close())
 
         x
       }
@@ -1830,6 +1853,74 @@ shinyServer(function(input, output, session) {
 
   })
 
+  list.pvalues_old_1 <- reactive({
+
+
+
+    qq.value <- as.character(input$input_dmcomp_choices_1)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+    #qq.value <- as.character(input$input_dmcomp_files_1)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      x <- list()
+      x
+    }
+    else{
+      #fucntion from the RnBeadsInterface package
+
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+#         # Create a Progress object
+#         progress <- shiny::Progress$new()
+#
+#         progress$set(message = "Making QQ Plot", value = 50)
+
+        #x <- comparison_plot(qq.dir , f)
+
+        filename <- file.path(qq.dir, 'differential_methylation_data',f)
+        filename= as.character(filename)
+        nrows.value <- as.integer(input$input_multiqqplot_readtop)
+
+
+        comp.file <- fread(filename,sep = ",", select = c("diffmeth.p.val"), nrows = nrows.value)
+
+
+        if (nrows.value == -1){
+          nrows.value = 100
+        }
+        else if (nrows.value > 1000){
+          nrows.value = 1000
+        }
+
+
+
+        list.diff.p.values <- as.data.frame(comp.file)
+
+        list.diff.p.values <- as.matrix(list.diff.p.values)
+
+        list.diff.p.values <- lapply(seq_len(ncol(list.diff.p.values)), function(col) list.diff.p.values[,col])
+
+        x <- unlist(list.diff.p.values)
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        #on.exit(progress$close())
+
+        x
+      }
+      else{
+        x <- list()
+        x
+      }
+    }
+
+
+  })
   ################################################
 
   # for Repository 2
@@ -1987,26 +2078,113 @@ shinyServer(function(input, output, session) {
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
         # Create a Progress object
-        progress <- shiny::Progress$new()
+        #progress <- shiny::Progress$new()
 
-        progress$set(message = "Makind QQ Plot", value = 50)
+        #progress$set(message = "Making QQ Plot", value = 50)
 
-        x <- comparison_plot(qq.dir , f)
+        #x <- comparison_plot(qq.dir , f)
+
+        filename <- file.path(qq.dir, 'differential_methylation_data',f)
+        filename= as.character(filename)
+        nrows.value <- as.integer(input$input_multiqqplot_readtop)
+
+        comp.file <- fread(filename,sep = ",", select = c("diffmeth.p.val") , nrows = nrows.value )
+
+        if (nrows.value == -1){
+          nrows.value = 100
+        }
+        else if (nrows.value > 1000){
+          nrows.value = 1000
+        }
+
+        setnames(comp.file, "diffmeth.p.val", "P")
+        comp.file <- data.frame(comp.file[1:nrows.value,])
+        y <- qqr(comp.file)
+
+
 
         # Make sure it closes when we exit this reactive, even if there's an error
-        on.exit(progress$close())
+        #on.exit(progress$close())
 
-        x
+        y
       }
       else{
-        x <- list()
-        x
+        y <- list()
+        y
       }
     }
 
 
   })
 
+
+  list.pvalues_old_2 <- reactive({
+
+
+
+    qq.value <- as.character(input$input_dmcomp_choices_2)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+    #qq.value <- as.character(input$input_dmcomp_files_2)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      x <- list()
+      x
+    }
+    else{
+      #fucntion from the RnBeadsInterface package
+
+      #index_list() contains the index of the selected file ffrom the dropdown
+      f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
+
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+        # Create a Progress object
+        #progress <- shiny::Progress$new()
+
+        #progress$set(message = "Making QQ Plot", value = 50)
+
+        #x <- comparison_plot(qq.dir , f)
+
+        filename <- file.path(qq.dir, 'differential_methylation_data',f)
+        filename= as.character(filename)
+        nrows.value <- as.integer(input$input_multiqqplot_readtop)
+
+        comp.file <- fread(filename,sep = ",", select = c("diffmeth.p.val") , nrows = nrows.value )
+
+        if (nrows.value == -1){
+          nrows.value = 100
+        }
+        else if (nrows.value > 1000){
+          nrows.value = 1000
+        }
+
+
+        list.diff.p.values <- as.data.frame(comp.file)
+
+        list.diff.p.values <- as.matrix(list.diff.p.values)
+
+        list.diff.p.values <- lapply(seq_len(ncol(list.diff.p.values)), function(col) list.diff.p.values[,col])
+
+        y <- unlist(list.diff.p.values)
+
+
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        #on.exit(progress$close())
+
+        y
+      }
+      else{
+        y <- list()
+        y
+      }
+    }
+
+
+  })
 
 
 
@@ -2020,7 +2198,7 @@ shinyServer(function(input, output, session) {
 
 
 
-    output$multicompqqplot <- renderPlot({
+    output$multicompqqplot1 <- renderPlotly({
 
       # dist <- switch(input$dist,
       #                unif = runif,
@@ -2050,29 +2228,55 @@ shinyServer(function(input, output, session) {
           # print error/ warning message
 
 
-          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          text(1,1,"No data available or no comparison file exist from repository 1")
+#           qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+#           text(1,1,"No data available or no comparison file exist from repository 1")
+
+          Primates <- c('No Data Avaiable for analysis 1')
+          Bodywt <- c(0.5 )
+          Brainwt <- c(0.5)
+
+          data <- data.frame(Primates, Bodywt, Brainwt)
+
+          pdf(NULL)
+          q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                       mode = 'text', text = ~Primates, textposition = 'middle center',
+                       textfont = list(color = '#000000', size = 16))%>%
+            layout(title = 'Q-Q Plot',
+                   xaxis = list(title = 'Expected -log10(p)',
+                                zeroline = TRUE,
+                                range = c(0, 1)),
+                   yaxis = list(title = 'Observed -log10(p)',
+                                range = c(0,1)))
+
+
+          dev.off()
+
+          q
+
 
         }
-        else if (length(list.pvalues_2()) == 0){
-          # print error/ warning message
-          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          text(1,1,"No data available or no comparison file exist from repository 2")
-        }
+
         else{
 
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Makind QQ Plot", value = 50)
+          progress$set(message = "Making analysis 1 QQ Plot", value = 50)
 
           x<- list.pvalues_1()
-          y<- list.pvalues_2()
 
-          #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
-          my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
-          q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
 
+
+
+          #my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
+          #q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
+          pdf(NULL)
+          q <- qqly(x, col = "#6087ea", size = 1, type = 20, abline_col = "pink",
+                    abline_size = 0.5, abline_type = 1, highlight = NULL,
+                    highlight_color = "#00FF00", xlab = "Expected -log10(p)",
+                    ylab = "Observed -log10(p)", title = "")
+
+          dev.off()
           # Make sure it closes when we exit this reactive, even if there's an error
           on.exit(progress$close())
 
@@ -2083,8 +2287,152 @@ shinyServer(function(input, output, session) {
 
       }
 
-    }, height = 400, width = 500)
+    })
 
+
+    # plotly ouput for analysis 2 qq plot
+
+      output$multicompqqplot2 <- renderPlotly({
+
+        if (is.null(v$data)) {
+          print (v$data)
+          return()
+        }
+
+        else if (identical(v$data, FALSE)) {
+          print (v$data)
+          return()
+        }
+
+        else {
+
+
+          if (length(list.pvalues_2()) == 0){
+            # print error/ warning message
+            #           qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+            #           text(1,1,"No data available or no comparison file exist from repository 2")
+
+            Primates <- c('No Data Avaiable from analysis 2')
+            Bodywt <- c(0.5 )
+            Brainwt <- c(0.5)
+
+            data <- data.frame(Primates, Bodywt, Brainwt)
+
+            pdf(NULL)
+            q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                         mode = 'text', text = ~Primates, textposition = 'middle center',
+                         textfont = list(color = '#000000', size = 16))%>%
+              layout(title = 'Q-Q Plot',
+                     xaxis = list(title = 'Expected -log10(p)',
+                                  zeroline = TRUE,
+                                  range = c(0, 1)),
+                     yaxis = list(title = 'Observed -log10(p)',
+                                  range = c(0,1)))
+
+            dev.off()
+
+            q
+
+          }
+          else{
+
+            # Create a Progress object
+            progress <- shiny::Progress$new()
+
+            progress$set(message = "Making analysis 2 QQ Plot", value = 50)
+
+
+            y<- list.pvalues_2()
+
+
+
+            #my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
+            #q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
+            pdf(NULL)
+            q <- qqly(y, col = "red", size = 1, type = 20, abline_col = "pink",
+                      abline_size = 0.5, abline_type = 1, highlight = NULL,
+                      highlight_color = "green", xlab = "Expected -log10(p)",
+                      ylab = "Observed -log10(p)", title = "")
+
+            dev.off()
+            # Make sure it closes when we exit this reactive, even if there's an error
+            on.exit(progress$close())
+
+            q
+
+          }
+
+
+        }
+
+      })
+
+
+      #old
+      output$multicompqqplot <- renderPlot({
+
+        # dist <- switch(input$dist,
+        #                unif = runif,
+        #                norm = rnorm,
+        #
+        #                # lnorm = rlnorm,
+        #                # exp = rexp,
+        #                rnorm)
+
+        if (is.null(v$data)) {
+          print (v$data)
+          return()
+        }
+
+        else if (identical(v$data, FALSE)) {
+          print (v$data)
+          return()
+        }
+
+        else {
+
+
+
+
+          if(length(list.pvalues_1()) == 0) {
+
+            # print error/ warning message
+
+
+            qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+            text(1,1,"No data available or no comparison file exist from repository 1")
+
+          }
+          else if (length(list.pvalues_2()) == 0){
+            # print error/ warning message
+            qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+            text(1,1,"No data available or no comparison file exist from repository 2")
+          }
+          else{
+
+            # Create a Progress object
+            progress <- shiny::Progress$new()
+
+            progress$set(message = "Makind old QQ Plot", value = 50)
+
+            x<- list.pvalues_old_1()
+            y<- list.pvalues_old_2()
+
+            #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
+            my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
+            q <- qqunif.plot(my.pvalue.list)
+
+            # Make sure it closes when we exit this reactive, even if there's an error
+            on.exit(progress$close())
+
+            q
+
+          }
+
+
+        }
+
+      }, height = 400, width = 600)
 
 
   })

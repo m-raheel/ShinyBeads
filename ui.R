@@ -30,7 +30,7 @@ library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
 
 
 choices = "NA"
-topRowsChoices = c('100', '500' , '1000', '10000', '50000' , 'ALL')
+topRowsChoices = c('100', '500' , '1000', '10000', '50000' , '-1')
 
 
 check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPLETED Preprocessing', 'COMPLETED Tracks and Tables','COMPLETED Covariate Inference','COMPLETED Exploratory Analysis','COMPLETED Differential Methylation')
@@ -462,19 +462,33 @@ tabPanel("Integrative Visualization",
 
                                                                            selectInput("input_dmcomp_choices_2", "Analysis 2:", choices),
                                                                            selectInput("input_dmcomp_files_2", "Comparisons 2:", ""),
-                                                                           br(),
+                                                                           br()
 
-                                                                           selectInput("input_multiqqplot_readtop", "Read top n rows:", topRowsChoices),
-
-                                                                           actionButton('displayBtn', 'Display',class="btn btn-primary btn-md")
 
                                                                        )
                                                                 ),
                                                                 column(width = 8,
                                                                        br(),
+                                                                       selectInput("input_multiqqplot_readtop", "Read top n rows:", topRowsChoices),
+
+                                                                       actionButton('displayBtn', 'Display',class="btn btn-primary btn-md"),
+                                                                       br(),
+                                                                       fluidRow(
+                                                                         column(width = 6,
+                                                                                tags$h4(style="color:black;","Analysis 1"),
+                                                                                plotlyOutput('multicompqqplot1')
+
+                                                                         ),
+                                                                         column(width = 6,
+                                                                                tags$h4(style="color:black;","Analysis 2"),
+                                                                                plotlyOutput('multicompqqplot2')
+
+                                                                         )
+                                                                        ),
+                                                                       br(),
+                                                                       tags$h4(style="color:black;","Combined QQ plot"),
                                                                        plotOutput('multicompqqplot'),
                                                                        br()
-
 
                                                                 )
                                                               )# end of fluid row
