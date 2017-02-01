@@ -3324,6 +3324,27 @@ shinyServer(function(input, output, session) {
     choices = list.files(path = selectedDir)
 
 
+#     choices_names <- list()
+#     choices_names_counter <- 1
+#
+#     lapply(1:length(choices), function(i) {
+#
+#
+#       input_choices <- as.character(choices[i])
+#       qq.dir <- file.path(results.dir(), input_choices)
+#
+#
+#       if (input_choices != "NA"){
+#         if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+#
+#             choices_names[choices_names_counter] <- input_choices
+#             choices_names_counter = choices_names_counter + 1
+#
+#           }
+#       }
+#     })
+
+
     checkboxGroupInput(paste0("cb_ts_comp_venn"), "", choices)
 
 
@@ -3349,39 +3370,170 @@ shinyServer(function(input, output, session) {
   })
 
 
+# returns the index of selected comparison file in QQplot 1
+observeEvent(input$cb_ts_comp_venn, {
+  # preparing data to display in Venn diagram and in data table
+  cb.checked <- c(input$cb_ts_comp_venn)
+
+
+  output$si <- renderUI({
+
+
+    choices = cb.checked
+    lapply(1:length(choices), function(i) {
+
+
+      input_choices <- as.character(choices[i])
+      qq.dir <- file.path(results.dir(), input_choices)
+
+
+      if (input_choices != "NA"){
+        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+          filename <- file.path(qq.dir,'differential_methylation.html')
+
+          differential.methylation.path <- filename
+
+
+          webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+          pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+          query = "//*/div[@id='section3']/ul/li"
+          dates = xpathSApply(pagetree, query, xmlValue)
+          dates
+          comp_names <- list()
+          comp_names_counter <- 1
+          for (j in 1:length(dates)) {
+
+            comp_names[comp_names_counter] <- dates[j]
+            comp_names_counter = comp_names_counter + 1
+
+          }
+
+          choices.list <- comp_names
+        }
+        else{
+          choices.list <- 'NA'
+
+        }
+      }
+      else{
+        choices.list <- 'NA'
+
+
+      }
+      selectInput(paste0("si",i), paste(input_choices,""), choices.list)
+    })
+
+  })
+
+})
+
 
 # returns the index of selected comparison file in table browser section
-get.choice.index <- eventReactive(input$si1, {
+get.choice.index <- reactive({
 
   # preparing data to display in Venn diagram and in data table
   cb.checked <- c(input$cb_ts_comp_venn)
 
-  choice.index <- '1'
+  choice.index <- list()
 
   choices = cb.checked
-  lapply(1:length(choices), function(i) {
+  for (i in 1:length(choices)) {
 
 
     input_choices <- as.character(choices[i])
     qq.dir <- file.path(results.dir(), input_choices)
 
-    choice.index <- '1'
+
+    if (input_choices != "NA"){
+      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+        filename <- file.path(qq.dir,'differential_methylation.html')
+
+        differential.methylation.path <- filename
 
 
-    comp = data.frame(input$si1)
-    for (j in 1:length(input$si1)) {
+        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
 
-        choice.index <- as.character(j)
-        break
 
+        query = "//*/div[@id='section3']/ul/li"
+        dates = xpathSApply(pagetree, query, xmlValue)
+        dates
+
+        for (j in 1:length(dates)) {
+
+          if ( i == 1 ){
+
+            if (identical(input$si1, dates[j])){
+              choice.index[i] <- as.character(j)
+              break
+            }
+
+          }
+          else if( i == 2 ){
+
+            if (identical(input$si2, dates[j])){
+              choice.index[i] <- as.character(j)
+              break
+            }
+
+          }
+          else if( i == 3 ){
+
+            if (identical(input$si3, dates[j])){
+              choice.index[i] <- as.character(j)
+              break
+            }
+
+          }
+          else if( i == 4 ){
+
+            if (identical(input$si4, dates[j])){
+              choice.index[i] <- as.character(j)
+              break
+            }
+
+          }
+          else if( i == 5 ){
+
+            if (identical(input$si5, dates[j])){
+              choice.index[i] <- as.character(j)
+              break
+            }
+
+          }
+          else if( i == 6 ){
+
+            if (identical(input$si6, dates[j])){
+              choice.index[i] <- as.character(j)
+              break
+            }
+
+          }
+
+          else{
+            if (identical(input$si1, dates[j])){
+              choice.index[i] <- as.character(j)
+              break
+            }
+
+          }
+
+
+        }
+      }
     }
 
 
-  })
+  }# end of outer for loop
 
 
 
   return(choice.index)
+
 })
 
 
@@ -3404,65 +3556,7 @@ get.choice.index <- eventReactive(input$si1, {
         paste("Cho",get.choice.index())
       })
 
-
-      # preparing data to display in Venn diagram and in data table
       cb.checked <- c(input$cb_ts_comp_venn)
-
-
-      output$si <- renderUI({
-
-
-        choices = cb.checked
-        lapply(1:length(choices), function(i) {
-
-
-          input_choices <- as.character(choices[i])
-          qq.dir <- file.path(results.dir(), input_choices)
-
-
-          if (input_choices != "NA"){
-            if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-
-              filename <- file.path(qq.dir,'differential_methylation.html')
-
-              differential.methylation.path <- filename
-
-
-              webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-              pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-
-              query = "//*/div[@id='section3']/ul/li"
-              dates = xpathSApply(pagetree, query, xmlValue)
-              dates
-              comp_names <- list()
-              comp_names_counter <- 1
-              for (j in 1:length(dates)) {
-
-                comp_names[comp_names_counter] <- dates[j]
-                comp_names_counter = comp_names_counter + 1
-
-              }
-
-              choices.list <- comp_names
-            }
-            else{
-              choices.list <- 'NA'
-
-            }
-          }
-          else{
-            choices.list <- 'NA'
-
-
-          }
-          selectInput("si1", paste(input_choices,""), choices.list)
-        })
-
-      })
-
-
-
 
       column_selected = as.character(input$input_topscorer_columns)
       equality = as.character(input$input_topscorer_columns_equality)
@@ -3480,7 +3574,11 @@ get.choice.index <- eventReactive(input$si1, {
         analysis.path <- file.path(results.dir(), analysis.selected)
         nrows.value <- as.character(100)
 
-        dataset <- readingCustomComparisonData(analysis.selected,analysis.path,1, nrows.value,column_selected)
+        if (length(get.choice.index()[i]) < 1){
+
+          get.choice.index()[i] <- 1
+        }
+        dataset <- readingCustomComparisonData(analysis.selected,analysis.path,as.integer(unlist(get.choice.index()[i])), nrows.value,column_selected)
 
         if(column_selected == "diffmeth.p.val"){
           colselected <- dataset$diffmeth.p.val
