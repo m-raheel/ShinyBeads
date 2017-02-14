@@ -1,7 +1,7 @@
 
 ########################################################################################################################
 ## server.R
-## created: 2016-09-1
+## created: 2016-09-01
 ## creator: Muhammad Raheel
 ## ---------------------------------------------------------------------------------------------------------------------
 ## Main workflow of the RnBeads Interface tool.
@@ -62,47 +62,7 @@ qqman.qq <- qqman::qq    #EDIT
 
 ## F U N C T I O N S ###################################################################################################
 
-########################################################################################################################
 
-#' rnbi.read.comparisondata
-#'
-#' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the results.
-#'
-# rnbi.read.comparisondata <- function(qq.value, qq.dir , comp.index , topRows) {
-#
-#   if (qq.value == "" || qq.value == "NA"){
-#     dataset <- data.table( data = "No data available.")
-#   }
-#   else{
-#     #comp.index is the file number to open and read
-#     f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
-#
-#     if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-#
-#       filename <- file.path(qq.dir, 'differential_methylation_data',f)
-#       filename= as.character(filename)
-#
-#       nrows.value <- as.character(topRows)
-#       if (nrows.value == 'ALL'){
-#         nrows.value = -1
-#       }
-#
-#       # fread function from the library data.table
-#       comp.file <- fread(filename,sep = ",", nrows = nrows.value)
-#       comp.file <- as.data.frame(comp.file)
-#
-#       dataset <- data.table( comp.file)
-#
-#       dataset
-#     }
-#     else{
-#       dataset <- data.table( data = "No data available.")
-#     }
-#   }
-#
-#   return(dataset)
-#
-# }
 
 ########################################################################################################################
 
@@ -2865,66 +2825,6 @@ shinyServer(function(input, output, session) {
   })
 
 
-# returns the index of selected comparison file in QQplot 1
-observeEvent(input$cb_ts_comp_venn, {
-  # preparing data to display in Venn diagram and in data table
-  cb.checked <- c(input$cb_ts_comp_venn)
-
-
-  output$si <- renderUI({
-
-
-    choices = cb.checked
-    lapply(1:length(choices), function(i) {
-
-
-      input_choices <- as.character(choices[i])
-      qq.dir <- file.path(results.dir(), input_choices)
-
-
-      if (input_choices != "NA"){
-        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-
-          filename <- file.path(qq.dir,'differential_methylation.html')
-
-          differential.methylation.path <- filename
-
-
-          webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-          pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-
-          query = "//*/div[@id='section3']/ul/li"
-          dates = xpathSApply(pagetree, query, xmlValue)
-          dates
-          comp_names <- list()
-          comp_names_counter <- 1
-          for (j in 1:length(dates)) {
-
-            comp_names[comp_names_counter] <- dates[j]
-            comp_names_counter = comp_names_counter + 1
-
-          }
-
-          choices.list <- comp_names
-        }
-        else{
-          choices.list <- 'NA'
-
-        }
-      }
-      else{
-        choices.list <- 'NA'
-
-
-      }
-      selectInput(paste0("si",i), paste(input_choices,""), choices.list)
-    })
-
-  })
-
-})
-
 
 # returns the index of selected comparison file in table browser section
 get.choice.index <- reactive({
@@ -3030,6 +2930,68 @@ get.choice.index <- reactive({
   return(choice.index)
 
 })
+
+
+# returns the index of selected comparison file in QQplot 1
+observeEvent(input$cb_ts_comp_venn, {
+  # preparing data to display in Venn diagram and in data table
+  cb.checked <- c(input$cb_ts_comp_venn)
+
+
+  output$si <- renderUI({
+
+
+    choices = cb.checked
+    lapply(1:length(choices), function(i) {
+
+
+      input_choices <- as.character(choices[i])
+      qq.dir <- file.path(results.dir(), input_choices)
+
+
+      if (input_choices != "NA"){
+        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+
+          filename <- file.path(qq.dir,'differential_methylation.html')
+
+          differential.methylation.path <- filename
+
+
+          webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+          pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+
+          query = "//*/div[@id='section3']/ul/li"
+          dates = xpathSApply(pagetree, query, xmlValue)
+          dates
+          comp_names <- list()
+          comp_names_counter <- 1
+          for (j in 1:length(dates)) {
+
+            comp_names[comp_names_counter] <- dates[j]
+            comp_names_counter = comp_names_counter + 1
+
+          }
+
+          choices.list <- comp_names
+        }
+        else{
+          choices.list <- 'NA'
+
+        }
+      }
+      else{
+        choices.list <- 'NA'
+
+
+      }
+      selectInput(paste0("si",i), paste(input_choices,""), choices.list)
+    })
+
+  })
+
+})
+
 
 
 

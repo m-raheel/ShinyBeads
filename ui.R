@@ -1,4 +1,13 @@
 
+########################################################################################################################
+## ui.R
+## created: 2016-09-01
+## creator: Muhammad Raheel
+## ---------------------------------------------------------------------------------------------------------------------
+## Main User Interface of the RnBeadsInterface tool.
+########################################################################################################################
+
+
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
 #library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
@@ -42,10 +51,6 @@ shinyUI(
 
   navbarobject <- navbarPage('idnavBarTop', theme = shinytheme("cerulean"),
 
-
-  # class="navbar navbar-fixed-bottom"
-
-
   footer = tags$div(class="", checked=NA,
                     #tags$p("&copy; 2016 - RnBeads-Interface"),
 
@@ -64,23 +69,14 @@ shinyUI(
   tabPanel("Home",
 
            shinyjs::useShinyjs(),
-           #shinyjs::extendShinyjs(text = "shinyjs.clearDirButton = function() { location.reload(); }"),
-
-
 
            #tags$style(type="text/css", "body {padding-top: 70px;}"),
 
            tags$p(class="pull-right","Timestamp: ", span(id = "time", date()), a(id = "update", "Update")),
 
-
-
            includeCSS("includes/styles.css"),
 
-
-
            #shinythemes::themeSelector(),
-
-
 
            HTML(paste('<div class="jumbotron">',
                         '<div class="container">',
@@ -96,10 +92,6 @@ shinyUI(
                           '<div class="row">',
                               '<div class="col-md-6">',
                                 '<h2>Working Repository</h2>',
-                                  tags$p("Click the select button to read the RnBeads analysis repository:"),
-
-                                  #actionButton("workingDirButton",label= "Select",class="btn btn-primary"),
-
 
                                   paste('<p>',textOutput("ErrorText1"),'</p>'),
 
@@ -173,6 +165,13 @@ shinyUI(
   ),
 
 
+  ########################################################################################################################
+  ##
+  ## Top Nav Bar Tab : Repository
+  ## ---------------------------------------------------------------------------------------------------------------------
+  ## User Interface components of Repository tab
+  ########################################################################################################################
+
 
   # Repository nav menu
   tabPanel("Repository",
@@ -217,7 +216,13 @@ shinyUI(
   ),
 
 
-  # individual analysis nav menu
+  ########################################################################################################################
+  ##
+  ## Top Nav Bar Tab : Individual Analysis
+  ## ---------------------------------------------------------------------------------------------------------------------
+  ## User Interface components of Individual Analysis tab
+  ########################################################################################################################
+
 
   tabPanel("Individual analysis",
 
@@ -291,12 +296,18 @@ shinyUI(
           )),#end of fluid row
           br()
 
-),#end of individual analysis nav menu
+  ),#end of individual analysis nav menu
 
 
-# individual analysis nav menu
+  ########################################################################################################################
+  ##
+  ## Top Nav Bar Tab : Individual data set
+  ## ---------------------------------------------------------------------------------------------------------------------
+  ## User Interface components of Individual data set tab
+  ########################################################################################################################
 
-tabPanel("Individual data set",
+
+  tabPanel("Individual data set",
 
 
                      tabPanel("Dataset",
@@ -357,11 +368,17 @@ tabPanel("Individual data set",
 
 
 
-),# end of individual dataset nav menu
+  ),# end of individual dataset nav menu
 
-# individual analysis nav menu
+  ########################################################################################################################
+  ##
+  ## Top Nav Bar Tab : Integrative Visualization
+  ## ---------------------------------------------------------------------------------------------------------------------
+  ## User Interface components of Integrative Visualization tab
+  ########################################################################################################################
 
-tabPanel("Integrative Visualization",
+
+  tabPanel("Integrative Visualization",
 
 
          tabsetPanel("visualization",
@@ -497,20 +514,7 @@ tabPanel("Integrative Visualization",
 
                                                      )# end of tab panel
 
-                                                     #   tabPanel("QQ-Plots 3",
-                                                     #
-                                                     #            br(), br(),
-                                                     #
-                                                     #            checkboxGroupInput("check_comp", label = h3("Select comparison file"),
-                                                     #                               choices = list("",1),
-                                                     #                               selected = 1),
-                                                     #
-                                                     #            actionButton('insertBtn', 'Show'),
-                                                     #
-                                                     #
-                                                     #            plotOutput('compqqplot3')
-                                                     #
-                                                     #   )#tab panel
+
                                          )# tab set panel
 
 
@@ -582,16 +586,6 @@ tabPanel("Integrative Visualization",
 
                                       )
 
-
-                                      # div(class="well",
-                                      #
-
-                                      #
-                                      # ),
-                                      # br()
-
-
-
                                 ), #end of column
 
 
@@ -632,18 +626,8 @@ tabPanel("Integrative Visualization",
                                                br(),
                                                plotlyOutput('x5')
                                            )
-                                           # actionButton('displaySimplePlotBtn', 'Simple Plot'),
-                                           # div(id="id_tb_simplefilterPlot",
-                                           #
-                                           #     br(),
-                                           #     br(),
-                                           #     plotOutput('simpleTBPlot')
-                                           # )
+
                                          )
-
-
-
-
                                        ),
                                        br()
 
@@ -735,7 +719,7 @@ tabPanel("Integrative Visualization",
 
                                        div(class="",
 
-                                           tags$p(textOutput("comparison.check")),
+                                           #tags$p(textOutput("comparison.check")),
                                            tags$p(textOutput("ts.venn.overlapping.error.value"  )),
                                            plotOutput('output.ts.multivenn.plot'),
                                            tableOutput('output.ts.table.multivenn.plot.labels'),
@@ -766,50 +750,10 @@ tabPanel("Integrative Visualization",
                                        br()
 
 
-                                )),# end  of  fluid row
-
-
-                              fluidRow(
-                                column(width = 12
-
-
-
-                                         # #plotlyOutput("p_plotly"),
-                                         #
-                                         # radioButtons("plotType", "Plot Type:", choices = c("ggplotly", "plotly")),
-                                         # plotlyOutput("plot"),
-                                         # verbatimTextOutput("hover"),
-                                         # verbatimTextOutput("click"),
-                                         # verbatimTextOutput("brush"),
-                                         # verbatimTextOutput("zoom"),
-                                         #
-                                         # br(),
-                                         #
-                                         #
-                                         # title = 'Select Table Rows',
-                                         #
-                                         # h1('A Client-side Table'),
-                                         #
-                                         # fluidRow(
-                                         #   column(6, DT::dataTableOutput('x1')),
-                                         #   column(6, plotlyOutput('x2', height = 500))
-                                         # ),
-                                         #
-                                         # hr(),
-                                         #
-                                         # h1('A Server-side Table'),
-                                         #
-                                         # fluidRow(
-                                         #   column(9, DT::dataTableOutput('x3')),
-                                         #   column(3, verbatimTextOutput('x4'))
-                                         # )
-
-
-
-
-
-
                                 ))# end  of  fluid row
+
+
+
 
                         )# end of tabpanel of top scorer
 
@@ -819,148 +763,6 @@ tabPanel("Integrative Visualization",
          br()
 
   )#end of integrative visualization nav menu
-
- # tabPanel("About",
- #
- #
- #          titlePanel("Download base plot in Shiny - an example"),
- #          sidebarLayout(
- #            sidebarPanel(
- #              selectInput(inputId = "var1", label = "Select the X variable", choices = c("Sepal.Length" = 1, "Sepal.Width" = 2, "Petal.Length" = 3, "Petal.Width" = 4)),
- #              selectInput(inputId = "var2", label = "Select the Y variable", choices = c("Sepal.Length" = 1, "Sepal.Width" = 2, "Petal.Length" = 3, "Petal.Width" = 4), selected = 2),
- #              radioButtons(inputId = "var3", label = "Select the file type", choices = list("png", "pdf"))
- #            ),
- #            mainPanel(
- #              plotOutput("plot"),
- #              downloadButton(outputId = "down", label = "Download the plot")
- #            )
- #          ),
- #
- #          # Adding the 'a' tag to the sidebar linking external file
- #          tags$p("'a' tag linking external file"),
- #          tags$a(href='https://designer.genomecompiler.com/plasmid_iframe?file_url=http://s3.amazonaws.com/gcc_production/plasmid_viewer/OG34_OG34_pSF-OXB19.gb', target='blank', 'plasmid1_URLfile'),
- #
- #          # Line spacing
- #          hr(),
- #
- #          # Adding the 'a' tag to the sidebar linking local file
- #          tags$p("'a' tag linking local file"),
- #          tags$a(href='data/plasmid1.txt', target='blank', 'plasmid1_localfile', download = 'plasmid1.txt')
- # )
-#
-#          # Application title
-#          #headerPanel("RnBeads Results"),
-#
-#
-#
-#          # Sidebar with controls to select the variable to plot against xyz
-#          # and to specify whether outliers should be included
-#          sidebarPanel(
-#            selectInput("input_type", "Select analysis folder:", choices)
-#
-#            #checkboxInput("outliers", "Show outliers", FALSE)
-#
-#
-#          ),
-#
-#          mainPanel(
-#
-#
-#
-#
-#
-#            tabsetPanel(
-#              tabPanel("Summary",
-#                       br(), br(),
-#
-#                       h3("clientData values"),
-#                       verbatimTextOutput("clientdataText"),
-#
-#                       br(), br(),
-#                       tags$strong("Working Directory:"),
-#                       verbatimTextOutput("workingDirText"),
-#
-#                       tags$strong("Selected RnBeads reuslts folder path:"),
-#                       verbatimTextOutput("text"),
-#
-#
-#                       tags$strong("Dataset path used for the analysis of RnBeads:"),
-#                       verbatimTextOutput("data_path"),
-#
-#
-#                       # a div named mydiv
-#
-#                       tags$div("click to change color" , id="mydiv", style="width: 50px; height :60px;
-#                       left: 550px; top: 000px;
-#                       background-color: gray; position: absolute"),
-#
-#                       # javascript code to send data to shiny server
-#
-#                       tags$script('
-#                                   document.getElementById("mydiv").onclick = function() {
-#                                   var number = Math.random();
-#                                   Shiny.onInputChange("mydata", number);
-#                                   };
-#                                   '),
-#
-#                       # handler to receive data from server
-#
-#
-#                       tags$input( id="myinput", style="width: 100px; height :60px;
-#                                   left: 150px; top: 100px;
-#                                   position: absolute"),
-#
-#                       tags$script('
-#                                   Shiny.addCustomMessageHandler("myperformedmodulesno",
-#                                   function(color) {
-#                                   document.getElementById("myinput").value = color;
-#                                   });
-#                                   ')
-#
-#                       ),# tab panel end
-#
-#              tabPanel("Analysis Options",
-#                       br(), br()
-#
-#              ),# tab panel end
-#
-#              tabPanel("Annotation.csv",
-#                       br(), br()
-#
-#
-#
-#              ),# tab panel end
-#
-#
-#
-#
-#              tabPanel("qq-Plots",
-#                    br(), br(),
-#                    radioButtons("qqplots", "QQ-plots:",
-#                                 c("summary1_betas_qq", "summary2_betas_qq")),
-#
-#                    imageOutput("qqimage", width="300px",height="600px")
-#
-#              ),
-#
-#              tabPanel("All qq-Plots",
-#                       #fluidRow(
-#                       #splitLayout(cellWidths = c("60%", "60%"), imageOutput("qq1plot1"), imageOutput("qq1plot2")),
-#                       #column(6,imageOutput("qq1plot1", width="300px",height="300px")),
-#                       #column(6,imageOutput("qq1plot2", width="300px",height="300px"))
-#                       #)
-#                       imageOutput("qq1plot1", width="300px",height="600px"),
-#                       imageOutput("qq1plot2", width="300px",height="600px")
-#
-#              )# tab panel end
-#                       )# end tabset panel
-#
-#         )#end of mainbar
-#
-#
-#   )# end of about tab  menu
-
-
 
   )# end of nav bar page
 
