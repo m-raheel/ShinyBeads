@@ -1,4 +1,13 @@
 
+########################################################################################################################
+## server.R
+## created: 2016-09-1
+## creator: Muhammad Raheel
+## ---------------------------------------------------------------------------------------------------------------------
+## Main workflow of the RnBeads Interface tool.
+########################################################################################################################
+
+
 # libraries to run on the shiny server ( uncomment it on the server)
 ######################################################################
 library(DT)
@@ -50,73 +59,71 @@ qqman.qq <- qqman::qq    #EDIT
 #   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
 # }
 
-readComparisonData <- function(qq.value, qq.dir , comp.index , topRows) {
+
+## F U N C T I O N S ###################################################################################################
+
+########################################################################################################################
+
+#' rnbi.read.comparisondata
+#'
+#' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the results.
+#'
+# rnbi.read.comparisondata <- function(qq.value, qq.dir , comp.index , topRows) {
+#
+#   if (qq.value == "" || qq.value == "NA"){
+#     dataset <- data.table( data = "No data available.")
+#   }
+#   else{
+#     #comp.index is the file number to open and read
+#     f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
+#
+#     if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+#
+#       filename <- file.path(qq.dir, 'differential_methylation_data',f)
+#       filename= as.character(filename)
+#
+#       nrows.value <- as.character(topRows)
+#       if (nrows.value == 'ALL'){
+#         nrows.value = -1
+#       }
+#
+#       # fread function from the library data.table
+#       comp.file <- fread(filename,sep = ",", nrows = nrows.value)
+#       comp.file <- as.data.frame(comp.file)
+#
+#       dataset <- data.table( comp.file)
+#
+#       dataset
+#     }
+#     else{
+#       dataset <- data.table( data = "No data available.")
+#     }
+#   }
+#
+#   return(dataset)
+#
+# }
+
+########################################################################################################################
+
+#' rnbi.read.comparisondata
+#'
+#' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the results.
+#'
+rnbi.read.comparisondata <- function(qq.value, qq.dir , comp.index , topRows, columnSelected) {
 
   if (qq.value == "" || qq.value == "NA"){
     dataset <- data.table( data = "No data available.")
   }
   else{
 
-
-
-    #index_list() contains the index of the selected file ffrom the dropdown
+    #comp.index is the file number to open and read
     f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
 
     if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
 
       filename <- file.path(qq.dir, 'differential_methylation_data',f)
-
-
-      filename= as.character(filename)
-
-      nrows.value <- as.character(topRows)
-      if (nrows.value == 'ALL'){
-        nrows.value = -1
-      }
-
-      # fread function from the library data.table
-      comp.file <- fread(filename,sep = ",", nrows = nrows.value)
-      #comp.file <- fread(filename,sep = ",")
-
-      comp.file <- as.data.frame(comp.file)
-
-
-
-
-      dataset <- data.table( comp.file)
-
-
-
-      dataset
-    }
-    else{
-      dataset <- data.table( data = "No data available.")
-    }
-  }
-
-  return(dataset)
-
-}
-
-readingCustomComparisonData <- function(qq.value, qq.dir , comp.index , topRows, columnSelected) {
-
-  if (qq.value == "" || qq.value == "NA"){
-    dataset <- data.table( data = "No data available.")
-  }
-  else{
-
-
-
-    #index_list() contains the index of the selected file ffrom the dropdown
-    f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
-
-    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-
-      filename <- file.path(qq.dir, 'differential_methylation_data',f)
-
-
       filename= as.character(filename)
 
       nrows.value <- as.character(topRows)
@@ -126,17 +133,9 @@ readingCustomComparisonData <- function(qq.value, qq.dir , comp.index , topRows,
 
       # fread function from the library data.table
       comp.file <- fread(filename,sep = ",", nrows = nrows.value , select = c('cgid','Chromosome','Start','Strand',columnSelected))
-      #comp.file <- fread(filename,sep = ",")
-
       comp.file <- as.data.frame(comp.file)
 
-
-
-
       dataset <- data.table( comp.file)
-
-
-
       dataset
     }
     else{
@@ -149,59 +148,14 @@ readingCustomComparisonData <- function(qq.value, qq.dir , comp.index , topRows,
 }
 
 
-
-readingPValues <- function(qq.value, qq.dir , comp.index , topRows) {
-
-  if (qq.value == "" || qq.value == "NA"){
-    dataset <- data.table( data = "No data available.")
-  }
-  else{
-
-
-
-    #index_list() contains the index of the selected file ffrom the dropdown
-    f = paste("diffMethTable_site_cmp",comp.index, ".csv",sep = '')
-
-    if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-
-      filename <- file.path(qq.dir, 'differential_methylation_data',f)
-
-
-      filename= as.character(filename)
-
-      nrows.value <- as.character(topRows)
-      if (nrows.value == 'ALL'){
-        nrows.value = -1
-      }
-
-      # fread function from the library data.table
-      comp.file <- fread(filename,sep = ",", nrows = nrows.value)
-      #comp.file <- fread(filename,sep = ",")
-
-      comp.file <- as.data.frame(comp.file)
-
-
-
-
-      dataset <- data.table( comp.file)
-
-
-
-      dataset
-    }
-    else{
-      dataset <- data.table( data = "No data available.")
-    }
-  }
-
-  return(dataset)
-
-}
-
-
+########################################################################################################################
 # For Top scorer tab
-getLogicalDataColumn <- function(dataset, column ,equality,range ) {
+
+#' rnbi.read.comparisondatalogical
+#'
+#' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the Logical (True, False) results.
+#'
+rnbi.read.comparisondatalogical <- function(dataset, column ,equality,range ) {
 
   print("inside the get logical data colums")
   print(equality)
@@ -249,9 +203,9 @@ plotVennDiagram <- function(a, a1,a2,a3, a12, a23, a13, a123) {
   return(out)
 }
 
+########################################################################################################################
 
-
-
+## S H I N Y S E R V E R ###################################################################################################
 
 options(shiny.maxRequestSize=30*1024^2)
 
@@ -259,49 +213,6 @@ shinyServer(function(input, output, session) {
 
   # update timestamp when update is clicked
   shinyjs::onclick("update", shinyjs::html("time", date()))
-
-  # x contains all the observations of the x variable selected by the user. X is a reactive function
-  x <- reactive({
-    iris[,as.numeric(input$var1)]
-  })
-  # x contains all the observations of the y variable selected by the user. Y is a reactive function
-  y <- reactive({
-    iris[,as.numeric(input$var2)]
-
-  })
-  # xl contains the x variable or column name of the iris dataset selected by the user
-  xl <- reactive({
-    names(iris[as.numeric(input$var1)])
-  })
-  # yl contains the y variable or column name of the iris dataset selected by the user
-  yl <- reactive({
-    names(iris[as.numeric(input$var2)])
-  })
-
-  # render the plot so could be used to display the plot in the mainPanel
-  output$plot <- renderPlot({
-    plot(x=x(), y=y(), main = "iris dataset plot", xlab = xl(), ylab = yl())
-
-  })
-
-  # downloadHandler contains 2 arguments as functions, namely filename, content
-  output$down <- downloadHandler(
-    filename =  function() {
-      paste("iris", input$var3, sep=".")
-    },
-    # content is a function with argument file. content writes the plot to the device
-    content = function(file) {
-      if(input$var3 == "png")
-        png(file) # open the png device
-      else
-        pdf(file) # open the pdf device
-      plot(x=x(), y=y(), main = "iris dataset plot", xlab = xl(), ylab = yl()) # draw the plot
-      dev.off()  # turn the device off
-
-    }
-  )
-
-
 
   # logo of the app
 
@@ -320,7 +231,7 @@ shinyServer(function(input, output, session) {
   }, deleteFile = FALSE)
 
 
-  # commented is the script to change the tab
+  # oberve to change the tabs when button or table clicked!
 
   observe({
     if(input$action > 0){
@@ -342,69 +253,6 @@ shinyServer(function(input, output, session) {
 
   })
 
-  # #select working directory
-  # selectedRepository <- eventReactive(input$workingDirButton,{
-  #
-  #   updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
-  #
-  #
-  #
-  #   selectedDir <-  as.character(updatedDir)
-  #
-  #   # return the RnBeads directories
-  #   #setwd(selectedDir)
-  #
-  #   #shinyjs::js$workingDirButton()
-  #
-  #   # updating all the selectInput dropdowns
-  #
-  #   updateSelectInput(session, "input_type",
-  #                     label = paste("Select analysis folder"),
-  #                     choices = list.files(path = selectedDir))
-  #
-  #   updateSelectInput(session, "select_ia",
-  #                     label = paste("Select analysis folder"),
-  #                     choices = list.files(path = selectedDir))
-  #
-  #
-  #
-  #   updateSelectInput(session, "input_dmcomp_choices",
-  #                     label = paste("Select analysis folder"),
-  #                     choices = list.files(path = selectedDir))
-  #
-  #   updateSelectInput(session, "input_dmcomp_choices_1",
-  #                     label = paste("Analysis 1"),
-  #                     choices = list.files(path = selectedDir))
-  #
-  #   updateSelectInput(session, "input_dmcomp_choices_2",
-  #                     label = paste("Analysis 2"),
-  #                     choices = list.files(path = selectedDir))
-  #
-  #   dirfolder = list.files(path = selectedDir)
-  #
-  #   if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
-  #     output$ErrorText1 <- renderText({ paste("You are working with the RnBeads analysis repository:",sep="") })
-  #     output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
-  #   }
-  #   else{
-  #     output$ErrorText1 <- renderText({ paste("Not a Valid RnBeads Repository:",sep="") })
-  #     output$ErrorText2 <- renderText({ paste(selectedDir,sep="") })
-  #     observe({
-  #
-  #       check.repo = 'FALSE'
-  #       session$sendCustomMessage(type = "t", check.repo)
-  #     })
-  #
-  #   }
-  #
-  #   selectedDir
-  #
-  # })
-
-
-  # #select working directory
-
-
   #updatedDir <- normalizePath("/projects/factorization/raw_data/Demo Repository", winslash = "\\", mustWork = NA)
 
   updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
@@ -413,7 +261,7 @@ shinyServer(function(input, output, session) {
 
   selectedDir <-  as.character(updatedDir)
 
-  # updating all the selectInput dropdowns
+  # updating all the selectInput dropdowns of the app
 
   updateSelectInput(session, "input_type",
                     label = paste("Select analysis folder"),
@@ -476,36 +324,13 @@ shinyServer(function(input, output, session) {
 
   }
 
-
-
-
-  # displaying all session values store in the clientData
-
-  # Store in a convenience variable
-  cdata <- session$clientData
-
-  # Values from cdata returned as text
-  output$clientdataText <- renderText({
-    cnames <- names(cdata)
-
-    allvalues <- lapply(cnames, function(name) {
-      paste(name, cdata[[name]], sep=" = ")
-    })
-    paste(allvalues, collapse = "\n")
-  })
-
-
-  dirfolder = reactive({list.files(path = getwd())})
   results.dir = reactive({file.path(path = selectedDir)})
 
   # selected RnBeads repository folder
   value <- reactive({as.character(input$input_type) })
   rwaDir <- reactive({file.path(results.dir(), value()) })
 
-
-
-  # Check if file exists and working directory is correct
-
+  # output logo
 
   output$logo <- renderText({
 
@@ -801,6 +626,13 @@ shinyServer(function(input, output, session) {
   })
 
 
+  ########################################################################################################################
+  ##
+  ## Nav Bar Tab : Individual Analaysis
+  ## ---------------------------------------------------------------------------------------------------------------------
+  ## Main sub tabs under Individual Analaysis top nav bar.
+  ########################################################################################################################
+
 
   ############################################################################################
 
@@ -925,40 +757,12 @@ shinyServer(function(input, output, session) {
   })
 
 
-#   observeEvent(input$view_rnbeads_reports,{
-#
-#     value.modules <- reactive({as.character(input$select_ia) })
-#     wd_modules <- reactive({file.path(results.dir(), value.modules()) })
-#
-#     if ( file.exists( isolate({ paste(wd_modules(),'index.html',sep="/") }) ) ){
-#
-#
-#       output$rnbeadsReports <- renderUI({
-#
-#          # data = includeHTML(paste(wd_modules(),'index.html',sep="/"))
-#          #
-#          # data = gsub('<link rel="stylesheet" href="configuration/report.css" type="text/css" />',"",data)
-#          # print(data)
-#          # HTML(data)
-#         browseURL(paste('http://internal.genetik.uni-sb.de/dataT7600','as.character(input$select_ia)','index.html',sep="/"))
-#         #HTML(paste('<p> </p>','<p class = "text-info">file://',paste(wd_modules(),'index.html',sep="/"),'</p>','<p >Copy this link and paste in a new tab in your browser to see the RnBeads reports. Note: Only for t7600 users!</p>',sep=""))
-#       })
-#
-#
-#
-#
-#
-#     }
-#     else{
-#
-#       output$rnbeadsReports <- renderUI({
-#
-#         HTML('<p>No index.html exists!</p>')
-#       })
-#
-#     }
-#
-#   })
+  ########################################################################################################################
+  ##
+  ## Nav Bar Tab : Individual Datset
+  ## ---------------------------------------------------------------------------------------------------------------------
+  ## Main sub tabs under Individual Dataset top nav bar.
+  ########################################################################################################################
 
 
   ############################################################################################
@@ -1207,6 +1011,22 @@ shinyServer(function(input, output, session) {
 
   })
 
+  ########################################################################################################################
+  ##
+  ## Top Nav Bar Tab : Integrative Visualization
+  ## ---------------------------------------------------------------------------------------------------------------------
+  ## Main sub tabs under Integrative Visualization top nav bar.
+  ########################################################################################################################
+
+
+
+  ########################################################################################################################
+  ##
+  ## Nav Bar Tab : QQ-plots
+  ##
+  ########################################################################################################################
+
+
   ############################################################################################
 
   # Differential Methylation options getting it from the HTML file
@@ -1427,68 +1247,6 @@ shinyServer(function(input, output, session) {
   })
 
 
-#   list.pvalues <- reactive({
-#
-#     qq.value <- as.character(input$input_dmcomp_choices)
-#
-#     qq.dir <- file.path(results.dir(), qq.value)
-#
-#     #qq.value <- as.character(input$input_dmcomp_files)
-#
-#
-#
-#     if (qq.value == "" || qq.value == "NA"){
-#       x <- list()
-#       x
-#     }
-#     else{
-#
-#       #fucntion from the RnBeadsInterface package
-#
-#       #index_list() contains the index of the selected file ffrom the dropdown
-#       f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
-#
-#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-#
-#         comparison_plot(qq.dir , f)
-#
-#
-#
-#         # # Increment the progress bar, and update the detail text.
-#         # progress$inc(detail = paste("Please wait..."))
-#         #
-#         # # Pause for 0.1 seconds to simulate a long computation.
-#         # Sys.sleep(0.1)
-#
-#
-#       }
-#       else{
-#         x <- list()
-#         x
-#       }
-#     }
-#
-#
-#   })
-#
-
-
-  # output$p_values2 <- renderDataTable({
-  #   iris2 = head(iris, 20)
-  #   # only show the Copy and Print buttons
-  #   datatable(
-  #     iris2,
-  #     extensions = 'Buttons', options = list(
-  #       dom = 'Bfrtip',
-  #       buttons = c('copy', 'print')
-  #     )
-  #
-  #   )
-  #
-  # })
-
-
-
 
   observeEvent(input$displayQQPlotBtn,{
 
@@ -1600,60 +1358,6 @@ shinyServer(function(input, output, session) {
       p
     })
   })
-
-#   observeEvent(input$displayQQPlotBtn,{
-#
-#     #shinyjs::show(id = "id_qqplot")
-#
-#     output$compqqplot <- renderPlot({
-#
-#       #plotInput()
-#
-#
-#       qq.value <- as.character(input$input_dmcomp_choices)
-#
-#       qq.dir <- file.path(results.dir(), qq.value)
-#
-#       f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
-#
-#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
-#       {
-#         #y <- dist(ppoints(length(list.pvalues())))
-#         #qqline(y,list.pvalues())
-#         #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
-#
-#         #qqman.qq(list.pvalues(),main="Q-Q plot of p-values")
-#
-#         #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
-#
-#
-#
-#         ##from package lattice
-#
-#         # Create a Progress object
-#         progress <- shiny::Progress$new()
-#
-#         progress$set(message = "Makind QQ Plot", value = 50)
-#
-#         q <- qqunif.plot(list.pvalues())
-#
-#         # Make sure it closes when we exit this reactive, even if there's an error
-#         on.exit(progress$close())
-#
-#         q
-#       }
-#
-#       else {
-#
-#         # print error/ warning message
-#         qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-#         text(1,1,"No data available or no comparison file exist")
-#
-#
-#       }
-#     })
-#
-#   })
 
 
   ############################################################################################
@@ -2437,110 +2141,12 @@ shinyServer(function(input, output, session) {
 
   })
 
-  ###################################################################################################
 
-  # QQ Plot 3  comparison among different files of same RnBeads Analysis
-  ###################################################################################################
-
-  observeEvent(input$insertBtn, {
-
-    qq.value <- as.character(input$input_dmcomp_choices)
-
-    qq.dir <- file.path(results.dir(), qq.value)
-
-
-    vec <- as.list(input$check_comp)
-
-    check.choices.list <- list()
-
-    if (length(vec) == 0){
-      x <- list()
-      output$compqqplot3 <- renderPlot({
-
-
-
-        if(length(check.choices.list) == 0) {
-
-          # print error/ warning message
-          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          text(1,1,"No data available or no comparison file exist")
-
-        }
-        else{
-          qqnorm(x)
-        }
-
-
-
-
-      }, height = 400, width = 500)
-    }
-    else{
-
-
-
-      for (i in 1:length(vec)) {
-
-        #fucntion from the RnBeadsInterface package
-
-        f = "diffMethTable_site_cmp1.csv"
-
-        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-          check.choices.list[i] <- list(comparison_plot(qq.dir , f))
-        }
-      }
-
-
-
-      output$compqqplot3 <- renderPlot({
-
-
-
-        print(as.numeric(length(check.choices.list)) == 1)
-
-        if(length(check.choices.list) == 0) {
-
-          # print error/ warning message
-          qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          text(1,1,"No data available or no comparison file exist")
-
-        }
-        else if(as.numeric(length(check.choices.list)) == 1) {
-
-          y<- unlist(check.choices.list[1])
-
-
-          qqnorm(y,main="Normal Q-Q plot", xlab="Theoretical Distribution", ylab="diffmeth.p.val")
-
-
-
-        }
-        else{
-          x<- unlist(check.choices.list[1])
-          y<- unlist(check.choices.list[2])
-
-          qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val", ylab="diffmeth.p.val")
-
-        }
-
-
-
-
-      }, height = 400, width = 500)
-
-
-    }
-
-
-  })
-
-
-
-
-
-
-
+  ########################################################################################################################
+  ##
+  ## Nav Bar Tab : Table Browser
+  ##
+  ########################################################################################################################
 
 
   ############################################################################################
@@ -2981,125 +2587,8 @@ shinyServer(function(input, output, session) {
       }
     })
 
-
-
   })
 
-
-  # observeEvent(input$displayPlotBtn,{
-  #
-  #
-  #   #checkDisplay$data <- FALSE
-  #   checkDisplay$data2 <- TRUE
-  #
-  #   output$x5 <- renderPlotly({
-  #     if (is.null(checkDisplay$data2)) {
-  #
-  #
-  #
-  #         return()
-  #
-  #
-  #     }
-  #
-  #     else if (identical(checkDisplay$data2, FALSE)) {
-  #
-  #
-  #
-  #         return()
-  #
-  #     }
-  #
-  #     else {
-  #
-  #
-  #         x.axis <- c(-10 , -5 , - 2.5 , 0 , 2.5 , 5, 10 , 20 , 30 , 40)
-  #
-  #
-  #
-  #         qq.value <- as.character(input$input_tablebrowser_choices)
-  #
-  #         qq.dir <- file.path(results.dir(), qq.value)
-  #
-  #
-  #         if (qq.value == "" || qq.value == "NA"){
-  #           dataset <- data.table( data = "No data available.")
-  #         }
-  #         else{
-  #
-  #
-  #
-  #           #index_list() contains the index of the selected file ffrom the dropdown
-  #           f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
-  #
-  #           if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-  #
-  #             # Create a Progress object
-  #             progress <- shiny::Progress$new()
-  #
-  #             progress$set(message = "Reading data", value = 50)
-  #
-  #
-  #             filename <- file.path(qq.dir, 'differential_methylation_data',f)
-  #
-  #
-  #             filename= as.character(filename)
-  #
-  #             # fread function from the library data.table
-  #             comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val"))
-  #             #comp.file <- fread(filename,sep = ",")
-  #
-  #             comp.file <- as.data.frame(comp.file )
-  #
-  #
-  #
-  #
-  #             # use the key aesthetic/argument to help uniquely identify selected observations
-  #             key <- colnames(comp.file) <- c("cgid","Chromosome","Start", "Strand", "mean.diff","diffmeth.p.val")
-  #             print(key)
-  #
-  #             p <- plot_ly(comp.file,
-  #                          type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
-  #                          x = ~mean.diff,               # more about scatter's "x": /r/reference/#scatter-x
-  #                          y = ~diffmeth.p.val,            # more about scatter's "y": /r/reference/#scatter-y
-  #                          name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
-  #                          marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
-  #                            color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
-  #                          )) %>%
-  #
-  #               # add_trace(x = ~mean.diff,                                         # scatter's "x": /r/reference/#scatter-x
-  #               #           y = ~diffmeth.p.val,  # scatter's "y": /r/reference/#scatter-y
-  #               #           mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
-  #               #           line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
-  #               #             color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
-  #               #             dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
-  #               #           )
-  #               # ) %>%
-  #
-  #               layout(                        # all of layout's properties: /r/reference/#layout
-  #                 title = "Plot", # layout's title: /r/reference/#layout-title
-  #                 xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
-  #                   title = "mean.diff",      # xaxis's title: /r/reference/#layout-xaxis-title
-  #                   showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
-  #                 yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
-  #                   title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
-  #               )
-  #
-  #             # Make sure it closes when we exit this reactive, even if there's an error
-  #             on.exit(progress$close())
-  #
-  #             p
-  #           }
-  #
-  #         }
-  #
-  #     }
-  #
-  #   })
-  #
-  #
-  #
-  # })
 
 
   observeEvent(input$displaySimplePlotBtn,{
@@ -3313,6 +2802,12 @@ shinyServer(function(input, output, session) {
   ), escape = TRUE)
 
 
+
+  ########################################################################################################################
+  ##
+  ## Nav Bar Tab : Top Scorer
+  ##
+  ########################################################################################################################
 
   ############################################################################################
 
@@ -3578,7 +3073,7 @@ get.choice.index <- reactive({
 
           get.choice.index()[i] <- 1
         }
-        dataset <- readingCustomComparisonData(analysis.selected,analysis.path,as.integer(unlist(get.choice.index()[i])), nrows.value,column_selected)
+        dataset <- rnbi.read.comparisondata(analysis.selected,analysis.path,as.integer(unlist(get.choice.index()[i])), nrows.value,column_selected)
 
         if(column_selected == "diffmeth.p.val"){
           colselected <- dataset$diffmeth.p.val
@@ -4148,230 +3643,6 @@ get.choice.index <- reactive({
 
   #end of top scorer tab
   ####################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  ####################################################################################
-  # output for the about section
-
-  output$text <- renderText({
-    paste("You have selected:",results.dir())
-  })
-
-  output$results.directory <- renderText({
-    rwaDir()
-  })
-
-  output$results = renderPrint({
-    input$mydata
-  })
-
-  observe({
-    input$mydata
-    color = rgb(runif(1), runif(1), runif(1))
-    session$sendCustomMessage(type = "myCallbackHandler", color)
-  })
-
-  output$workingDirText <- renderText({getwd() })
-
-
-  ####################################################################################
-
-
-  output$table1 <- renderDataTable({
-
-    # my_table <- cbind(rownames(mtcars), mtcars)
-    # colnames(my_table)[1] <- 'car'
-    # my_table$link <- createLink(my_table$car)
-    # return(my_table)
-
-  }, escape = FALSE)
-
-
-  # displaying plots in plots tab
-  ###################################################################################3
-
-  qqplot1.path <- reactive({file.path(rwaDir(), "preprocessing_pdfs/summary1_betas_qq.pdf")})
-  qqplot2.path <- reactive({file.path(rwaDir(), "preprocessing_pdfs/summary2_betas_qq.pdf")})
-
-  output$qqplot1 <- renderText({
-    return(paste('<iframe style="height:600px; width:100%" src="', qqplot1.path , '"></iframe>', sep = ""))
-  })
-
-  # Send a qq1 image, and don't delete the image after sending it
-  output$qq1plot1 <- renderImage({
-    # When input$n is 3, filename is ./images/image3.jpeg
-    filename <- normalizePath(file.path(rwaDir(),
-                                        paste('preprocessing_images/summary1_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
-
-    # Return a list containing the filename and alt text
-    list(src = filename,alt = paste("No record found."))
-
-  }, deleteFile = FALSE)
-
-  # Send a qq2 image, and don't delete the image after sending it
-  output$qq1plot2 <- renderImage({
-    # When input$n is 3, filename is ./images/image3.jpeg
-    filename <- normalizePath(file.path(rwaDir(),
-                                        paste('preprocessing_images/summary2_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
-
-    # Return a list containing the filename and alt text
-    list(src = filename,alt = paste("No record found."))
-
-  }, deleteFile = FALSE)
-
-  #  sends pre-rendered images according to the radio button selection
-  output$qqimage <- renderImage({
-    if (is.null(input$qqplots))
-      return(NULL)
-
-    if (input$qqplots == "summary1_betas_qq") {
-
-      filename <- normalizePath(file.path(rwaDir(),
-                                          paste('preprocessing_images/summary1_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
-
-      return(list(
-        src = filename,
-        contentType = "image/png",
-        alt = "No record found."
-      ))
-    } else if (input$qqplots == "summary2_betas_qq") {
-
-      filename <- normalizePath(file.path(rwaDir(),
-                                          paste('preprocessing_images/summary2_betas_qq', '.png', sep='')), winslash = "\\", mustWork = NA)
-
-      return(list(
-        src = filename,
-        filetype = "image/png",
-        alt = "No record found."
-      ))
-    }
-
-  }, deleteFile = FALSE)
-  #######################################################################
-
-  output$p_plotly <- renderPlotly({
-    d <- diamonds[sample(nrow(diamonds), 1000), ]
-    p <- ggplot(txhousing, aes(date, median)) +
-      geom_line(aes(group = city), alpha = 0.2)
-
-    ggplotly(p)
-
-  })
-
-
-
-  output$plot <- renderPlotly({
-    # use the key aesthetic/argument to help uniquely identify selected observations
-    key <- row.names(mtcars)
-    if (identical(input$plotType, "ggplotly")) {
-      p <- ggplot(mtcars, aes(x = mpg, y = wt, colour = factor(vs), key = key)) +
-        geom_point()
-      ggplotly(p) %>% layout(dragmode = "select")
-    } else {
-      plot_ly(mtcars, x = ~mpg, y = ~wt, key = ~key) %>%
-        layout(dragmode = "select")
-    }
-  })
-
-  output$hover <- renderPrint({
-    d <- event_data("plotly_hover")
-    if (is.null(d)) "Hover events appear here (unhover to clear)" else d
-  })
-
-  output$click <- renderPrint({
-    d <- event_data("plotly_click")
-    if (is.null(d)) "Click events appear here (double-click to clear)" else d
-  })
-
-  output$brush <- renderPrint({
-    d <- event_data("plotly_selected")
-    if (is.null(d)) "Click and drag events (i.e., select/lasso) appear here (double-click to clear)" else d
-  })
-
-  output$zoom <- renderPrint({
-    d <- event_data("plotly_relayout")
-    if (is.null(d)) "Relayout (i.e., zoom) events appear here" else d
-  })
-
-
-
-  output$x1 <- DT::renderDataTable(cars, server = FALSE)
-
-  # highlight selected rows in the scatterplot
-  # output$x2 <- renderPlotly({
-  #   p <- plot_ly(cars, x = ~speed, y = ~dist, mode = "markers",
-  #                marker = list(opacity = 0.2, color = "black"))
-  #   s <- input$x1_rows_selected
-  #   if (length(s)) {
-  #     p <- p %>%
-  #       add_trace(data = cars[s, , drop = FALSE],
-  #                 x = ~speed, y = ~dist, mode = "markers",
-  #                 marker = list(opacity = 1, color = "black")) %>%
-  #       layout(showlegend = FALSE)
-  #   }
-  #   p
-  # })
-
-  output$x2 <- renderPlotly({
-    # use the key aesthetic/argument to help uniquely identify selected observations
-    key <- row.names(cars)
-    if (identical(input$plotType, "ggplotly")) {
-      p <- ggplot(cars, aes(x = speed, y = dist, colour = "black", key = key)) +
-        geom_point()
-      ggplotly(p) %>% layout(dragmode = "select")
-    } else {
-      p <- plot_ly(cars, x = ~speed, y = ~dist, key = ~key) %>%
-           layout(dragmode = "select")
-
-      s <- input$x1_rows_selected
-        if (length(s)) {
-          p <- p %>%
-            add_trace(data = cars[s, , drop = FALSE],
-                      x = ~speed, y = ~dist, mode = "markers",
-                      marker = list(opacity = 1, color = "black")) %>%
-            layout(showlegend = FALSE)
-        }
-      p
-    }
-  })
-
-
-  # server-side processing
-  mtcars2 <- mtcars[, 1:8]
-  output$x3 <- DT::renderDataTable(mtcars2, server = TRUE)
-
-  # print the selected indices
-  output$x4 <- renderPrint({
-    s <- input$x3_rows_selected
-    if (length(s)) {
-      cat('These rows were selected:\n\n')
-      cat(s, sep = ', ')
-    }
-  })
-
-
-
 
 })
 
