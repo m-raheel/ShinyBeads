@@ -29,7 +29,7 @@ library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-l
 library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 library(plyr)
-
+library(shinydashboard, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 #####################################################################
 
 
@@ -193,12 +193,12 @@ shinyServer(function(input, output, session) {
 
   # oberve to change the tabs when button or table clicked!
 
-  observe({
-    if(input$action > 0){
-
-      session$sendCustomMessage("myCallbackHandler", "1")
-    }
-  })
+#   observe({
+#     if(input$action > 0){
+#
+#       session$sendCustomMessage("myCallbackHandler", "1")
+#     }
+#   })
 
   observe({
     if(input$view_datasets > 0){
@@ -308,7 +308,7 @@ shinyServer(function(input, output, session) {
     choices <- list.files(path = results.dir())
 
     output$count_rfolders <- renderText({
-      paste("Total directories in this repository =", length(choices), sep = " ")
+      paste("Total RnBeads reports in this repository =", length(choices), sep = " ")
 
     })
 
@@ -3606,8 +3606,48 @@ observeEvent(input$cb_ts_comp_venn, {
   #end of top scorer tab
   ####################################################################################
 
+
+  output$runR <- renderText({
+      paste("Please wait! RnBeads library is loading")
+      library(RnBeads)
+      x <- matrix(1:10, ncol = 5)
+#       write(x, file = paste(getwd(),"data.txt",sep ="/"),
+#             ncolumns = if(is.character(x)) 1 else 5,
+#             append = TRUE, sep = " ")
+
+      #mydata = read.table(paste(getwd(),"data.txt",sep ="/"))
+      paste(rnb.getOption("analyze.sites"))
+    })
+
 })
 
+.LOG.INFO <- new.env()
+
+.LOG.INDENT <- "    "
+.LOGGER <- "RnBeadsInterface"
+.LOG.STAT <- c("INFO" = "INFO", "STATUS" = "STATUS", "WARNING" = "WARNING", "ERROR" = "ERROR")
+
+logger.transform <- function(txt, indent = TRUE) {
+  if (!(is.character(txt) && is.vector(txt))) {
+    stop("invalid value for parameter txt")
+  }
+  if (length(txt) > 1) {
+    txt <- paste(txt, collapse = " ")
+  }
+  if (indent && length(.LOG.INFO[["titles"]]) != 0) {
+    txt <- paste(paste(rep(.LOG.INDENT, length(.LOG.INFO[["titles"]])), collapse = ""), txt, sep = "")
+  }
+  return(txt)
+}
+
+logger.paste <- function(status.word, txt) {
+  record <- list(
+    timestamp = format(Sys.time(), "%Y-%m-%d %H:%M:%S ")
+  )
+  txt <- paste(record, "\n", sep = "")
+  cat(txt, append = TRUE)
+
+}
 
 
 # http://stats.stackexchange.com/questions/110755/how-calculate-inflation-observed-and-expected-p-values-from-uniform-distribution
