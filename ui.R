@@ -782,7 +782,11 @@ check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPL
 
 header <- dashboardHeader(
 
-  title = "RnBeads Interface"
+  title = tags$a(class='pull-left', href = '.', tags$img(src = 'RnBeads.png'))
+
+
+
+
 )
 
 ########################################################################################################################
@@ -797,7 +801,7 @@ sidebar <- dashboardSidebar(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
     tags$style(HTML("
-                      .sidebar { position: fixed; }
+                      .sidebar { position: fixed;}
                       " )
     )
 
@@ -921,7 +925,7 @@ body <- dashboardBody(
 
                                                              '<h2>Rnbeads Reports!</h2>',
 
-                                                             '<p>Select from the left menu and click View Reports!</p>',
+                                                             '<p>Select analysis from the above menu and click View Reports!</p>',
 
 
                                                              #                                                  actionButton("view_rnbeads_reports", label = "Reports", class=""),
@@ -935,8 +939,41 @@ body <- dashboardBody(
 
 
 
-                                                  )
-                                                  ),
+                                                  )),
+
+                                                  HTML(paste(
+
+                                                             '<div class="container">',
+                                                             '<!-- Example row of columns -->',
+                                                             '<div class="row">',
+
+                                                             br(),
+                                                             br(),
+                                                             '<div class="col-md-12">',
+                                                             br(),
+                                                             tags$a(class='pull-left', href = '.', tags$img(src = 'RnBeads.png')),
+
+                                                             '</div>',
+                                                             '<div class="col-md-12">',
+
+
+
+                                                             '<p>RnBeads is an R package for comprehensive analysis of DNA methylation data obtained with any experimental protocol that provides single-CpG resolution. </p>',
+                                                             '<p><a class="btn btn-primary btn-md" href="http://rnbeads.mpi-inf.mpg.de/" target = "blank" role="button">Learn more &raquo;</a></p>',
+
+
+
+
+
+
+                                                             '</div>',
+
+
+                                                             '</div>',
+                                                             '</div>',
+
+                                                             '<br/>')),
+
 
                                                   br()
 
@@ -1434,29 +1471,6 @@ body <- dashboardBody(
                                               #actionButton("clearDirButton",label= "Clear",class="btn btn-primary"),
 
                                               br(),
-                                          '</div>',
-                                          '<div class="col-md-3">',
-
-                                          '<h2>RnBeads</h2>',
-
-                                          '</div>',
-                                          '<div class="col-md-3">',
-                                            br(),
-                                            tags$a(class='pull-right', href = '.', tags$img(src = 'RnBeads.png')),
-
-                                          '</div>',
-                                          '<div class="col-md-6">',
-
-
-
-                                                '<p>RnBeads is an R package for comprehensive analysis of DNA methylation data obtained with any experimental protocol that provides single-CpG resolution. </p>',
-                                                '<p><a class="btn btn-primary btn-md" href="http://rnbeads.mpi-inf.mpg.de/" target = "blank" role="button">Learn more &raquo;</a></p>',
-
-
-
-
-
-
                                           '</div>',
 
 
