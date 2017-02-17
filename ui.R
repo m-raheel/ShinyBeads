@@ -782,8 +782,8 @@ check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPL
 
 header <- dashboardHeader(
 
-  title = tags$a(class='pull-left', href = '.', tags$img(src = 'RnBeads.png'))
-
+  #title = tags$a(class='pull-left', href = '.', tags$img(src = 'RnBeads.png'), style = "background-color: 'white';")
+  title = "RnBeads Interface"
 
 
 
