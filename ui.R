@@ -1491,16 +1491,7 @@ body <- dashboardBody(
                                              Shiny.addCustomMessageHandler("myCallbackHandler",
                                              function(typeMessage) {
                                                  console.log(typeMessage)
-                                                 if(typeMessage == 1){
 
-                                                    $("a:contains(Repository)").click();
-                                                 }
-                                                 if(typeMessage == 2){
-                                                    $("a:contains(Individual data set)").click();
-                                                 }
-                                                 if(typeMessage == 3){
-                                                    $("a:contains(Integrative Visualization)").click();
-                                                 }
                                                  if(typeMessage == 4){
                                                     $("a:contains(DatasetList)").click();
                                                  }

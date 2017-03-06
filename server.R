@@ -193,12 +193,12 @@ shinyServer(function(input, output, session) {
 
   # oberve to change the tabs when button or table clicked!
 
-#   observe({
-#     if(input$action > 0){
-#
-#       session$sendCustomMessage("myCallbackHandler", "1")
-#     }
-#   })
+  observeEvent(input$action, {
+    newtab <- switch(input$tabs,
+                     "about" = "home",
+    )
+    updateTabItems(session, "tabs", newtab)
+  })
 
   observe({
     if(input$view_datasets > 0){
