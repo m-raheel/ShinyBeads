@@ -639,7 +639,18 @@ shinyServer(function(input, output, session) {
 
         DT
 
-      })
+      },selection = 'single',
+      extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
+
+      options = list(autoWidth = FALSE,columnDefs = list(list(className = 'dt-center', targets = 2)),
+                     pageLength = 100,
+                     initComplete = JS(
+                       "function(settings, json) {",
+                       "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                       "}"),
+                     #lengthMenu = c(5, 10, 15, 20)
+                     scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+      ), escape = TRUE)
     }
     else{
 
@@ -760,10 +771,15 @@ shinyServer(function(input, output, session) {
           dataset <- a.file()
           dataset
 
-        },selection = 'single', filter = 'top',
+        },selection = 'single',
 
         extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-        options = list(
+        options = list(columnDefs = list(list(className = 'dt-center', targets = 2)),
+                       pageLength = 100,
+                       initComplete = JS(
+                         "function(settings, json) {",
+                         "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                         "}"),
           scrollX = TRUE,
           scrollY = TRUE,
           dom = 'Blfrtip',
@@ -800,10 +816,16 @@ shinyServer(function(input, output, session) {
             dataset <- a.file()
             dataset
 
-          },selection = 'single', filter = 'top',
+          },selection = 'single',
 
           extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
           options = list(
+                         columnDefs = list(list(className = 'dt-center', targets = c(1,2))),
+                         #pageLength = 100,
+                         initComplete = JS(
+                           "function(settings, json) {",
+                           "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                           "}"),
             scrollX = TRUE,
             scrollY = TRUE,
             dom = 'Blfrtip',
@@ -1061,9 +1083,6 @@ shinyServer(function(input, output, session) {
   ############################################################################################
 
   observeEvent(input$input_dmcomp_choices,{
-
-
-
 
     shinyjs::hide(id = "id_qqplot")
 
@@ -2314,13 +2333,16 @@ shinyServer(function(input, output, session) {
 
                 updateSelectInput(session, "input_tablebrowser_x_axis",
                                   label = paste("Select x-axis:"),
-                                  choices = as.character(as.vector(names(comp.file))))
+                                  choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
 
                 updateSelectInput(session, "input_tablebrowser_y_axis",
                                   label = paste("Select y-axis:"),
-                                  choices = as.character(as.vector(names(comp.file))))
+                                  choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
+
+                #comp.file <- sprintf("%.3f", names(comp.file[,6:ncol(comp.file)]))
 
                 dataset <- data.table( comp.file)
+                #%>% formatRound(columns =c('mean.diff'), digits= 3)
 
 
                 inFile <- input$file1
@@ -2360,8 +2382,17 @@ shinyServer(function(input, output, session) {
 
       },selection = 'single', filter = 'top',
 
-      extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-      options = list(
+      extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL,'Scroller'= NULL),
+      options = list(deferRender = TRUE,
+                     scrollY = 400,
+                     scroller = TRUE,
+                     #fixedHeader = TRUE,
+                     columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5))),
+                     #pageLength = 100,
+                     initComplete = JS(
+                       "function(settings, json) {",
+                       "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                       "}"),
         scrollX = TRUE,
         scrollY = TRUE,
         dom = 'Blfrtip',
@@ -2379,7 +2410,9 @@ shinyServer(function(input, output, session) {
         br(),
         keys = TRUE
 
+
       ), escape = TRUE)
+
   })
 
 
@@ -2650,8 +2683,17 @@ shinyServer(function(input, output, session) {
 
   },selection = 'single', filter = 'top',
 
-  extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-  options = list(
+  extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL,'Scroller'= NULL),
+  options = list(deferRender = TRUE,
+                 scrollY = 400,
+                 scroller = TRUE,
+                 #fixedHeader = TRUE,
+                 columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5))),
+                 #pageLength = 100,
+                 initComplete = JS(
+                   "function(settings, json) {",
+                   "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                   "}"),
     dom = 'Blfrtip',
     buttons = list(
       'copy',
@@ -2742,8 +2784,17 @@ shinyServer(function(input, output, session) {
 
   },selection = 'single', filter = 'top',
 
-  extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-  options = list(
+  extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL,'Scroller'= NULL),
+  options = list(deferRender = TRUE,
+                 scrollY = 400,
+                 scroller = TRUE,
+                 #fixedHeader = TRUE,
+                 columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5))),
+                 #pageLength = 100,
+                 initComplete = JS(
+                   "function(settings, json) {",
+                   "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                   "}"),
     dom = 'Blfrtip',
     buttons = list(
       'copy',
@@ -3151,6 +3202,7 @@ observeEvent(input$cb_ts_comp_venn, {
       }#end of forloop
 
 
+
       if (length(cb.checked) == 1){
 
         output$output.ts.table.multivenn.plot.labels <- renderTable({
@@ -3198,12 +3250,23 @@ observeEvent(input$cb_ts_comp_venn, {
           # Make sure it closes when we exit this reactive, even if there's an error
           on.exit(progress$close())
 
+#           colnames(outputTableData) = head(LETTERS, ncol(outputTableData))
+#           head(outputTableData)
+
           outputTableData
 
 
         },selection = 'single', filter = 'top',
         extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-        options = list( scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+        options = list(
+          #fixedHeader = TRUE,
+          columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5))),
+          pageLength = 100,
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+            "}"),
+                       scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
         ), escape = TRUE)
 
       }
@@ -3217,7 +3280,7 @@ observeEvent(input$cb_ts_comp_venn, {
 
         # drawing venn diagram
         p <- vennDiagram(dataset.venn.count.list[[2]], include = "both",
-                         names = c(paste("A = ",cb.checked[1]), paste("B = ",cb.checked[2])),
+                         names = c(paste ("A"), paste ("B")),
                          cex = 1, counts.col = "red", circle.col = c("green","blue"))
 
 
@@ -3289,8 +3352,18 @@ observeEvent(input$cb_ts_comp_venn, {
 
 
         },selection = 'single', filter = 'top',
-        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-        options = list( scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL,'Scroller'= NULL),
+        options = list(deferRender = TRUE,
+                       scrollY = 400,
+                       scroller = TRUE,
+                       #fixedHeader = TRUE,
+                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5,6))),
+                       #pageLength = 100,
+                       initComplete = JS(
+                         "function(settings, json) {",
+                         "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                         "}"),
+                       scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
         ), escape = TRUE)
 
       }
@@ -3304,7 +3377,7 @@ observeEvent(input$cb_ts_comp_venn, {
         })
 
         p <- vennDiagram(dataset.venn.count.list[[3]], include = "both",
-                         names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3])),
+                         names = c(paste ("A"), paste ("B"),paste ("C")),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange"))
 
 
@@ -3373,8 +3446,18 @@ observeEvent(input$cb_ts_comp_venn, {
 
 
         },selection = 'single', filter = 'top',
-        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-        options = list( scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL,'Scroller'= NULL),
+        options = list(deferRender = TRUE,
+                       scrollY = 400,
+                       scroller = TRUE,
+                       #fixedHeader = TRUE,
+                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5,6,7))),
+                       #pageLength = 100,
+                       initComplete = JS(
+                         "function(settings, json) {",
+                         "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                         "}"),
+                       scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
         ), escape = TRUE)
 
 
@@ -3390,7 +3473,7 @@ observeEvent(input$cb_ts_comp_venn, {
         })
 
         p <- vennDiagram(dataset.venn.count.list[[4]], include = "both",
-                         names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3]),paste ("D = ",cb.checked[4])),
+                         names = c(paste ("A"), paste ("B"),paste ("C"),paste ("D")),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
 
 
@@ -3464,8 +3547,18 @@ observeEvent(input$cb_ts_comp_venn, {
 
 
         },selection = 'single', filter = 'top',
-        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-        options = list( scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL,'Scroller'= NULL),
+        options = list(deferRender = TRUE,
+                       scrollY = 400,
+                       scroller = TRUE,
+                       #fixedHeader = TRUE,
+                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5,6,7,8))),
+                       #pageLength = 100,
+                       initComplete = JS(
+                         "function(settings, json) {",
+                         "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                         "}"),
+                       scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
         ), escape = TRUE)
 
       }
@@ -3479,7 +3572,7 @@ observeEvent(input$cb_ts_comp_venn, {
         })
 
         p <- vennDiagram(dataset.venn.count.list[[5]], include = "both",
-                         names = c(paste ("A = ",cb.checked[1]), paste ("B = ",cb.checked[2]),paste ("C = ",cb.checked[3]),paste ("D = ",cb.checked[4]),paste ("E = ",cb.checked[5])),
+                         names = c(paste ("A"), paste ("B"),paste ("C"),paste ("D"),paste ("E")),
                          cex = 1, counts.col = "red", circle.col = c("green","blue", "orange","yellow"))
 
 
@@ -3559,8 +3652,18 @@ observeEvent(input$cb_ts_comp_venn, {
 
 
         },selection = 'single', filter = 'top',
-        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL),
-        options = list( scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+        extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL,'Scroller'= NULL),
+        options = list(deferRender = TRUE,
+                       scrollY = 400,
+                       scroller = TRUE,
+                       #fixedHeader = TRUE,
+                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5,6,7,8,9))),
+                       #pageLength = 100,
+                       initComplete = JS(
+                         "function(settings, json) {",
+                         "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
+                         "}"),
+                       scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list( 'copy', 'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
         ), escape = TRUE)
 
       }
