@@ -1290,7 +1290,7 @@ shinyServer(function(input, output, session) {
         #
         p <- qqly(qqrObject, col = "#6087ea", size = 1, type = 20, abline_col = "pink",
                   abline_size = 0.5, abline_type = 1, highlight = NULL,
-                  highlight_color = "#00FF00", xlab = "Expected -log10(p)",
+                  highlight_color = "#00FF00", xlab = "Expected -log10(p) (uniform distribution)",
                   ylab = "Observed -log10(p)", title = "")
 
         # Make sure it closes when we exit this reactive, even if there's an error
@@ -2340,7 +2340,7 @@ shinyServer(function(input, output, session) {
                                   choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
 
                 #comp.file <- sprintf("%.3f", names(comp.file[,6:ncol(comp.file)]))
-
+                comp.file <- rapply(object = comp.file, f = round, classes = "numeric", how = "replace", digits = 3)
                 dataset <- data.table( comp.file)
                 #%>% formatRound(columns =c('mean.diff'), digits= 3)
 
@@ -3151,6 +3151,26 @@ observeEvent(input$cb_ts_comp_venn, {
 
         }
 
+
+#         if(column_selected == "diffmeth.p.val"){
+#           original.dataset.list[[i]]$diffmeth.p.val <- as.data.frame(rapply(object = original.dataset.list[[i]]$diffmeth.p.val, f = round, classes = "numeric", how = "replace", digits = 3))
+#
+#         }
+#
+#         else if(column_selected == "diffmeth.p.adj.fdr"){
+#           original.dataset.list[[i]]$diffmeth.p.adj.fdr <- as.data.frame(rapply(object = original.dataset.list[[i]]$diffmeth.p.adj.fdr, f = round, classes = "numeric", how = "replace", digits = 3))
+#
+#         }
+#         else if(column_selected == "mean.quot.log2"){
+#           original.dataset.list[[i]]$mean.quot.log2 <- as.data.frame(rapply(object = original.dataset.list[[i]]$mean.quot.log2, f = round, classes = "numeric", how = "replace", digits = 3))
+#
+#         }
+#         else{
+#           original.dataset.list[[i]]$mean.diff <- as.data.frame(rapply(object = original.dataset.list[[i]]$mean.diff, f = round, classes = "numeric", how = "replace", digits = 3))
+#
+#         }
+
+        # rounding off the columns values
         if(column_selected == "diffmeth.p.val"){
           original.dataset.list[[i]]$diffmeth.p.val <- sprintf("%.3f", original.dataset.list[[i]]$diffmeth.p.val)
 
