@@ -20,4 +20,9 @@ h2 {
   color: #ad1d28;
 }
 
+h3 {
+  font-family: 'Lobster', cursive;
+  line-height: 0.1;
+  color: #ffffff;
+}
 
