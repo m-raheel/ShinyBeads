@@ -231,12 +231,18 @@ body <- dashboardBody(
                                           tabBox( width = NULL,
                                                  tabPanel("RnBeads Reports",
 
+
+
                                                   HTML(paste('<div class="">',
                                                              '<div class="container">',
+                                                               #'<h2>Rnbeads modules performed!</h2>',
+                                                               tags$h2(style="color:black;","Rnbeads modules performed"),
+                                                                 tableOutput("list_module"),
 
-                                                             '<h2>Rnbeads Reports!</h2>',
+                                                             #'<h2>Rnbeads Reports!</h2>',
+                                                             tags$h2(style="color:black;","Rnbeads Reports"),
 
-                                                             '<p>Select analysis from the above menu and click View Reports!</p>',
+
 
 
                                                              #                                                  actionButton("view_rnbeads_reports", label = "Reports", class=""),
@@ -252,40 +258,6 @@ body <- dashboardBody(
 
                                                   )),
 
-                                                  HTML(paste(
-
-                                                             '<div class="container">',
-                                                             '<!-- Example row of columns -->',
-                                                             '<div class="row">',
-
-                                                             br(),
-                                                             br(),
-                                                             '<div class="col-md-12">',
-                                                             br(),
-                                                             tags$a(class='pull-left', href = '.', tags$img(src = 'RnBeads.png')),
-
-                                                             '</div>',
-                                                             '<div class="col-md-12">',
-
-
-
-                                                             '<p>RnBeads is an R package for comprehensive analysis of DNA methylation data obtained with any experimental protocol that provides single-CpG resolution. </p>',
-                                                             '<p><a class="btn btn-primary btn-md" href="http://rnbeads.mpi-inf.mpg.de/" target = "blank" role="button">Learn more &raquo;</a></p>',
-
-
-
-
-
-
-                                                             '</div>',
-
-
-                                                             '</div>',
-                                                             '</div>',
-
-                                                             '<br/>')),
-
-
                                                   br()
 
                          ),
@@ -299,16 +271,16 @@ body <- dashboardBody(
                                   br()
 
 
-                         ),
-
-                         tabPanel("Modules performed",
-
-                                  #tags$strong("List of modules performed are:"),
-
-                                  tableOutput("list_module"),
-                                  br()
-
                          )
+
+#                          tabPanel("Modules performed",
+#
+#                                   #tags$strong("List of modules performed are:"),
+#
+#                                   tableOutput("list_module"),
+#                                   br()
+#
+#                          )
                      ),
                      collapsible = TRUE,
                            title = "Analysis", status = "primary", solidHeader = TRUE)
@@ -773,13 +745,47 @@ body <- dashboardBody(
                        HTML(paste('<div class="jumbotron">',
                                     '<div class="container">',
 
-                                        '<h2>Rnbeads-Interface!</h2>',
+                                        '<h2>RnShinyBeads!</h2>',
                                         '<p>It is a tool to provide user friendly interactive interface for RnBeads generated reports. It allows to keep track of the analysis performed and prevent performing same analysis again and again. It makes it interactive and easier to compare same or different RnBeads analysis. Target users are the ones who uses RnBeads for analyzing DNA methylation data either individually or as a group.</p>',
 
                                     '</div>',
-                                  '</div>',
+                                  '</div>'
 
-                                  '<br/>')),
+                                  )),
+
+                       HTML(paste(
+
+                         '<div class="container">',
+                         '<!-- Example row of columns -->',
+                         '<div class="row">',
+
+
+                         '<div class="col-md-12">',
+
+                         tags$a(class='pull-left', href = '.', tags$img(src = 'RnBeads.png')),
+
+                         '</div>',
+                         '<div class="col-md-12">',
+
+
+
+                         '<p>RnBeads is an R package for comprehensive analysis of DNA methylation data obtained with any experimental protocol that provides single-CpG resolution. </p>',
+                         '<p><a class="btn btn-primary btn-md" href="http://rnbeads.mpi-inf.mpg.de/" target = "blank" role="button">Learn more &raquo;</a></p>',
+
+
+
+
+
+
+                         '</div>',
+
+
+                         '</div>',
+                         '</div>',
+
+                         '<br/>')),
+
+
 
 
                        #includeHTML("index.html"),
