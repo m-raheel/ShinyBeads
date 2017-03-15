@@ -15,6 +15,13 @@ To install the latest development version from GitHub:
     install.packages("devtools")
     devtools::install_github("m-raheel/Rnbeads-Interface")
 
+To run the applicaiton:
 
+    RnBeadsInterface::runApplication()
+    
+    
+You can view a [live interactive
+demo](http://http://internal.genetik.uni-sb.de/shiny/RnBeadsInterface/) to see some of
+its functionality.
 
 More information will be updated soon.
