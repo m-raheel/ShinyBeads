@@ -2606,6 +2606,13 @@ output$testingcompqqplot <- renderPlot({
 
           q <- plotly::ggplotly(p)
 
+          output$info.qqplot2 <- renderUI({
+
+            HTML(paste("'<p>QQplot is generated from the diffmeth.p.values of the comparisons selected above for the two analysis.</p> <br/ > <p><b>diffmeth.p.val:</b> p-value obtained from a two-sided Welch t-test or alternatively from linear models employed in the limma package (which type of p-value is computed is specified in the differential.site.test.method option). In case of paired analysis, the paired Student's t-test is applied.",'</p>',sep=""))
+
+          })
+
+
           dev.off()
           # Make sure it closes when we exit this reactive, even if there's an error
           on.exit(progress$close())

@@ -443,7 +443,12 @@ body <- dashboardBody(
 
                                                column(width = 10,
                                                       tags$h4(style="color:black;","QQ-plot"),
-                                                      plotlyOutput('multicompqqplot1')
+                                                      plotlyOutput('multicompqqplot1'),
+                                                      br(),
+                                                      HTML(paste(
+                                                        uiOutput('info.qqplot2')
+                                                      )),
+                                                      br()
 
                                                )
                                              ),
