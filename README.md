@@ -1,3 +1,4 @@
-# Rnbeads-Interface
 
-A Shiny app for RnBeads
+RnShinyBeads - A Shiny app for RnBeads
+===========================================================================
+
