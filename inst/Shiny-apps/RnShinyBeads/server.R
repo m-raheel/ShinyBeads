@@ -64,17 +64,370 @@ qqman.qq <- qqman::qq    #EDIT
 
 ########################################################################################################################
 
+#' rnbi.total.analysis
+#'
+#' return the list of RnBeads analysis found in the given path
+#'
+rnbi.total.analysis <- function(wd) {
+
+  choices <- list.files(path = wd)
+
+
+  total.analysis.list <- list()
+  counter <- 1
+
+  for (i in 1:length(choices)) {
+
+    # if index.html file exist in the directory than it is considered as an RnBeads analysis
+    if ( file.exists( isolate({ paste(wd,choices[i],'index.html',sep="/") }) ) )
+    {
+        total.analysis.list[counter] <- choices[i]
+        counter <- counter + 1
+
+    }
+  }
+  return(total.analysis.list)
+
+}
+
+########################################################################################################################
+
+#' rnbi.total.dataset
+#'
+#' return the list of datasets/sample sheet used in the RnBeads analysis found in the given path
+#'
+rnbi.total.dataset <- function(rd) {
+
+  folders <- rnbi.total.analysis(rd)
+
+  path.lists <- list()
+  final.list <- list()
+  analysis.list <- list()
+  counter <- 1
+  analysis.counter <- 1
+
+  if ( length(folders) != 0 ){
+
+    for (i in 1:length(folders)) {
+
+
+      if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) )
+      {
+        tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
+        filepath <- tmp
+
+        if (file.exists( isolate({ paste(filepath) }) ) ){
+          filename <- as.character(filepath)
+
+          path.lists[i] <- filename
+
+          A <- try(read.csv((toString(path.lists[i]))))
+
+          if(inherits(A, "try-error")){
+            print ('error occured in try block of A')
+          }
+
+          else
+          {
+            check.common = FALSE
+
+            for (j in i:length(folders)) {
+
+
+
+              if ( file.exists( isolate({ paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/") }) ) ){
+
+
+                tmp = toString(paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/"))
+
+                B <- try(read.csv((toString(tmp))))
+
+                if(inherits(B, "try-error")){
+                  print ('error occured in try block of B')
+                }
+
+                else
+                {
+
+                  if ( j != i){
+
+
+
+                    comparison <- identical(A,B)
+
+                    if (comparison == TRUE){
+
+                      check.common = TRUE
+
+                    }
+
+
+                  }
+                }#end else try-error of B
+              }#end of if for checking file
+            }# eend for loop j
+
+            if (check.common == FALSE ){
+
+
+              analysis.list[analysis.counter] <- folders[i]
+              final.list[counter] <- path.lists[i]
+
+              counter = counter+1
+              analysis.counter = analysis.counter + 1
+
+            }
+            else if (check.common == FALSE ){
+
+
+              analysis.list[analysis.counter] <- folders[i]
+              final.list[counter] <- path.lists[i]
+
+              counter = counter+1
+              analysis.counter = analysis.counter + 1
+
+            }
+
+          }
+
+        }
+      }
+      else{
+
+      }
+
+    }# end for loop i
+
+    newList <- list("path_list" = final.list, "analysis_list" = analysis.list)
+    return(newList)
+  }
+  else{
+
+    newList <- list("path_list" = final.list, "analysis_list" = analysis.list)
+    return(newList)
+
+
+  }
+
+}
+
+########################################################################################################################
+
+#' rnbi.common.dataset
+#'
+#' return the list of datasets/sample sheet used in the RnBeads analysis found in the given path
+#'
+
+rnbi.common.dataset <- function(rd) {
+
+
+  folders <- rnbi.total.analysis(rd)
+  folders
+
+
+  if ( length(folders) != 0 ){
+
+    path.lists <- list()
+    for (i in 1:length(folders)) {
+
+
+      if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) ){
+
+        tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
+        filepath <- tmp
+
+        # removing the last character from the path '/' cause error in the server
+
+        if (file.exists( isolate({ paste(filepath) }) ) ){
+          filename <- as.character(filepath)
+
+          path.lists[i] <- filename
+
+
+        }
+      }
+      else{
+
+      }
+
+    }
+
+    if (length(path.lists) != 0){
+
+
+      # this for loops store the combination of results folder that uses the same  dataset
+      same.sample.list <- list()
+      same.sample.list2 <- list()
+
+      temp.list <- list()
+      temp.counter <- 1
+
+      counter <- 1
+      for (i in 1:length(folders)) {
+
+        if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) ){
+
+
+          A <- try(read.csv((toString(path.lists[i]))))
+
+          #A <- read.csv((toString(path.lists[i])))[ ,2:3]
+
+          if(inherits(A, "try-error")){
+            print ('error occured in try block of A')
+          }
+
+          else
+          {
+            for (j in i:length(folders)) {
+
+              if ( file.exists( isolate({ paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/") }) ) ){
+
+                B <- try(read.csv((toString(path.lists[j]))))
+
+                if(inherits(B, "try-error")){
+                  print ('error occured in try block of B')
+                }
+
+                else
+                {
+                  if (length(A) == length(B) && j != i){
+                    comparison <- identical(A,B)
+                    comparison
+                    if (comparison == TRUE){
+
+                      temp.list[temp.counter] <- folders[j]
+                      temp.counter = temp.counter+1
+
+                      if ((folders[i] %in% temp.list) & (folders[j] %in% temp.list) ){
+                      }
+                      else{
+                        same.sample.list[counter] <- list(c(folders[i],folders[j]))
+                        same.sample.list2[counter] <- folders[j]
+
+                        counter = counter+1
+
+                      }
+                    }
+
+                  }
+                }#end else try-error of B
+              }#end of if for checking file
+
+            }
+
+          }#end else try-error of A
+
+        }
+      }
+
+
+      # datastructure logic of storing the list of folders as a list that share the common folders
+      temp.list <- list()
+      actual.list <- list()
+      actual.counter <- 1
+      length(same.sample.list)
+
+      increament <- 1
+      k <- 1
+      actual.list
+
+
+      apath.lists <- list()
+      apath.counter <- 1
+
+      while (k <= length(same.sample.list)) {
+
+        a <- unlist(same.sample.list[k], use.names = FALSE)
+        temp.variable <- a[1]
+        temp.list <- append(temp.list, temp.variable)
+
+        # bn <- basename(file.path(rd, temp.variable,'data_import_data', c("annotation.csv")))
+        # dn <- dirname(file.path(rd, temp.variable,'data_import_data/annotation.csv'))
+        # full.path <- file.path(dn,'annotation.csv')
+
+
+        filepath <- file.path(rd, temp.variable, 'data_import_data','annotation.csv')
+
+        filepath= as.character(filepath)
+
+
+        #filename <- paste(filepath, 'annotation.csv', sep="/")
+
+        if (file.exists( isolate({ paste(filepath) }) ) ){
+
+          filename <- filepath
+          #removing space
+
+
+          #tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
+          #removing space
+          #tmp <- gsub(" /", "/", tmp)
+          apath.lists[apath.counter] <- filename
+          apath.counter <- apath.counter + 1
+
+
+          for (l in k:length(same.sample.list)) {
+            b <- unlist(same.sample.list[l], use.names = FALSE)
+            b1 <- b[1]
+            if (b1 == temp.variable){
+
+              temp.list <- append(temp.list, b[2])
+
+            }
+            else{
+              increament = l -1
+
+              break
+            }
+
+          }
+
+          #message(paste0("Value of K =  ", k))
+
+          k <- k + increament
+
+          temp.variable <- b
+
+          actual.list[actual.counter] <- list(temp.list)
+          temp.list <- list()
+
+
+          actual.counter <- actual.counter + 1
+        }
+
+
+      }
+
+      return(actual.list)
+
+    }
+    else{
+      common.datasets <- list()
+
+      return(common.datasets)
+    }
+  }
+  else{
+
+    common.datasets <- list()
+
+    return(common.datasets)
+
+
+  }
+
+}
+
+########################################################################################################################
+
 #' rnbi.analysis.modules.performed
 #'
 #' return the list of RnBeads Modules performed on the selected analysis
 #'
 rnbi.analysis.modules.performed <- function(wd) {
 
-
-
+  # if analysis log file is peresent than searching the file for the completed modules
   if ( file.exists( isolate({ paste(wd,'analysis.log',sep="/") }) ) ){
-
-
 
     resulting.modules.list <- list()
     module.counter <- 1
@@ -136,9 +489,9 @@ rnbi.analysis.modules.performed <- function(wd) {
 
 ########################################################################################################################
 
-#' rnbi.qqplot.data
+#' rnbi.qqplot.single
 #'
-#' convert the p0values in to an object of class qqplot.data which will be used to draw qqplot.
+#' Draw the qqplot for single data
 #'
 rnbi.qqplot.single <- function(x) {
   col = "#252525"
@@ -183,9 +536,9 @@ rnbi.qqplot.single <- function(x) {
 
 ########################################################################################################################
 
-#' rnbi.qqplot.data
+#' rnbi.qqplot.data.single
 #'
-#' convert the p-values in to an object of class qqplot.data which will be used to draw qqplot.
+#' convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
 #'
 rnbi.qqplot.data.single <- function(x,
                     p = "P",
@@ -215,9 +568,9 @@ rnbi.qqplot.data.single <- function(x,
 
 ########################################################################################################################
 
-#' rnbi.qqplot.data
+#' rnbi.qqplot.double
 #'
-#' convert the p0values in to an object of class qqplot.data which will be used to draw qqplot.
+#' draw qqplot for two analysis
 #'
 rnbi.qqplot.double <- function(x,y) {
   col = "#252525"
@@ -264,9 +617,9 @@ rnbi.qqplot.double <- function(x,y) {
 
 ########################################################################################################################
 
-#' rnbi.qqplot.data
+#' rnbi.qqplot.data.double
 #'
-#' convert the p-values in to an object of class qqplot.data which will be used to draw qqplot.
+#' convert the p-values of the two analysis in to an object of class qqplot.data which will be used to draw qqplot.
 #'
 rnbi.qqplot.data.double <- function(x,y,
                                     p = "diffmeth.p.val",
@@ -312,8 +665,8 @@ rnbi.qqplot.data.double <- function(x,y,
 
 ########################################################################################################################
 
-#' rnbi.qqplot.data
-#'
+#' rnbi.qqplot.data.multi
+#' Not completed, Not used
 #' convert the p-values in to an object of class qqplot.data which will be used to draw qqplot.
 #'
 rnbi.qqplot.data.multi <- function(x,y,
@@ -408,7 +761,7 @@ rnbi.read.comparisondata <- function(qq.value, qq.dir , comp.index , topRows, co
 
 #' rnbi.read.comparisondatalogical
 #'
-#' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the Logical (True, False) results.
+#' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the Logical (True, False) results used for Venn Diagram purpose.
 #'
 rnbi.read.comparisondatalogical <- function(dataset, column ,equality,range ) {
 
@@ -459,6 +812,12 @@ plotVennDiagram <- function(a, a1,a2,a3, a12, a23, a13, a123) {
 }
 
 ########################################################################################################################
+# end of functions
+
+
+
+
+
 
 ## S H I N Y S E R V E R ###################################################################################################
 
@@ -513,56 +872,57 @@ shinyServer(function(input, output, session) {
   updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
 
 
-
   selectedDir <-  as.character(updatedDir)
+
+  analysis <- rnbi.total.analysis(selectedDir)
 
   # updating all the selectInput dropdowns of the app
 
   updateSelectInput(session, "input_type",
                     label = paste("Select analysis folder"),
-                    choices = list.files(path = selectedDir))
+                    choices = analysis)
 
   updateSelectInput(session, "select_ia",
                     label = paste("Select analysis folder"),
-                    choices = list.files(path = selectedDir))
+                    choices = analysis)
 
 
 
   updateSelectInput(session, "input_dmcomp_choices",
                     label = paste("Select analysis folder"),
-                    choices = list.files(path = selectedDir))
+                    choices = analysis)
 
   updateSelectInput(session, "input_dmcomp_choices_1",
                     label = paste("Analysis 1"),
-                    choices = list.files(path = selectedDir))
+                    choices = analysis)
 
   updateSelectInput(session, "input_dmcomp_choices_2",
                     label = paste("Analysis 2"),
-                    choices = list.files(path = selectedDir))
+                    choices = analysis)
 
   updateSelectInput(session, "input_tablebrowser_choices",
                     label = paste("Select analysis folder"),
-                    choices = list.files(path = selectedDir))
+                    choices = analysis)
 
   updateSelectInput(session, "input_topscorer_choices_1",
                     label = paste("Analysis 1"),
-                    choices = list.files(path = selectedDir))
+                    choices = analysis)
 
   updateSelectInput(session, "input_topscorer_choices_2",
                     label = paste("Analysis 2"),
-                    choices = list.files(path = selectedDir))
+                    choices = analysis)
 
 
   # Can also set the label and select items
   updateCheckboxGroupInput(session, "cb_ts_comp_venn",
                            label = paste("Select analysis"),
-                           choices = list.files(path = selectedDir),
+                           choices = analysis,
                            selected = 1
   )
 
 
 
-  dirfolder = list.files(path = selectedDir)
+  dirfolder = analysis
 
   if ( file.exists( isolate({ paste(selectedDir,dirfolder[1],'index.html',sep="/") }) ) ){
     output$ErrorText1 <- renderText({ paste("You are working with the following RnBeads analysis repository:",sep="") })
@@ -578,6 +938,7 @@ shinyServer(function(input, output, session) {
     })
 
   }
+
 
   results.dir = reactive({file.path(path = selectedDir)})
 
@@ -599,8 +960,11 @@ shinyServer(function(input, output, session) {
   ##################################################################################
   observe({
 
+    # Create a Progress object
+    progress <- shiny::Progress$new()
+    progress$set(message = "Reading analysis, please wait..", value = 50)
 
-    choices <- list.files(path = results.dir())
+    choices <- rnbi.total.analysis(results.dir())
 
     output$count_rfolders <- renderText({
       paste("Total RnBeads reports in this repository = ", length(choices), sep = " ")
@@ -627,6 +991,10 @@ shinyServer(function(input, output, session) {
       },selection = 'single', escape = FALSE)
 
     }
+
+    #closing the progress bar
+    on.exit(progress$close())
+
   })
 
   ############################################################################################
@@ -636,17 +1004,24 @@ shinyServer(function(input, output, session) {
 
   observe({
 
+    # Create a Progress object
+    progress <- shiny::Progress$new()
+    progress$set(message = "Reading dataset, please wait..", value = 50)
+
+
     cd_list <- list()
     cd_list_counter <- 1
 
 
-    common.datasets = datasets_total(results.dir())
-    common.datasets = common.datasets$path_list
+    common.datasets = rnbi.total.dataset(results.dir())
+    common.datasets.path = common.datasets$path_list
+    common.datasets.analysis = common.datasets$analysis_list
 
+    total.common.datasets = rnbi.common.dataset(results.dir())
 
     if (length(common.datasets) != 0){
 
-      cd_list <- lapply(1:length(common.datasets), function(i) {
+      cd_list <- lapply(1:(length(common.datasets.path) + length(total.common.datasets)), function(i) {
         cd_list[cd_list_counter] <- paste("Dataset",i,sep = "_")
         cd_list_counter = cd_list_counter + 1
 
@@ -719,6 +1094,8 @@ shinyServer(function(input, output, session) {
 
     }
 
+    #closing the progress bar
+    on.exit(progress$close())
 
   })
 
@@ -735,7 +1112,7 @@ shinyServer(function(input, output, session) {
 
     row <- as.integer(row)
 
-    total.datasets = datasets_total(results.dir())
+    total.datasets = rnbi.total.dataset(results.dir())
 
     path_list = total.datasets$path_list
 
@@ -800,7 +1177,7 @@ shinyServer(function(input, output, session) {
     ########################################################################################
     analysis_list = unlist(total.datasets$analysis_list)
 
-    common.datasets = datasets_common(results.dir())
+    common.datasets = rnbi.common.dataset(results.dir())
 
     check.common = FALSE
 
@@ -1053,7 +1430,7 @@ shinyServer(function(input, output, session) {
 
       last_character = as.integer(last_character)
 
-      datasets_files = datasets_total(results.dir())
+      datasets_files = rnbi.total.dataset(results.dir())
 
       path_list = datasets_files$path_list
       # if no datasets returned means that we have only one analysis so in else showing it
@@ -1095,10 +1472,7 @@ shinyServer(function(input, output, session) {
 
         ), escape = TRUE)
 
-        output$h1_datasettab <- renderText({
-          paste("Dataset_",last_character)
 
-        })
       }
       else{
 
@@ -1141,10 +1515,7 @@ shinyServer(function(input, output, session) {
 
           ), escape = TRUE)
 
-          output$h1_datasettab <- renderText({
-            paste("Dataset_",last_character)
 
-          })
 
 
         }
@@ -1171,23 +1542,45 @@ shinyServer(function(input, output, session) {
       # how many analysis is the selected dataset is used in common in the analysis
       ########################################################################################
       analysis_list = unlist(datasets_files$analysis_list)
-      common.datasets = datasets_common(results.dir())
-
+      common.datasets = rnbi.common.dataset(results.dir())
 
       # checking if the selected datasets is used in more than one analysis then saving the index of the matrix
       check.common = FALSE
 
       common.index = 1
       matrix.list = as.matrix(common.datasets)
+
+      # Generate a summary of the dataset
+      output[[paste0('annotationtest')]] <- renderDataTable({
+
+        DT <- data.table(analysis_list[last_character])
+
+        DT
+
+
+      },selection = 'single', escape = TRUE)
+
+
       for (i in 1:length(matrix.list)) {
 
         matrix.unlist = unlist(matrix.list[i])
 
-        if (analysis_list[last_character]  %in% matrix.unlist){
-          #print(paste('matrix unlist inside if ',i,matrix.unlist))
-          check.common = TRUE
-          common.index = i
+        A <- try(
+          if (analysis_list[last_character]  %in% matrix.unlist){
+            #print(paste('matrix unlist inside if ',i,matrix.unlist))
+            check.common = TRUE
+            common.index = i
+          }
+
+          )
+
+        if(inherits(A, "try-error")){
+          print ('error occured in try block of A')
         }
+
+
+
+
       }
 
       # if no datasets returned means that we have only one analysis so in else showing it
@@ -1233,12 +1626,12 @@ shinyServer(function(input, output, session) {
       }
 
       else if (length(analysis_list) != 0){
-        al <- reactive({analysis_list[last_character]})
+        al <- analysis_list[last_character]
 
         # Generate a summary of the dataset
         output[[paste0('annotation1')]] <- renderDataTable({
 
-          DT <- data.table( Analysis_Dir = al())
+          DT <- data.table( Analysis_Dir = al)
 
           DT
 
@@ -1251,7 +1644,7 @@ shinyServer(function(input, output, session) {
 
 
             print (v2)
-            matrix.unlist <- data.frame("Categorie"=al(), "values"= v2)
+            matrix.unlist <- data.frame("Categorie"=al, "values"= v2)
 
             data <- matrix.unlist[,c('Categorie', 'values')]
             print (data)
@@ -1268,9 +1661,6 @@ shinyServer(function(input, output, session) {
       }
       else{
 
-
-
-
         # Generate a summary of the dataset
         output[[paste0('annotation1')]] <- renderDataTable({
 
@@ -1281,6 +1671,8 @@ shinyServer(function(input, output, session) {
 
 
         },selection = 'single', escape = TRUE)
+
+
 
       }
 
@@ -1582,6 +1974,13 @@ shinyServer(function(input, output, session) {
         p <- rnbi.qqplot.single (comp.file)
 
         p <- plotly::ggplotly(p)
+
+
+        output$info.qqplot <- renderUI({
+
+          HTML(paste("'<p>QQplot is generated from the diffmeth.p.values of the comparison selected above.</p> <br/ > <p><b>diffmeth.p.val:</b> p-value obtained from a two-sided Welch t-test or alternatively from linear models employed in the limma package (which type of p-value is computed is specified in the differential.site.test.method option). In case of paired analysis, the paired Student's t-test is applied.",'</p>',sep=""))
+
+        })
 
 
         # Make sure it closes when we exit this reactive, even if there's an error
@@ -2950,7 +3349,7 @@ output$testingcompqqplot <- renderPlot({
 
   output$cb <- renderUI({
 
-    choices = list.files(path = selectedDir)
+    choices = rnbi.total.analysis(selectedDir)
 
 
 #     choices_names <- list()

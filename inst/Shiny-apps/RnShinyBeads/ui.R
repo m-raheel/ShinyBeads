@@ -305,6 +305,7 @@ body <- dashboardBody(
                                     tabPanel("dataset",
 
                                           tags$strong("Selected dataset is used in following analysis."),
+                                          dataTableOutput(paste0('annotationtest')),
                                           br(),
                                           br(),
                                           dataTableOutput(paste0('annotation1')),
@@ -378,7 +379,15 @@ body <- dashboardBody(
                                              div(id="id_qqplot",
                                                  fluidRow(
                                                    column(width = 9,
-                                                          plotlyOutput('compqqplotly')
+                                                          plotlyOutput('compqqplotly'),
+                                                          br(),
+
+                                                          HTML(paste(
+                                                            uiOutput('info.qqplot')
+                                                          )),
+                                                          br()
+
+
                                                           #plotOutput('compqqplot')
                                                    ))# end  of  fluid row
 
