@@ -420,6 +420,144 @@ rnbi.common.dataset <- function(rd) {
 
 ########################################################################################################################
 
+#' rnbi.dataset
+#'
+#' return the list of datasets/sample sheet used in the RnBeads analysis found in the given path
+#'
+
+rnbi.dataset <- function(rd) {
+
+  folders <- rnbi.total.analysis(rd)
+
+
+  #final list of common dataset analysis
+  common.list <- list()
+  counter = 1
+
+  #vector of all the indexes of the analysis that have been found common overall
+  commmon.index <- c()
+
+
+  analysis.list <- c()
+
+
+
+  if ( length(folders) != 0 ){
+
+    for (i in 1:length(folders)) {
+
+      if (i %in% commmon.index){
+
+      }
+      else{
+
+        if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) )
+        {
+          tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
+          filepath <- tmp
+
+          if (file.exists( isolate({ paste(filepath) }) ) ){
+            filename <- as.character(filepath)
+
+            A <- try(read.csv((toString(filename))))
+
+            if(inherits(A, "try-error")){
+              print ('error occured in try block of A')
+            }
+
+            else
+            {
+              check.common = FALSE
+
+              inner.common.list <- c()
+
+              for (j in i:length(folders)) {
+
+
+
+                if ( file.exists( isolate({ paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/") }) ) ){
+
+
+                  tmp = toString(paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/"))
+
+                  B <- try(read.csv((toString(tmp))))
+
+                  if(inherits(B, "try-error")){
+                    print ('error occured in try block of B')
+                  }
+
+                  else
+                  {
+
+                    if ( j != i){
+
+
+
+                      comparison <- identical(A,B)
+
+                      if (comparison == TRUE){
+
+                        check.common = TRUE
+
+                        commmon.index <- c(commmon.index, j)
+                        inner.common.list <- c(inner.common.list, j)
+
+                      }
+
+
+
+
+                    }
+                  }#end else try-error of B
+                }#end of if for checking file
+              }# eend for loop j
+
+              if (check.common == TRUE  ){
+
+                commmon.index <- c(commmon.index, i)
+                inner.common.list <- c(inner.common.list, i)
+
+                common.list[counter] <- list(inner.common.list)
+                counter <- counter + 1
+
+
+
+              }
+              else if ( i == length(folders)){
+
+                analysis.list <- c(analysis.list, i)
+
+              }
+              else if (check.common == FALSE && i != length(folders)){
+
+                analysis.list <- c(analysis.list, i)
+
+              }
+
+            }
+
+          }
+        }
+        else{
+
+        }
+
+      }# end of if for common.index
+
+    }# end for loop i
+
+    newList <- list("common_list" = common.list, "analysis_list" = analysis.list,"total_common_index" = commmon.index)
+    return(newList)
+  }
+  else{
+
+    newList <- list("common_list" = common.list, "analysis_list" = analysis.list, "total_common_index" = commmon.index)
+    return(newList)
+  }
+}
+
+########################################################################################################################
+
 #' rnbi.analysis.modules.performed
 #'
 #' return the list of RnBeads Modules performed on the selected analysis
@@ -854,6 +992,14 @@ shinyServer(function(input, output, session) {
     updateTabItems(session, "tabs", newtab)
   })
 
+  observeEvent(input$dataset, {
+    newtab <- switch(input$tabs,
+                     "home" = "dataset",
+    )
+    updateTabItems(session, "tabs", newtab)
+  })
+
+
   observe({
     if(input$view_datasets > 0){
 
@@ -1006,23 +1152,34 @@ shinyServer(function(input, output, session) {
 
     # Create a Progress object
     progress <- shiny::Progress$new()
-    progress$set(message = "Reading dataset, please wait..", value = 50)
+    progress$set(message = "Collecting information, please wait..", value = 50)
 
 
     cd_list <- list()
     cd_list_counter <- 1
 
+    commond_list <- list()
+    commond_list_counter <- 1
 
-    common.datasets = rnbi.total.dataset(results.dir())
-    common.datasets.path = common.datasets$path_list
-    common.datasets.analysis = common.datasets$analysis_list
+#     common.datasets = rnbi.total.dataset(results.dir())
+#     common.datasets.path = common.datasets$path_list
+#     common.datasets.analysis = common.datasets$analysis_list
+#
+#     total.common.datasets = rnbi.common.dataset(results.dir())
 
-    total.common.datasets = rnbi.common.dataset(results.dir())
 
-    if (length(common.datasets) != 0){
+    analysis <- rnbi.total.analysis(results.dir())
 
-      cd_list <- lapply(1:(length(common.datasets.path) + length(total.common.datasets)), function(i) {
-        cd_list[cd_list_counter] <- paste("Dataset",i,sep = "_")
+    common.datasets = rnbi.dataset(results.dir())
+    datasets.unique.analysis.index = common.datasets$analysis_list
+    datasets.common.analysis.index = common.datasets$common_list
+
+    if (length(datasets.unique.analysis.index) != 0 || length(datasets.common.analysis.index) != 0 ){
+
+
+      # unique analysis
+      cd_list <- lapply(1:(length(datasets.unique.analysis.index)), function(i) {
+        cd_list[cd_list_counter] <- paste("Dataset",analysis[datasets.unique.analysis.index[i]],datasets.unique.analysis.index[i],sep = "_")
         cd_list_counter = cd_list_counter + 1
 
 
@@ -1031,16 +1188,32 @@ shinyServer(function(input, output, session) {
       })
 
 
-      dataset_choices <- unlist(cd_list)
+      # common analysis
+      commond_list <- lapply(1:(length(datasets.common.analysis.index)), function(i) {
+        list_index <- unlist(datasets.common.analysis.index[i])
+        commond_list[commond_list_counter] <- paste("Dataset",analysis[list_index[1]],list_index[1],sep = "_")
+        commond_list_counter = commond_list_counter + 1
+
+
+        commond_list
+
+      })
+
+      # combining unique and common analysis into one
+
+      total_dataset <-  c(cd_list, commond_list)
+
+      dataset_choices <- unlist(total_dataset)
       # update the datalist dropdown in the individual data sets tab
       updateSelectInput(session, "dd_ids_datasets",
                         label = "Datasets",
                         choices = dataset_choices)
 
       output$total_datasets <- renderText({
-        paste("Total datasets used in this repository =", length(cd_list), sep = " ")
+        paste("Total datasets used in this repository =", length(cd_list) + length(commond_list), sep = " ")
 
       })
+
 
       output$list_datasets <- renderDataTable({
         cd_list <- unlist(cd_list)
@@ -1051,28 +1224,14 @@ shinyServer(function(input, output, session) {
       },selection = 'single', escape = FALSE)
 
 
-    }
-
-
-    else if ( file.exists( isolate({ normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA) }) ) )
-    {
-      # update the datalist dropdown in the individual data sets tab
-      updateSelectInput(session, "dd_ids_datasets",
-                        label = "Datasets",
-                        choices = 'Dataset_1')
-
-      output$total_datasets <- renderText({
-        paste("Total datasets used in this repository = 1", sep = " ")
-
-      })
-
-      output$list_datasets <- renderDataTable({
-
-        DT <- data.table( Datasets_Used = 'Dataset_1')
+      output$common_datasets_used <- renderDataTable({
+        cd_list <- unlist(cd_list)
+        DT <- data.table( Datasets_Used = commond_list)
 
         DT
 
       },selection = 'single', escape = FALSE)
+
 
     }
 
@@ -1112,149 +1271,7 @@ shinyServer(function(input, output, session) {
 
     row <- as.integer(row)
 
-    total.datasets = rnbi.total.dataset(results.dir())
 
-    path_list = total.datasets$path_list
-
-    # if no datasets returned means that we have only one analysis so in else showing it
-    if (length(path_list) != 0){
-      a.file <- reactive({read.csv(as.character(path_list[row]))})
-
-      # Generate a summary of the dataset
-      output[[paste0('annotation')]] <- renderDataTable({
-
-        dataset <- a.file()
-        dataset
-      },selection = 'single', escape = TRUE)
-
-      output$h1_datasettab <- renderText({
-        paste('Dataset_',row,sep = '')
-
-      })
-      updateSelectInput(session, "dd_ids_datasets",
-                         selected = paste('Dataset_',row,sep = ''))
-
-    }
-    else{
-
-      if ( file.exists( isolate({ paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/") }) ) )
-      {
-
-        a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))})
-
-        # Generate a summary of the dataset
-        output[[paste0('annotation')]] <- renderDataTable({
-
-          dataset <- a.file()
-          dataset
-
-        },selection = 'single', escape = TRUE)
-
-        output$h1_datasettab <- renderText({
-          paste("Dataset_",row)
-
-        })
-      }
-      else{
-
-        # Generate a summary of the dataset
-        output[[paste0('annotation')]] <- renderDataTable({
-
-          dataset <- data.table( data = "No infomation available.")
-          dataset
-        },selection = 'single', escape = TRUE)
-
-        output$h1_datasettab <- renderText({
-          paste("No data available")
-
-        })
-
-      }
-    }
-
-
-    # how many analysis is the selected dataset is used in common in the analysis
-    ########################################################################################
-    analysis_list = unlist(total.datasets$analysis_list)
-
-    common.datasets = rnbi.common.dataset(results.dir())
-
-    check.common = FALSE
-
-    common.index = 1
-    matrix.list = as.matrix(common.datasets)
-    for (i in 1:length(matrix.list)) {
-
-      matrix.unlist = unlist(matrix.list[i])
-
-      if (analysis_list[row]  %in% matrix.unlist){
-        #print(paste('matrix unlist inside if ',i,matrix.unlist))
-        check.common = TRUE
-        common.index = i
-      }
-    }
-
-    #print((matrix.list[1]))
-
-
-    # if no datasets returned means that we have only one analysis so in else showing it
-
-    if (check.common == TRUE){
-
-
-
-      matrix.unlist = unlist(matrix.list[common.index])
-      # Generate a summary of the dataset
-      output[[paste0('annotation1')]] <- renderDataTable({
-
-        DT <- data.table( Analysis_Dir = matrix.unlist)
-
-        DT
-
-
-      },selection = 'single', escape = TRUE)
-
-    }
-
-    else if (length(analysis_list) != 0){
-      al <- reactive({analysis_list[row]})
-
-      # Generate a summary of the dataset
-      output[[paste0('annotation1')]] <- renderDataTable({
-
-        DT <- data.table( Analysis_Dir = al())
-
-        DT
-
-
-      },selection = 'single', escape = TRUE)
-
-    }
-    else{
-
-
-
-
-        # Generate a summary of the dataset
-        output[[paste0('annotation1')]] <- renderDataTable({
-
-          dataset <- data.table( data = "No infomation available.")
-          dataset
-
-
-
-
-        },selection = 'single', escape = TRUE)
-
-
-
-
-    }
-
-    ###################################################################################
-    #print(row)
-    session$sendCustomMessage("myCallbackHandler", "2")
-    #updateTabsetPanel(session, "Individual dataset", selected = "DatasetTab")
   })
 
 
@@ -1420,22 +1437,29 @@ shinyServer(function(input, output, session) {
     dd_datasets <- as.character(input$dd_ids_datasets)
 
     tmp = toString(dd_datasets)
-    len = nchar(tmp)
-    last_character = substr(tmp,len,len)
+    tmp = unlist(strsplit(tmp, "_"))
+    len = length(tmp)
+    #last_character = substr(tmp,len,len)
+    last_character = tmp[len]
 
 
 
+#     # Create a Progress object
+#     progress <- shiny::Progress$new()
+#     progress$set(message = "please wait..", value = 50)
+
+
+    analysis <- rnbi.total.analysis(results.dir())
 
     if (dd_datasets != "NA"){
 
       last_character = as.integer(last_character)
 
-      datasets_files = rnbi.total.dataset(results.dir())
+      path_ = paste(results.dir(), analysis[last_character], 'data_import_data','annotation.csv',sep="/")
 
-      path_list = datasets_files$path_list
       # if no datasets returned means that we have only one analysis so in else showing it
-      if (length(path_list) != 0){
-        a.file <- reactive({read.csv(as.character(path_list[last_character]))})
+      if (length(path_) != 0){
+        a.file <- reactive({read.csv(as.character(path_))})
 
 
         # Generate a summary of the dataset
@@ -1541,143 +1565,71 @@ shinyServer(function(input, output, session) {
 
       # how many analysis is the selected dataset is used in common in the analysis
       ########################################################################################
-      analysis_list = unlist(datasets_files$analysis_list)
-      common.datasets = rnbi.common.dataset(results.dir())
-
-      # checking if the selected datasets is used in more than one analysis then saving the index of the matrix
-      check.common = FALSE
-
-      common.index = 1
-      matrix.list = as.matrix(common.datasets)
-
-      # Generate a summary of the dataset
-      output[[paste0('annotationtest')]] <- renderDataTable({
-
-        DT <- data.table(analysis_list[last_character])
-
-        DT
 
 
-      },selection = 'single', escape = TRUE)
+      common.datasets = rnbi.dataset(results.dir())
+      datasets.unique.analysis.index = common.datasets$analysis_list
+      datasets.common.analysis.index = common.datasets$common_list
+
+      datasets.total.common.analysis.index = common.datasets$total_common_index
 
 
-      for (i in 1:length(matrix.list)) {
+      # if dataset is used in more than one analysis or not
+      if (last_character %in% datasets.total.common.analysis.index ){
 
-        matrix.unlist = unlist(matrix.list[i])
+        common <- c()
+        common_index <- 1
 
-        A <- try(
-          if (analysis_list[last_character]  %in% matrix.unlist){
-            #print(paste('matrix unlist inside if ',i,matrix.unlist))
-            check.common = TRUE
-            common.index = i
+        # iterate over the common dataset analysis
+        for (i in 1:length(datasets.common.analysis.index)) {
+
+          list_index <- unlist(datasets.common.analysis.index[i])
+
+          if(last_character %in% list_index)
+          {
+
+            # store the different analysis sharing common dataset
+            for (j in 1:length(list_index)){
+              common <- c(common, analysis[list_index[j]] )
+            }
+            common_index <- i
+            break
+
           }
 
-          )
-
-        if(inherits(A, "try-error")){
-          print ('error occured in try block of A')
         }
 
-
-
-
-      }
-
-      # if no datasets returned means that we have only one analysis so in else showing it
-
-      if (check.common == TRUE){
-
-
-
-        matrix.unlist = unlist(matrix.list[common.index])
-
-        # Generate a summary of the dataset
         output[[paste0('annotation1')]] <- renderDataTable({
 
-          DT <- data.table( Analysis_Dir = matrix.unlist)
+          DT <- data.table( Analysis_Dir = common)
 
           DT
 
 
         },selection = 'single', escape = TRUE)
 
-        output$common_dataset_pie <- renderPlotly({
-
-          v2 <- vector(mode="character", length=length(matrix.unlist))
-          for (i in 1:length(matrix.unlist)) {
-            v2[i] <- '10'
-          }
-
-          print (v2)
-          matrix.unlist <- data.frame("Categorie"=matrix.unlist, "values"= v2)
-
-          data <- matrix.unlist[,c('Categorie', 'values')]
-          print (data)
-
-          p <- plot_ly(data, labels = ~Categorie, values = ~values, type = 'pie') %>%
-            layout(title = paste('RnBeads Analysis using',dd_datasets ),
-                   xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                   yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-
-
-
-        })
-
       }
 
-      else if (length(analysis_list) != 0){
-        al <- analysis_list[last_character]
-
-        # Generate a summary of the dataset
-        output[[paste0('annotation1')]] <- renderDataTable({
-
-          DT <- data.table( Analysis_Dir = al)
-
-          DT
-
-
-        },selection = 'single', escape = TRUE)
-
-
-        output$common_dataset_pie <- renderPlotly({
-            v2 <- c('10')
-
-
-            print (v2)
-            matrix.unlist <- data.frame("Categorie"=al, "values"= v2)
-
-            data <- matrix.unlist[,c('Categorie', 'values')]
-            print (data)
-
-            p <- plot_ly(data, labels = ~Categorie, values = ~values, type = 'pie') %>%
-                layout(title = paste('RnBeads Analysis using',dd_datasets ),
-                       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                       yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-
-
-
-            })
-
-      }
       else{
 
-        # Generate a summary of the dataset
+        # if no dataset is shared among other analysis
+
         output[[paste0('annotation1')]] <- renderDataTable({
 
-          dataset <- data.table( data = "No infomation available.")
-          dataset
+          DT <- data.table( Analysis_Dir = analysis[last_character])
 
-
+          DT
 
 
         },selection = 'single', escape = TRUE)
-
-
 
       }
 
       ###################################################################################
     }
+
+#     #closing the progress bar
+#     on.exit(progress$close())
 
   })
 

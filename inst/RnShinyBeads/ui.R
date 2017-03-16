@@ -205,10 +205,35 @@ body <- dashboardBody(
                                                           tags$strong("List of different data sets used in the analysis:"),
                                                           tags$p(""),
 
+
                                                           verbatimTextOutput("total_datasets"),
                                                           br(),
-                                                          dataTableOutput("list_datasets"),
-                                                          br()
+
+
+                                                          HTML(paste('<b><p>To learn more about dataset click ',actionButton('dataset', 'here',class="btn btn-primary"),'</p></b>',sep="")),
+
+
+                                                          br(),
+
+                                                          fluidRow(
+
+                                                            column(width = 6,
+                                                                   box( width = NULL,
+                                                                            dataTableOutput("list_datasets"),
+
+                                                                            br(),
+                                                                     collapsible = TRUE,
+                                                                    title = "Unique Datasets / Sample sheets", status = "primary", solidHeader = TRUE)
+                                                            ),
+                                                            column(width = 6,
+                                                                   box( width = NULL,
+                                                                           dataTableOutput("common_datasets_used"),
+                                                                           br(),
+                                                                    collapsible = TRUE,
+                                                                   title = "Shared Datasets / Sample sheets", status = "primary", solidHeader = TRUE)
+
+                                                            )
+                                                          )
                                                  )
                      ), collapsible = TRUE,
                            title = "Overview", status = "primary", solidHeader = TRUE)
@@ -310,14 +335,11 @@ body <- dashboardBody(
                                           br(),
                                           dataTableOutput(paste0('annotation1')),
 
-                                          br(),
-                                          plotlyOutput('common_dataset_pie'),
                                           br()
                                   ),
                                   tabPanel("annotation file",
                                            br(),
                                            tags$strong("Sample Annotations."),
-
 
                                            dataTableOutput(paste0('annotation')),
                                            br()
