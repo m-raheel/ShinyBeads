@@ -8,47 +8,24 @@
 ########################################################################################################################
 
 
-# libraries to run on the shiny server ( uncomment it on the server)
+# libraries
 ######################################################################
 library(DT)
 library(shiny)
-
-#library(RnBeads)
 library(XML)
 library(compare)
-# libFolders <- .libPaths()
-# .libPaths(.libPaths()[-1])
-
-# .libPaths(libFolders)
 library(data.table) # using the function fread for reading large csv files
 library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
+library(plotly) #interactive graphics with D3
 library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-library(manhattanly , lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-library(VennDiagram, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(manhattanly)
+library(VennDiagram)
 library(plyr)
-library(shinydashboard, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-#####################################################################
-
-
-# local (comment while on the server)
-#####################################################################
-# library(shiny)
-# library(RnBeadsInterface)
-# #library(RnBeads)
-# library(XML)
-# library(compare)
-# library(DT)
-# library(data.table) # using the function fread for reading large csv files
-# library(qqman)
-# library(tcltk)# OS independent file dir selection
-# library(lattice)# using qqunif.plot
-# library(plotly) #interactive graphics with D3
-# library(manhattanly)
-# library(VennDiagram)
+library(shinydashboard)
 library(limma)
+#####################################################################
 
 
 qqman.qq <- qqman::qq    #EDIT
@@ -58,7 +35,6 @@ qqman.qq <- qqman::qq    #EDIT
 # createLink <- function(val) {
 #   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
 # }
-
 
 ## F U N C T I O N S ###################################################################################################
 
@@ -87,334 +63,6 @@ rnbi.total.analysis <- function(wd) {
     }
   }
   return(total.analysis.list)
-
-}
-
-########################################################################################################################
-
-#' rnbi.total.dataset
-#'
-#' return the list of datasets/sample sheet used in the RnBeads analysis found in the given path
-#'
-rnbi.total.dataset <- function(rd) {
-
-  folders <- rnbi.total.analysis(rd)
-
-  path.lists <- list()
-  final.list <- list()
-  analysis.list <- list()
-  counter <- 1
-  analysis.counter <- 1
-
-  if ( length(folders) != 0 ){
-
-    for (i in 1:length(folders)) {
-
-
-      if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) )
-      {
-        tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
-        filepath <- tmp
-
-        if (file.exists( isolate({ paste(filepath) }) ) ){
-          filename <- as.character(filepath)
-
-          path.lists[i] <- filename
-
-          A <- try(read.csv((toString(path.lists[i]))))
-
-          if(inherits(A, "try-error")){
-            print ('error occured in try block of A')
-          }
-
-          else
-          {
-            check.common = FALSE
-
-            for (j in i:length(folders)) {
-
-
-
-              if ( file.exists( isolate({ paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/") }) ) ){
-
-
-                tmp = toString(paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/"))
-
-                B <- try(read.csv((toString(tmp))))
-
-                if(inherits(B, "try-error")){
-                  print ('error occured in try block of B')
-                }
-
-                else
-                {
-
-                  if ( j != i){
-
-
-
-                    comparison <- identical(A,B)
-
-                    if (comparison == TRUE){
-
-                      check.common = TRUE
-
-                    }
-
-
-                  }
-                }#end else try-error of B
-              }#end of if for checking file
-            }# eend for loop j
-
-            if (check.common == FALSE ){
-
-
-              analysis.list[analysis.counter] <- folders[i]
-              final.list[counter] <- path.lists[i]
-
-              counter = counter+1
-              analysis.counter = analysis.counter + 1
-
-            }
-            else if (check.common == FALSE ){
-
-
-              analysis.list[analysis.counter] <- folders[i]
-              final.list[counter] <- path.lists[i]
-
-              counter = counter+1
-              analysis.counter = analysis.counter + 1
-
-            }
-
-          }
-
-        }
-      }
-      else{
-
-      }
-
-    }# end for loop i
-
-    newList <- list("path_list" = final.list, "analysis_list" = analysis.list)
-    return(newList)
-  }
-  else{
-
-    newList <- list("path_list" = final.list, "analysis_list" = analysis.list)
-    return(newList)
-
-
-  }
-
-}
-
-########################################################################################################################
-
-#' rnbi.common.dataset
-#'
-#' return the list of datasets/sample sheet used in the RnBeads analysis found in the given path
-#'
-
-rnbi.common.dataset <- function(rd) {
-
-
-  folders <- rnbi.total.analysis(rd)
-  folders
-
-
-  if ( length(folders) != 0 ){
-
-    path.lists <- list()
-    for (i in 1:length(folders)) {
-
-
-      if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) ){
-
-        tmp = toString(paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/"))
-        filepath <- tmp
-
-        # removing the last character from the path '/' cause error in the server
-
-        if (file.exists( isolate({ paste(filepath) }) ) ){
-          filename <- as.character(filepath)
-
-          path.lists[i] <- filename
-
-
-        }
-      }
-      else{
-
-      }
-
-    }
-
-    if (length(path.lists) != 0){
-
-
-      # this for loops store the combination of results folder that uses the same  dataset
-      same.sample.list <- list()
-      same.sample.list2 <- list()
-
-      temp.list <- list()
-      temp.counter <- 1
-
-      counter <- 1
-      for (i in 1:length(folders)) {
-
-        if ( file.exists( isolate({ paste(rd, folders[i], 'data_import_data','annotation.csv',sep="/") }) ) ){
-
-
-          A <- try(read.csv((toString(path.lists[i]))))
-
-          #A <- read.csv((toString(path.lists[i])))[ ,2:3]
-
-          if(inherits(A, "try-error")){
-            print ('error occured in try block of A')
-          }
-
-          else
-          {
-            for (j in i:length(folders)) {
-
-              if ( file.exists( isolate({ paste(rd, folders[j], 'data_import_data','annotation.csv',sep="/") }) ) ){
-
-                B <- try(read.csv((toString(path.lists[j]))))
-
-                if(inherits(B, "try-error")){
-                  print ('error occured in try block of B')
-                }
-
-                else
-                {
-                  if (length(A) == length(B) && j != i){
-                    comparison <- identical(A,B)
-                    comparison
-                    if (comparison == TRUE){
-
-                      temp.list[temp.counter] <- folders[j]
-                      temp.counter = temp.counter+1
-
-                      if ((folders[i] %in% temp.list) & (folders[j] %in% temp.list) ){
-                      }
-                      else{
-                        same.sample.list[counter] <- list(c(folders[i],folders[j]))
-                        same.sample.list2[counter] <- folders[j]
-
-                        counter = counter+1
-
-                      }
-                    }
-
-                  }
-                }#end else try-error of B
-              }#end of if for checking file
-
-            }
-
-          }#end else try-error of A
-
-        }
-      }
-
-
-      # datastructure logic of storing the list of folders as a list that share the common folders
-      temp.list <- list()
-      actual.list <- list()
-      actual.counter <- 1
-      length(same.sample.list)
-
-      increament <- 1
-      k <- 1
-      actual.list
-
-
-      apath.lists <- list()
-      apath.counter <- 1
-
-      while (k <= length(same.sample.list)) {
-
-        a <- unlist(same.sample.list[k], use.names = FALSE)
-        temp.variable <- a[1]
-        temp.list <- append(temp.list, temp.variable)
-
-        # bn <- basename(file.path(rd, temp.variable,'data_import_data', c("annotation.csv")))
-        # dn <- dirname(file.path(rd, temp.variable,'data_import_data/annotation.csv'))
-        # full.path <- file.path(dn,'annotation.csv')
-
-
-        filepath <- file.path(rd, temp.variable, 'data_import_data','annotation.csv')
-
-        filepath= as.character(filepath)
-
-
-        #filename <- paste(filepath, 'annotation.csv', sep="/")
-
-        if (file.exists( isolate({ paste(filepath) }) ) ){
-
-          filename <- filepath
-          #removing space
-
-
-          #tmp <- file.path(rd, paste(temp.variable,'/data_import_data/annotation.csv'),sep='')
-          #removing space
-          #tmp <- gsub(" /", "/", tmp)
-          apath.lists[apath.counter] <- filename
-          apath.counter <- apath.counter + 1
-
-
-          for (l in k:length(same.sample.list)) {
-            b <- unlist(same.sample.list[l], use.names = FALSE)
-            b1 <- b[1]
-            if (b1 == temp.variable){
-
-              temp.list <- append(temp.list, b[2])
-
-            }
-            else{
-              increament = l -1
-
-              break
-            }
-
-          }
-
-          #message(paste0("Value of K =  ", k))
-
-          k <- k + increament
-
-          temp.variable <- b
-
-          actual.list[actual.counter] <- list(temp.list)
-          temp.list <- list()
-
-
-          actual.counter <- actual.counter + 1
-        }
-
-
-      }
-
-      return(actual.list)
-
-    }
-    else{
-      common.datasets <- list()
-
-      return(common.datasets)
-    }
-  }
-  else{
-
-    common.datasets <- list()
-
-    return(common.datasets)
-
-
-  }
 
 }
 
@@ -651,11 +299,14 @@ rnbi.qqplot.single <- function(x) {
 
   d2 <- qqr$data
 
-  #library reshape
-  d <- melt(d2, id.vars="EXPECTED")
 
-  # Everything on the same plot
-  p <- ggplot(d, aes(EXPECTED,value, col=variable)) +
+
+
+  #library reshape
+  #d <- melt(d2, id.vars="EXPECTED")
+
+  # plot
+  p <- ggplot2::ggplot(data = d2, ggplot2::aes_string(x = 'EXPECTED', y = 'OBSERVED',text = 'CGID')) +
     geom_point() +
     ggplot2::geom_abline(ggplot2::aes(intercept = 0, slope = 1),
                          size = abline_size,
@@ -678,24 +329,46 @@ rnbi.qqplot.single <- function(x) {
 #'
 #' convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
 #'
-rnbi.qqplot.data.single <- function(x,
-                    p = "P",
+rnbi.qqplot.data.single <- function(x,p = "P") {
 
-                    ...) {
+  ## Make sure you have p column exists in x.
+  if (!(p %in% names(x))) stop(paste("Column", p, "not found 'x' data.frame"))
+
+  # Check for numeric p
+  if (!is.numeric(x[[p]])) stop(sprintf("p argument specified as %s but this column is not numeric in the 'x' data.frame", p))
+
+  # Check if any p are not in (0,1)
+  if (any(x[[p]]<0)) stop("Negative p-values found. These must be removed.")
+  if (any(x[[p]]>1)) stop("P-values greater than 1 found. These must be removed.")
+  if (any(is.na(x[[p]]))) stop("NA P-values found. These must be removed")
+
+  ## check if all specified annotations are in 'x' data.frame
+
+
   # Create a new data.frame with columns called P.
   d <- data.frame(P = x[[p]])
+
+
+
+  d[["CGID"]] <- x[["cgid"]]
+  #colnames(d)[which(colnames(d) == "CGID")] <- cgid
+
+
 
   # sort d by decreasing p-value
   d <- d[order(d[["P"]] ,decreasing = FALSE), , drop = FALSE]
 
   # Observed and expected
   d[["OBSERVED"]] <- -log10(d[["P"]])
+
   d[["EXPECTED"]] <- -log10(stats::ppoints(length(d[["P"]])))
 
   # droping the P column
   d <- d[,-(1),drop=FALSE]
 
-  qqplot.data <- list(data = d,  pName = p)
+  qqplot.data <- list(data = d)
+
+
 
   class(qqplot.data) <- "qqplot.data"
 
@@ -731,11 +404,15 @@ rnbi.qqplot.double <- function(x,y) {
 
   d2 <- qqr$data
 
-  #library reshape
-  d <- melt(d2, id.vars="EXPECTED")
+#   d1 <- data.frame(x = d2[['EXPECTED']], y = d2[['Analysis_1']], text = d2[['CGID_1']])
+#   d3 <- data.frame(x = d2[['EXPECTEDQ']], y = d2[['Analysis_2']], text = d2[['CGID_2']])
+#   #library reshape
+
 
   # Everything on the same plot
-  p <- ggplot(d, aes(EXPECTED,value, col=variable)) +
+  p <- ggplot(d2, aes(expected,observed, col=analysis , text = cgid)) +
+  #p <- ggplot2::ggplot(data = d2, ggplot2::aes_string(x = 'EXPECTED', y = c('Analysis_1' ,'Analysis_2' ),text = 'CGID_1')) +
+       #ggplot2::ggplot(data = d2, ggplot2::aes_string(x = 'EXPECTEDQ', y = 'Analysis_1',text = 'CGID_2')) +
     geom_point() +
     ggplot2::geom_abline(ggplot2::aes(intercept = 0, slope = 1),
                          size = abline_size,
@@ -764,10 +441,8 @@ rnbi.qqplot.data.double <- function(x,y,
 
                                     ...) {
 
-
-
-  x <- data.frame(P = x[[p]])
-  y <- data.frame(P = y[[p]])
+  x <- data.frame(P = x[[p]], cgid = x[["cgid"]])
+  y <- data.frame(P = y[[p]], cgid = y[["cgid"]])
 
   # sort d by decreasing p-value
   x <- x[order(x[["P"]] ,decreasing = FALSE), , drop = FALSE]
@@ -777,22 +452,47 @@ rnbi.qqplot.data.double <- function(x,y,
   d <- data.frame(P = x[["P"]] , Q = y[["P"]])
 
 
-  # sort d by decreasing p-value
-  #d <- d[with(d, order(P)), ]
-  #d <- d[order(d[["Q"]] ,decreasing = FALSE), , drop = FALSE]
-
   # Observed and expected
   d[["Analysis_1"]] <- -log10(d[["P"]])
-  d[["EXPECTED"]] <- -log10(stats::ppoints(length(d[["P"]])))
+  d[["EXPECTED"]] <- -log10(stats::ppoints(length(d[["P"]]) ))
 
   d[["Analysis_2"]] <- -log10(d[["Q"]])
-  #d[["EXPECTEDQ"]] <- -log10(stats::ppoints(length(d[["Q"]])))
+  d[["EXPECTEDQ"]] <- -log10(stats::ppoints(length(d[["Q"]])))
 
-  #d <- d[with(d, order(Analysis_1, Analysis_2)), ]
-  # droping the P column
-  d <- d[,-(1:2),drop=FALSE]
 
-  qqplot.data <- list(data = d,  pName = p)
+  # making a customized dataframe with the columns and values needed to display in the plot
+  # using the melt function from the library reshape that allows to combine columns
+  ########################################################################################
+
+  # needed the analysis names and oberseved values
+  df1 <- data.frame(id = 1:nrow(d) , analysis1 = d[["Analysis_1"]] , analysis2 = d[["Analysis_2"]])
+  m <- melt(df1, id=c("id"))
+
+  # needed the expected values
+  df2 <- data.frame(id = 1:nrow(d) , expected1 = d[["EXPECTED"]] , expected2 = d[["EXPECTEDQ"]])
+  e <- melt(df2, id=c("id"))
+
+  # needed the cgids to display as text in the plot
+  df3 <- data.frame(id = 1:nrow(d) , cgid1 = x[["cgid"]] , cgid2 = y[["cgid"]])
+  f <- melt(df3, id=c("id"))
+  f
+
+  # final customized data frame
+  df4 <- data.frame(analysis = m$variable  , observed = m$value, expected = e$value , cgid = f$value)
+
+  ########################################################################################
+
+  #df4
+  #analysis   observed	 expected	 cgid
+  #-----------------------------------------
+  #analysis1	 10.64	    2.30	  cg00645010
+  #analysis1	 8.84	      1.82	  cg27534567
+  #analysis2	 8.23	      1.60	  cg01070250
+  #analysis2   8.23	      1.60	  cg01070250
+  ########################################################################################
+
+
+  qqplot.data <- list(data = df4)
 
   class(qqplot.data) <- "qqplot.data"
 
@@ -1914,18 +1614,18 @@ shinyServer(function(input, output, session) {
 
 
         if (nrows.value == -1){
-          nrows.value = 100
+          nrows.value = 20000
         }
-        else if (nrows.value > 1000){
-          nrows.value = 1000
+        else if (nrows.value > 20000){
+          nrows.value = 20000
         }
 
 
         comp.file <- data.frame(comp.file[1:nrows.value,])
 
-        p <- rnbi.qqplot.single (comp.file)
+        q <- rnbi.qqplot.single (comp.file)
 
-        p <- plotly::ggplotly(p)
+        p <- plotly::ggplotly(q)
 
 
         output$info.qqplot <- renderUI({
@@ -2205,7 +1905,7 @@ output$testingcompqqplot <- renderPlot({
         nrows.value <- as.integer(input$input_multiqqplot_readtop)
 
 
-        comp.file <- fread(filename,sep = ",", select = c("diffmeth.p.val"), nrows = nrows.value)
+        comp.file <- fread(filename,sep = ",", select = c("cgid","diffmeth.p.val"), nrows = nrows.value)
 
 
         if (nrows.value == -1){
@@ -2403,7 +2103,7 @@ output$testingcompqqplot <- renderPlot({
         filename= as.character(filename)
         nrows.value <- as.integer(input$input_multiqqplot_readtop)
 
-        comp.file <- fread(filename,sep = ",", select = c("diffmeth.p.val") , nrows = nrows.value )
+        comp.file <- fread(filename,sep = ",", select = c("cgid","diffmeth.p.val") , nrows = nrows.value )
 
         if (nrows.value == -1){
           nrows.value = 100
@@ -2563,6 +2263,10 @@ output$testingcompqqplot <- renderPlot({
             HTML(paste("'<p>QQplot is generated from the diffmeth.p.values of the comparisons selected above for the two analysis.</p> <br/ > <p><b>diffmeth.p.val:</b> p-value obtained from a two-sided Welch t-test or alternatively from linear models employed in the limma package (which type of p-value is computed is specified in the differential.site.test.method option). In case of paired analysis, the paired Student's t-test is applied.",'</p>',sep=""))
 
           })
+
+          qqr <- rnbi.qqplot.data.double(x,y )
+
+          d2 <- qqr$data
 
 
           dev.off()
@@ -2957,7 +2661,7 @@ output$testingcompqqplot <- renderPlot({
           dev.off()
           p
         }
-        else if (length(filtered_data) > 50000)
+        else if (length(filtered_data) > 20000)
         {
           Primates <- c('Data too big to display in plot! please filter some data')
           Bodywt <- c(0.5 )
@@ -3561,7 +3265,12 @@ observeEvent(input$cb_ts_comp_venn, {
 
         analysis.selected <- as.character(cb.checked[i])
         analysis.path <- file.path(results.dir(), analysis.selected)
-        nrows.value <- as.character(100)
+
+        nrows.value <- as.character(input$input_topscorer_readtop)
+
+        if (nrows.value == 'ALL'){
+          nrows.value = -1
+        }
 
         if (length(get.choice.index()[i]) < 1){
 

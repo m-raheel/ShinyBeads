@@ -8,39 +8,23 @@
 ########################################################################################################################
 
 
-# libraries to run on the shiny server ( uncomment it on the server)
+# libraries
 ######################################################################
 #library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 #.libPaths(.libPaths()[-1])
 library(DT)
 library(shiny)
-
 library(shinyjs)
 library(shinythemes)
-library(plyr , lib.loc = '/opt/Rlib/3.4')
-library(ggplot2 , lib.loc = '/opt/Rlib/3.4')
-library(plotly , lib.loc = '/opt/Rlib/3.4') #interactive graphics with D3
-library(shinydashboard, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(plyr)
+library(ggplot2)
+library(plotly) #interactive graphics with D3
+library(shinydashboard)
 #####################################################################
-
-
-# local (comment while on the server)
-#####################################################################
-
-# library(shiny)
-# library(RnBeadsInterface)
-# library(DT)
-# library(shinyjs)
-# library(shinythemes)
-# library(plotly) #interactive graphics with D3
-# #library(V8) # package for extended shinyJS
-# #library(shinyFiles)
-
-
 
 
 choices = "NA"
-topRowsChoices = c('100', '500' , '1000', '10000', '50000' , '-1')
+topRowsChoices = c('100', '500' , '1000', '10000', '20000' , '-1')
 
 
 check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPLETED Preprocessing', 'COMPLETED Tracks and Tables','COMPLETED Covariate Inference','COMPLETED Exploratory Analysis','COMPLETED Differential Methylation')
@@ -261,11 +245,11 @@ body <- dashboardBody(
                                                   HTML(paste('<div class="">',
                                                              '<div class="container">',
                                                                #'<h2>Rnbeads modules performed!</h2>',
-                                                               tags$h2(style="color:black;","Rnbeads modules performed"),
+                                                               #tags$h2(style="color:black;","Rnbeads modules performed"),
                                                                  tableOutput("list_module"),
 
                                                              #'<h2>Rnbeads Reports!</h2>',
-                                                             tags$h2(style="color:black;","Rnbeads Reports"),
+                                                             #tags$h2(style="color:black;","Rnbeads Reports"),
 
 
 
@@ -465,7 +449,9 @@ body <- dashboardBody(
 
                                                column(width = 10,
                                                       tags$h4(style="color:black;","QQ-plot"),
+
                                                       plotlyOutput('multicompqqplot1'),
+                                                      #tableOutput('testingdata'),
                                                       br(),
                                                       HTML(paste(
                                                         uiOutput('info.qqplot2')
@@ -672,7 +658,7 @@ body <- dashboardBody(
                            ),
 
                            tags$h4(style="color:black;","Multiple analysis Venn Diagram"),
-                           tags$p(paste("Check the analysis on the left for which you want to see the overlapping. (Top 100 rows)")),
+                           tags$p(paste("Check the analysis on the left for which you want to see the overlappings.")),
                            tags$p(paste("Note: Please select atleast 1 and atmost 6 analysis to draw Venn Diagram!")),
 
 
@@ -702,6 +688,8 @@ body <- dashboardBody(
 
                                     )# end  of  fluid row
                            ),
+
+                           selectInput("input_topscorer_readtop", "Read total n rows:", topRowsChoices),
 
                            actionButton('btnMultipleShowVenn', 'Display',class="btn btn-primary btn-md"),
                            br(),
