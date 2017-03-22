@@ -2731,19 +2731,22 @@ output$testingcompqqplot <- renderPlot({
                              type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
                              x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
                              y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
-                             name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
+                             #name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
                              marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
                                color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
                              )) %>%
 
-                  # add_trace(x = ~mean.diff,                                         # scatter's "x": /r/reference/#scatter-x
-                  #           y = ~diffmeth.p.val,  # scatter's "y": /r/reference/#scatter-y
-                  #           mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
-                  #           line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
-                  #             color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
-                  #             dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
-                  #           )
-                  # ) %>%
+                  add_trace(filtered,
+                            x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                            y = ~filtered[,c(input$input_tablebrowser_y_axis)],
+                            text = ~filtered[["cgid"]]
+#                             mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
+#                             line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
+#                               color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
+#                               dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
+#                             ),
+
+                  ) %>%
 
                   layout(                        # all of layout's properties: /r/reference/#layout
                     title = "Plot", # layout's title: /r/reference/#layout-title
