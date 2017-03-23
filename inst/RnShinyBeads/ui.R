@@ -4,14 +4,12 @@
 ## created: 2016-09-01
 ## creator: Muhammad Raheel
 ## ---------------------------------------------------------------------------------------------------------------------
-## Main User Interface of the RnBeadsInterface tool.
+## Main User Interface of the RnShinyBeads tool.
 ########################################################################################################################
 
 
 # libraries
 ######################################################################
-#library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-#.libPaths(.libPaths()[-1])
 library(DT)
 library(shiny)
 library(shinyjs)
@@ -24,9 +22,7 @@ library(shinydashboard)
 
 
 choices = "NA"
-topRowsChoices = c('100', '500' , '1000', '10000', '20000' , '-1')
-
-
+topRowsChoices = c('100', '500' , '1000', '10000', '20000','50000' , '100000' , '-1')
 check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPLETED Preprocessing', 'COMPLETED Tracks and Tables','COMPLETED Covariate Inference','COMPLETED Exploratory Analysis','COMPLETED Differential Methylation')
 
 

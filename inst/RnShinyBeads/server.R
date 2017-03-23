@@ -4,7 +4,7 @@
 ## created: 2016-09-01
 ## creator: Muhammad Raheel
 ## ---------------------------------------------------------------------------------------------------------------------
-## Main workflow of the RnBeads Interface tool.
+## Main workflow of the RnShinyBeads tool.
 ########################################################################################################################
 
 
@@ -27,14 +27,6 @@ library(shinydashboard)
 library(limma)
 #####################################################################
 
-
-qqman.qq <- qqman::qq    #EDIT
-
-#library(shinyFiles)
-
-# createLink <- function(val) {
-#   sprintf('<a href="https://www.google.com/#q=%s" target="_blank" class="btn btn-primary">Info</a>',val)
-# }
 
 ## F U N C T I O N S ###################################################################################################
 
@@ -493,54 +485,6 @@ rnbi.qqplot.data.double <- function(x,y,
 
 
   qqplot.data <- list(data = df4)
-
-  class(qqplot.data) <- "qqplot.data"
-
-  qqplot.data
-
-}
-
-
-########################################################################################################################
-
-#' rnbi.qqplot.data.multi
-#' Not completed, Not used
-#' convert the p-values in to an object of class qqplot.data which will be used to draw qqplot.
-#'
-rnbi.qqplot.data.multi <- function(x,y,
-                                   p = "diffmeth.p.val",
-
-                                   ...) {
-
-
-
-  x <- data.frame(P = x[[p]])
-  y <- data.frame(P = y[[p]])
-
-  # sort d by decreasing p-value
-  x <- x[order(x[["P"]] ,decreasing = FALSE), , drop = FALSE]
-  y <- y[order(y[["P"]] ,decreasing = FALSE), , drop = FALSE]
-
-  # Create a new data.frame with columns called P.
-  d <- data.frame(P = x[["P"]] , Q = y[["P"]])
-
-
-  # sort d by decreasing p-value
-  #d <- d[with(d, order(P)), ]
-  #d <- d[order(d[["Q"]] ,decreasing = FALSE), , drop = FALSE]
-
-  # Observed and expected
-  d[["Analysis_1"]] <- -log10(d[["P"]])
-  d[["EXPECTED"]] <- -log10(stats::ppoints(length(d[["P"]])))
-
-  d[["Analysis_2"]] <- -log10(d[["Q"]])
-  #d[["EXPECTEDQ"]] <- -log10(stats::ppoints(length(d[["Q"]])))
-
-  #d <- d[with(d, order(Analysis_1, Analysis_2)), ]
-  # droping the P column
-  d <- d[,-(1:2),drop=FALSE]
-
-  qqplot.data <- list(data = d,  pName = p)
 
   class(qqplot.data) <- "qqplot.data"
 
