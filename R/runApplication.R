@@ -5,9 +5,9 @@
 
 runApplication <- function()
 {
-     appDir <- system.file("RnShinyBeads", package = "RnBeadsInterface")
+     appDir <- system.file("RnShinyBeads", package = "RnShinyBeads")
      if (appDir == "") {
-       stop("Could not find app directory. Try re-installing RnBeadsInterface.", call. = FALSE)
+       stop("Could not find app directory. Try re-installing RnShinyBeads", call. = FALSE)
      }
 
      shiny::runApp(appDir, display.mode = "normal")
