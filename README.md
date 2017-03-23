@@ -13,11 +13,11 @@ Installation
 To install the latest development version from GitHub:
 
     install.packages("devtools")
-    devtools::install_github("m-raheel/Rnbeads-Interface")
+    devtools::install_github("m-raheel/RnShinyBeads")
 
 To run the applicaiton:
 
-    RnBeadsInterface::runApplication()
+    RnShinyBeads::runApplication()
     
     
 You can view a [live interactive
