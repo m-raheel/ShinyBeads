@@ -19,7 +19,8 @@ library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
-library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+#library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
+library(RnShinyBeads, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 library(manhattanly)
 library(VennDiagram)
 library(plyr)
@@ -1012,7 +1013,7 @@ shinyServer(function(input, output, session) {
     wd_modules <- reactive({file.path(results.dir(), value.modules()) })
 
     if ( file.exists( isolate({ paste(wd_modules(),'analysis.log',sep="/") }) ) ){
-      #fucntion from the RnBeadsInterface package
+      #fucntion from the RnShinyBeads package
 
 
       #Performed_Modules <-  modules_performed(wd_modules())
@@ -1832,7 +1833,7 @@ output$testingcompqqplot <- renderPlot({
       x
     }
     else{
-      #fucntion from the RnBeadsInterface package
+      #fucntion from the RnShinyBeads package
 
       #index_list() contains the index of the selected file ffrom the dropdown
       f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
@@ -2031,7 +2032,7 @@ output$testingcompqqplot <- renderPlot({
       x
     }
     else{
-      #fucntion from the RnBeadsInterface package
+      #fucntion from the RnShinyBeads package
 
       #index_list() contains the index of the selected file ffrom the dropdown
       f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
@@ -3886,7 +3887,7 @@ observeEvent(input$cb_ts_comp_venn, {
 .LOG.INFO <- new.env()
 
 .LOG.INDENT <- "    "
-.LOGGER <- "RnBeadsInterface"
+.LOGGER <- "RnShinyBeads"
 .LOG.STAT <- c("INFO" = "INFO", "STATUS" = "STATUS", "WARNING" = "WARNING", "ERROR" = "ERROR")
 
 logger.transform <- function(txt, indent = TRUE) {

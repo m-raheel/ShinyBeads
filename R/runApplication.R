@@ -1,6 +1,6 @@
-#' Launch RnBeadsInterface app
+#' Launch RnShinyBeads app
 #'
-#' Run the RnBeadsInterface application
+#' Run the RnShinyBeads application
 #' @export
 
 runApplication <- function()
