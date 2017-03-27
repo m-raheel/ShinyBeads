@@ -22,6 +22,7 @@ library(shinydashboard)
 
 
 choices = "NA"
+topRowsPlotChoices = c('100', '500' , '1000','5000')
 topRowsChoices = c('100', '500' , '1000', '10000', '20000','50000' , '100000' , '-1')
 check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPLETED Preprocessing', 'COMPLETED Tracks and Tables','COMPLETED Covariate Inference','COMPLETED Exploratory Analysis','COMPLETED Differential Methylation')
 
@@ -369,8 +370,33 @@ body <- dashboardBody(
 
                                              selectInput("input_dmcomp_choices", "Select analysis folder:", choices),
                                              selectInput("input_dmcomp_files", "comparisons:", ""),
-                                             selectInput("input_qqplot_readtop", "Read top n rows:", topRowsChoices),
+                                             selectInput("input_qqplot_readtop", "Read top n rows:", topRowsPlotChoices),
 
+
+                                             tags$div(id = "", class="",
+                                                      #tags$h3(style="color:black;","Filter data"),
+                                                      fluidRow(
+                                                        column(width = 5,
+
+                                                               uiOutput("qq.columns")
+
+                                                        ),
+                                                        column(width = 3,
+
+                                                               uiOutput("qq.columns.equality")
+
+
+
+                                                        ),
+
+                                                        column(width = 4,
+
+                                                               uiOutput("qq.columns.range")
+
+                                                        )
+
+                                                      )# end  of  fluid row
+                                             ),
 
 
                                              actionButton('displayQQPlotBtn', 'Display',class="btn btn-primary btn-md"),
@@ -434,8 +460,35 @@ body <- dashboardBody(
 
                                                )
                                              ),
+                                             selectInput("input_multiqqplot_readtop", "Read top n rows:", topRowsPlotChoices),
 
-                                             selectInput("input_multiqqplot_readtop", "Read top n rows:", topRowsChoices),
+
+                                             tags$div(id = "", class="",
+                                                      #tags$h3(style="color:black;","Filter data"),
+                                                      fluidRow(
+                                                        column(width = 5,
+
+                                                               uiOutput("qq.multi.columns")
+
+                                                        ),
+                                                        column(width = 3,
+
+                                                               uiOutput("qq.multi.columns.equality")
+
+
+
+                                                        ),
+
+                                                        column(width = 4,
+
+                                                               uiOutput("qq.multi.columns.range")
+
+                                                        )
+
+                                                      )# end  of  fluid row
+                                             ),
+
+
 
                                              actionButton('displayBtn', 'Display',class="btn btn-primary btn-md"),
                                              br(),

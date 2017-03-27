@@ -19,7 +19,6 @@ library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
-#library(RnBeadsInterface, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 library(RnShinyBeads, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
 library(manhattanly)
 library(VennDiagram)
@@ -30,6 +29,34 @@ library(limma)
 
 
 ## F U N C T I O N S ###################################################################################################
+
+########################################################################################################################
+
+#' rnbi.analysis.datatype
+#'
+#' return the analysis data type of a specified analysis from the table in data_import.html file
+#'
+rnbi.analysis.datatype <- function(wd , analysis.name) {
+
+  analysis.dir <- file.path(wd, analysis.name)
+
+  filename <- file.path(analysis.dir,'data_import.html')
+
+  differential.methylation.path <- filename
+
+  webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+  pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+
+  query = "//*/div[@id='section2']/div/table"
+  query
+  datatype = xpathSApply(pagetree, query, xmlValue)
+
+
+  return(datatype)
+
+}
+
+
 
 ########################################################################################################################
 
@@ -205,6 +232,7 @@ rnbi.dataset <- function(rd) {
 #'
 rnbi.analysis.modules.performed <- function(wd) {
 
+
   # if analysis log file is peresent than searching the file for the completed modules
   if ( file.exists( isolate({ paste(wd,'analysis.log',sep="/") }) ) ){
 
@@ -265,12 +293,67 @@ rnbi.analysis.modules.performed <- function(wd) {
 
 }
 
+########################################################################################################################
+
+#' rnbi.analysis.rrbs.modules.performed
+#'
+#' return the list of RnBeads Modules performed on the selected analysis
+#'
+rnbi.analysis.rrbs.modules.performed <- function(wd) {
+
+  resulting.modules.list <- list()
+  module.counter <- 1
+
+  display_vectors <- c('Data Import', 'Quality Control', 'Preprocessing', 'Tracks and Tables','Covariate Inference','Exploratory Analysis','Differential Methylation')
+
+  # if analysis log file is peresent than searching the file for the completed modules
+  if ( file.exists( isolate({ paste(wd,'data_import.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[1]
+    module.counter <- module.counter + 1
+  }
+
+  if ( file.exists( isolate({ paste(wd,'quality_control.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[2]
+    module.counter <- module.counter + 1
+  }
+
+  if ( file.exists( isolate({ paste(wd,'preprocessing.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[3]
+    module.counter <- module.counter + 1
+  }
+
+  if ( file.exists( isolate({ paste(wd,'tracks_and_tables.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[4]
+    module.counter <- module.counter + 1
+  }
+
+  if ( file.exists( isolate({ paste(wd,'exploratory_analysis.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[6]
+    module.counter <- module.counter + 1
+  }
+  if ( file.exists( isolate({ paste(wd,'differential_methylation.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[7]
+    module.counter <- module.counter + 1
+  }
+
+
+  return(resulting.modules.list)
+
+}
+
+
 
 ########################################################################################################################
 
 #' rnbi.qqplot.single
 #'
-#' Draw the qqplot for single data
+#' Draw the qqplot for single data for idat analysis
 #'
 rnbi.qqplot.single <- function(x) {
   col = "#252525"
@@ -316,10 +399,11 @@ rnbi.qqplot.single <- function(x) {
 }
 
 
+
 ########################################################################################################################
 
 #' rnbi.qqplot.data.single
-#'
+#'  For Idat analysis
 #' convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
 #'
 rnbi.qqplot.data.single <- function(x,p = "P") {
@@ -368,6 +452,113 @@ rnbi.qqplot.data.single <- function(x,p = "P") {
   qqplot.data
 
 }
+
+########################################################################################################################
+
+#' rnbi.qqplot.single.rrbs
+#'
+#' Draw the qqplot for single data for RRBS analysis
+#'
+rnbi.qqplot.single.rrbs <- function(x) {
+  col = "#252525"
+  size = 1
+  type = 20
+  abline_col = "red"
+  abline_size = 0.5
+  abline_type = 1
+  highlight = NULL
+  highlight_color = "#00FF00"
+  xlab = "Expected -log10(p)"
+  ylab = "Observed -log10(p)"
+  title = "Q-Q Plot"
+
+
+  setnames(x, "diffmeth.p.val", "P")
+
+  qqr <- rnbi.qqplot.data.single.rrbs(x )
+
+  d2 <- qqr$data
+
+
+
+
+  #library reshape
+  #d <- melt(d2, id.vars="EXPECTED")
+
+  # plot
+  p <- ggplot2::ggplot(data = d2, ggplot2::aes_string(x = 'EXPECTED', y = 'OBSERVED',text = 'Chromosome')) +
+    geom_point() +
+    ggplot2::geom_abline(ggplot2::aes(intercept = 0, slope = 1),
+                         size = abline_size,
+                         color = abline_col,
+                         linetype = abline_type) +
+
+
+    ggplot2::labs(x = xlab,
+                  y = ylab,
+                  title = title)
+
+  p
+
+}
+
+
+
+########################################################################################################################
+
+#' rnbi.qqplot.data.single
+#'  For RRBS analysis
+#' convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
+#'
+rnbi.qqplot.data.single.rrbs <- function(x,p = "P") {
+
+  ## Make sure you have p column exists in x.
+  if (!(p %in% names(x))) stop(paste("Column", p, "not found 'x' data.frame"))
+
+  # Check for numeric p
+  if (!is.numeric(x[[p]])) stop(sprintf("p argument specified as %s but this column is not numeric in the 'x' data.frame", p))
+
+  # Check if any p are not in (0,1)
+  if (any(x[[p]]<0)) stop("Negative p-values found. These must be removed.")
+  if (any(x[[p]]>1)) stop("P-values greater than 1 found. These must be removed.")
+  if (any(is.na(x[[p]]))) stop("NA P-values found. These must be removed")
+
+  ## check if all specified annotations are in 'x' data.frame
+
+
+  # Create a new data.frame with columns called P.
+  d <- data.frame(P = x[[p]])
+
+
+
+  d[["Chromosome"]] <- x[["Chromosome"]]
+  #colnames(d)[which(colnames(d) == "CGID")] <- cgid
+
+
+
+  # sort d by decreasing p-value
+  d <- d[order(d[["P"]] ,decreasing = FALSE), , drop = FALSE]
+
+  # Observed and expected
+  d[["OBSERVED"]] <- -log10(d[["P"]])
+
+  d[["EXPECTED"]] <- -log10(stats::ppoints(length(d[["P"]])))
+
+  # droping the P column
+  d <- d[,-(1),drop=FALSE]
+
+  qqplot.data <- list(data = d)
+
+
+
+  class(qqplot.data) <- "qqplot.data"
+
+  qqplot.data
+
+}
+
+
+
 
 
 ########################################################################################################################
@@ -494,6 +685,133 @@ rnbi.qqplot.data.double <- function(x,y,
 }
 
 
+########################################################################################################################
+
+#' rnbi.qqplot.double.rrbs
+#'  For RRBS analysis
+#' draw qqplot for two analysis
+#'
+rnbi.qqplot.double.rrbs <- function(x,y) {
+  col = "#252525"
+  size = 1
+  type = 20
+  abline_col = "red"
+  abline_size = 0.5
+  abline_type = 1
+  highlight = NULL
+  highlight_color = "#00FF00"
+  xlab = "Expected -log10(p)"
+  ylab = "Observed -log10(p)"
+  title = "Q-Q Plot"
+
+
+  #   setnames(x, "diffmeth.p.val", "P")
+  #   setnames(y, "diffmeth.p.val", "P")
+
+  qqr <- rnbi.qqplot.data.double.rrbs(x,y )
+
+  d2 <- qqr$data
+
+  #   d1 <- data.frame(x = d2[['EXPECTED']], y = d2[['Analysis_1']], text = d2[['CGID_1']])
+  #   d3 <- data.frame(x = d2[['EXPECTEDQ']], y = d2[['Analysis_2']], text = d2[['CGID_2']])
+  #   #library reshape
+
+
+  # Everything on the same plot
+  p <- ggplot(d2, aes(expected,observed, col=analysis, text = chromosome)) +
+    #p <- ggplot2::ggplot(data = d2, ggplot2::aes_string(x = 'EXPECTED', y = c('Analysis_1' ,'Analysis_2' ),text = 'CGID_1')) +
+    #ggplot2::ggplot(data = d2, ggplot2::aes_string(x = 'EXPECTEDQ', y = 'Analysis_1',text = 'CGID_2')) +
+    geom_point() +
+    ggplot2::geom_abline(ggplot2::aes(intercept = 0, slope = 1),
+                         size = abline_size,
+                         color = abline_col,
+                         linetype = abline_type) +
+
+
+    ggplot2::labs(x = xlab,
+                  y = ylab,
+                  title = title)
+
+
+
+  p
+
+}
+
+########################################################################################################################
+
+#' rnbi.qqplot.data.double.rrbs
+#'  For RRBS analaysis
+#' convert the p-values of the two analysis in to an object of class qqplot.data which will be used to draw qqplot.
+#'
+rnbi.qqplot.data.double.rrbs <- function(x,y,
+                                         p = "diffmeth.p.val",
+
+                                         ...) {
+
+  x <- data.frame(P = x[[p]], Chromosome = x[["Chromosome"]])
+  y <- data.frame(P = y[[p]], Chromosome = y[["Chromosome"]])
+
+  # sort d by decreasing p-value
+  x <- x[order(x[["P"]] ,decreasing = FALSE), , drop = FALSE]
+  y <- y[order(y[["P"]] ,decreasing = FALSE), , drop = FALSE]
+
+
+  x_length = length(x[["P"]])
+
+  y_p <- y[["P"]]
+  y_p <- y_p[1: x_length]
+
+  y_chromo <- y[["Chromosome"]]
+  y_chromo <- y_chromo[1: x_length]
+
+  # Create a new data.frame with columns called P.
+  d <- data.frame(P = x[["P"]] , Q = y_p)
+
+  d[["Chromosome"]] <- x[["Chromosome"]]
+  d[["ChromosomeQ"]] <- y_chromo
+
+  # Observed and expected
+  d[["Analysis_1"]] <- -log10(d[["P"]])
+  d[["EXPECTED"]] <- -log10(stats::ppoints(length(d[["P"]]) ))
+
+  d[["Analysis_2"]] <- -log10(d[["Q"]])
+  d[["EXPECTEDQ"]] <- -log10(stats::ppoints(length(d[["Q"]])))
+
+
+  # making a customized dataframe with the columns and values needed to display in the plot
+  # using the melt function from the library reshape that allows to combine columns
+  ########################################################################################
+
+  # needed the analysis names and oberseved values
+  df1 <- data.frame(id = 1:nrow(d) , analysis1 = d[["Analysis_1"]] , analysis2 = d[["Analysis_2"]])
+  m <- melt(df1, id=c("id"))
+
+  # needed the expected values
+  df2 <- data.frame(id = 1:nrow(d) , expected1 = d[["EXPECTED"]] , expected2 = d[["EXPECTEDQ"]])
+  e <- melt(df2, id=c("id"))
+
+  x_length = length(x[["Chromosome"]])
+  y_chromo <- y[["Chromosome"]]
+  #length(y_chromo[1: x_length])
+
+  df3 <- data.frame(id = 1:nrow(d) , cgid1 = d[["Chromosome"]] , cgid2 = d[["ChromosomeQ"]])
+  f <- melt(df3, id=c("id"))
+
+
+  # final customized data frame
+  df4 <- data.frame(analysis = m$variable  , observed = m$value, expected = e$value, chromosome = f$value)
+
+  ########################################################################################
+
+
+  qqplot.data <- list(data = df4)
+
+  class(qqplot.data) <- "qqplot.data"
+
+  qqplot.data
+
+}
 
 
 
@@ -1010,33 +1328,82 @@ shinyServer(function(input, output, session) {
   observeEvent(input$select_ia,{
 
     value.modules <- reactive({as.character(input$select_ia) })
-    wd_modules <- reactive({file.path(results.dir(), value.modules()) })
 
-    if ( file.exists( isolate({ paste(wd_modules(),'analysis.log',sep="/") }) ) ){
-      #fucntion from the RnShinyBeads package
-
-
-      #Performed_Modules <-  modules_performed(wd_modules())
-      Performed_Modules <- rnbi.analysis.modules.performed(wd_modules())
-
-      modules <- unlist(Performed_Modules)
-
-      output$list_module <- renderTable({
-        DT <- data.table( Performed_Modules = modules)
-        DT
-
-      })
-
-    }
-    else{
-
+    if (as.character(input$select_ia) == 'NA')
+    {
       output$list_module <- renderTable({
         DT <- data.table(Performed_Modules = 'No file exist or no data available.')
         DT
 
       })
     }
+    else{
+      wd_modules <- reactive({file.path(results.dir(), value.modules()) })
 
+      data_type = rnbi.analysis.datatype(results.dir() , value.modules())
+
+      if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+      {
+        rrbs_analysis = FALSE
+      }
+      else{
+        rrbs_analysis = TRUE
+      }
+
+      if (rrbs_analysis == TRUE){
+
+        Performed_Modules <- rnbi.analysis.rrbs.modules.performed(wd_modules())
+
+
+        if ( length(Performed_Modules) > 0 ){
+          #fucntion from the RnShinyBeads package
+
+          modules <- unlist(Performed_Modules)
+
+          output$list_module <- renderTable({
+            DT <- data.table( Performed_Modules = modules)
+            DT
+
+          })
+
+        }
+        else{
+
+          output$list_module <- renderTable({
+            DT <- data.table(Performed_Modules = 'No file exist or no data available.')
+            DT
+
+          })
+        }
+      }
+      else{
+
+        if ( file.exists( isolate({ paste(wd_modules(),'analysis.log',sep="/") }) ) ){
+          #fucntion from the RnShinyBeads package
+
+
+          #Performed_Modules <-  modules_performed(wd_modules())
+          Performed_Modules <- rnbi.analysis.modules.performed(wd_modules())
+
+          modules <- unlist(Performed_Modules)
+
+          output$list_module <- renderTable({
+            DT <- data.table( Performed_Modules = modules)
+            DT
+
+          })
+
+        }
+        else{
+
+          output$list_module <- renderTable({
+            DT <- data.table(Performed_Modules = 'No file exist or no data available.')
+            DT
+
+          })
+        }
+      }
+    }# end of else for checking NA
   })
 
   ############################################################################################
@@ -1457,6 +1824,44 @@ shinyServer(function(input, output, session) {
   # qqplots 1 of diff methylation p- values
   ############################################################################################
 
+  output$qq.columns <- renderUI({
+    selectInput("input_qq_columns",
+                label = paste(""),
+                choices = c("diffmeth.p.val"))
+  })
+
+  output$qq.columns.equality <- renderUI({
+    selectInput("input_qq_columns_equality",
+                label = paste(""),
+                choices = c(">","<", ">=","<=","all"))
+  })
+
+  output$qq.columns.range <- renderUI({
+    selectInput("input_qq_columns_range",
+                label = paste(""),
+                choices = c("0.01","0.1", "0.05","0.5","0","1"))
+  })
+
+
+  output$qq.multi.columns <- renderUI({
+    selectInput("input_qq_multi_columns",
+                label = paste(""),
+                choices = c("diffmeth.p.val"))
+  })
+
+  output$qq.multi.columns.equality <- renderUI({
+    selectInput("input_qq_multi_columns_equality",
+                label = paste(""),
+                choices = c(">","<", ">=","<=","all"))
+  })
+
+  output$qq.multi.columns.range <- renderUI({
+    selectInput("input_qq_multi_columns_range",
+                label = paste(""),
+                choices = c("0.01","0.1", "0.05","0.5","0","1"))
+  })
+
+
   # returns the index of selected comparison file in QQplot 1
   index_list <- eventReactive(input$input_dmcomp_files, {
 
@@ -1524,7 +1929,25 @@ shinyServer(function(input, output, session) {
 
       qq.dir <- file.path(results.dir(), qq.value)
 
-      f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+
+      data_type = rnbi.analysis.datatype(results.dir() , qq.value)
+
+      if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+      {
+        rrbs_analysis = FALSE
+      }
+      else{
+        rrbs_analysis = TRUE
+      }
+
+      if (rrbs_analysis == TRUE)
+      {
+
+        f = paste("diffMethTable_site_cmp",index_list(), ".csv.gz",sep = '')
+      }
+      else{
+        f = paste("diffMethTable_site_cmp",index_list(), ".csv",sep = '')
+      }
 
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) )
       {
@@ -1534,18 +1957,6 @@ shinyServer(function(input, output, session) {
 
         progress$set(message = "Making QQ Plot", value = 50)
 
-        #y <- dist(ppoints(length(list.pvalues())))
-        #qqline(y,list.pvalues())
-        #qq(gwasResults$P, main = "Q-Q plot of GWAS p-values")
-
-        #qqman.qq(list.pvalues(),main="Q-Q plot of p-values")
-
-        #qqplot(y,list.pvalues(),main=input$dist,xlab="Theoretical Quantile", ylab="diffmeth.p.val")
-
-        ##from package lattice
-
-        #qqunif.plot(list.pvalues())
-
         filename <- file.path(qq.dir, 'differential_methylation_data',f)
 
 
@@ -1553,24 +1964,127 @@ shinyServer(function(input, output, session) {
 
         nrows.value <- as.integer(input$input_qqplot_readtop)
 
+        column_selected = as.character(input$input_qq_columns)
+        equality = as.character(input$input_qq_columns_equality)
+        range_selected = as.numeric(input$input_qq_columns_range)
 
 
+        if (rrbs_analysis == TRUE)
+        {
+          # fread function from the library data.table
+          comp.file <- fread(input = paste('zcat < ',filename,sep = ''),sep = ",", select = c("Chromosome","diffmeth.p.val"))
 
-        # fread function from the library data.table
-        comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val","diffmeth.p.adj.fdr"), nrows = nrows.value)
+          if(column_selected == "diffmeth.p.val"){
+            colselected <- comp.file$diffmeth.p.val
+          }
+          else{
+            colselected <- comp.file$diffmeth.p.val
+          }
 
+          # filtering the dataframe
 
-        if (nrows.value == -1){
-          nrows.value = 20000
+          if(equality == ">="){
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file[colselected > range_selected,]
+
+          }
+          else if(equality == ">"){
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file[colselected > range_selected,]
+
+          }
+          else if(equality == "<="){
+
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file[colselected <= range_selected,]
+
+          }
+          else if(equality == "<"){
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file[colselected < range_selected,]
+
+          }
+
+          else {
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file
+
+          }
+
+          comp.file <- filtered.dataset
         }
-        else if (nrows.value > 20000){
-          nrows.value = 20000
+        else{
+          # fread function from the library data.table
+          comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val"))
+
+          if(column_selected == "diffmeth.p.val"){
+            colselected <- comp.file$diffmeth.p.val
+          }
+          else{
+            colselected <- comp.file$diffmeth.p.val
+          }
+
+          # filtering the dataframe
+
+          if(equality == ">="){
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file[colselected >= range_selected,]
+
+          }
+          else if(equality == ">"){
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file[colselected > range_selected,]
+
+          }
+          else if(equality == "<="){
+
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file[colselected <= range_selected,]
+
+          }
+          else if(equality == "<"){
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file[colselected < range_selected,]
+
+          }
+
+          else {
+            original.dataset <- comp.file
+            filtered.dataset <- comp.file
+
+          }
+
+          comp.file <- filtered.dataset
         }
+
+
+        if (length(comp.file$diffmeth.p.val) < nrows.value){
+          nrows.value = length(comp.file$diffmeth.p.val)
+        }
+
+
 
 
         comp.file <- data.frame(comp.file[1:nrows.value,])
 
-        q <- rnbi.qqplot.single (comp.file)
+        if (rrbs_analysis == TRUE)
+        {
+
+          #remove NA columns rows
+
+          completeFun <- function(data, desiredCols) {
+            completeVec <- complete.cases(data[, desiredCols])
+            return(data[completeVec, ])
+          }
+
+          filtered.comp.file <- completeFun(comp.file, "diffmeth.p.val")
+
+          q <- rnbi.qqplot.single.rrbs(filtered.comp.file)
+        }
+        else{
+          q <- rnbi.qqplot.single(comp.file)
+        }
+
 
         p <- plotly::ggplotly(q)
 
@@ -1835,38 +2349,155 @@ output$testingcompqqplot <- renderPlot({
     else{
       #fucntion from the RnShinyBeads package
 
-      #index_list() contains the index of the selected file ffrom the dropdown
-      f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
+      data_type = rnbi.analysis.datatype(results.dir() , qq.value)
+
+      if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+      {
+        rrbs_analysis = FALSE
+      }
+      else{
+        rrbs_analysis = TRUE
+      }
+
+      if (rrbs_analysis == TRUE)
+      {
+
+        f = paste("diffMethTable_site_cmp",index_list_1(), ".csv.gz",sep = '')
+      }
+      else{
+        f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
+      }
+
 
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
-        # Create a Progress object
-#         progress <- shiny::Progress$new()
-#
-#         progress$set(message = "Making QQ Plot", value = 50)
-
-        #x <- comparison_plot(qq.dir , f)
 
         filename <- file.path(qq.dir, 'differential_methylation_data',f)
         filename= as.character(filename)
         nrows.value <- as.integer(input$input_multiqqplot_readtop)
 
 
-        comp.file <- fread(filename,sep = ",", select = c("cgid","diffmeth.p.val"), nrows = nrows.value)
+
+        column_selected = as.character(input$input_qq_multi_columns)
+        equality = as.character(input$input_qq_multi_columns_equality)
+        range_selected = as.numeric(input$input_qq_multi_columns_range)
+
+        if (rrbs_analysis == TRUE)
+        {
+          # fread function from the library data.table
+          comp.file <- fread(input = paste('zcat < ',filename,sep = ''),sep = ",", select = c("Chromosome","diffmeth.p.val"))
+          original.dataset <- comp.file
+
+          if(column_selected == "diffmeth.p.val"){
+            colselected <- comp.file$diffmeth.p.val
+          }
+          else{
+            colselected <- comp.file$diffmeth.p.val
+          }
+
+          # filtering the dataframe
+
+          if(equality == ">="){
+
+            filtered.dataset <- comp.file[colselected >= range_selected,]
+
+          }
+          else if(equality == ">"){
+
+            filtered.dataset <- comp.file[colselected > range_selected,]
+
+          }
+          else if(equality == "<="){
 
 
-        if (nrows.value == -1){
-          nrows.value = 100
+            filtered.dataset <- comp.file[colselected <= range_selected,]
+
+          }
+          else if(equality == "<"){
+
+            filtered.dataset <- comp.file[colselected < range_selected,]
+
+          }
+
+          else {
+
+            filtered.dataset <- comp.file
+
+          }
+
+          comp.file <- filtered.dataset
         }
-        else if (nrows.value > 1000){
-          nrows.value = 1000
+        else{
+          # fread function from the library data.table
+          comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val"))
+          original.dataset <- comp.file
+
+          if(column_selected == "diffmeth.p.val"){
+            colselected <- comp.file$diffmeth.p.val
+          }
+          else{
+            colselected <- comp.file$diffmeth.p.val
+          }
+
+          # filtering the dataframe
+
+          if(equality == ">="){
+
+            filtered.dataset <- comp.file[colselected >= range_selected,]
+
+          }
+          else if(equality == ">"){
+
+            filtered.dataset <- comp.file[colselected > range_selected,]
+
+          }
+          else if(equality == "<="){
+
+
+            filtered.dataset <- comp.file[colselected <= range_selected,]
+
+          }
+          else if(equality == "<"){
+
+            filtered.dataset <- comp.file[colselected < range_selected,]
+
+          }
+
+          else {
+
+            filtered.dataset <- comp.file
+
+          }
+
+          comp.file <- filtered.dataset
         }
 
+
+        if (length(comp.file$diffmeth.p.val) < nrows.value){
+          nrows.value = length(comp.file$diffmeth.p.val)
+        }
 
 
         comp.file <- data.frame(comp.file[1:nrows.value,])
-        x <- comp.file
 
+        if (rrbs_analysis == TRUE)
+        {
+
+          #remove NA columns rows
+
+          completeFun <- function(data, desiredCols) {
+            completeVec <- complete.cases(data[, desiredCols])
+            return(data[completeVec, ])
+          }
+
+          filtered.comp.file <- completeFun(comp.file, "diffmeth.p.val")
+
+          x <- filtered.comp.file
+        }
+        else{
+
+          x <- comp.file
+        }
 
         # Make sure it closes when we exit this reactive, even if there's an error
         #on.exit(progress$close())
@@ -2033,38 +2664,157 @@ output$testingcompqqplot <- renderPlot({
     }
     else{
       #fucntion from the RnShinyBeads package
+      data_type = rnbi.analysis.datatype(results.dir() , qq.value)
 
-      #index_list() contains the index of the selected file ffrom the dropdown
-      f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
+      if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+      {
+        rrbs_analysis = FALSE
+      }
+      else{
+        rrbs_analysis = TRUE
+      }
+
+      if (rrbs_analysis == TRUE)
+      {
+
+        f = paste("diffMethTable_site_cmp",index_list_2(), ".csv.gz",sep = '')
+      }
+      else{
+        f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
+      }
+
 
       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
-        # Create a Progress object
-        #progress <- shiny::Progress$new()
-
-        #progress$set(message = "Making QQ Plot", value = 50)
-
-        #x <- comparison_plot(qq.dir , f)
 
         filename <- file.path(qq.dir, 'differential_methylation_data',f)
         filename= as.character(filename)
         nrows.value <- as.integer(input$input_multiqqplot_readtop)
 
-        comp.file <- fread(filename,sep = ",", select = c("cgid","diffmeth.p.val") , nrows = nrows.value )
 
-        if (nrows.value == -1){
-          nrows.value = 100
+        column_selected = as.character(input$input_qq_multi_columns)
+        equality = as.character(input$input_qq_multi_columns_equality)
+        range_selected = as.numeric(input$input_qq_multi_columns_range)
+
+
+        if (rrbs_analysis == TRUE)
+        {
+          # fread function from the library data.table
+          comp.file <- fread(input = paste('zcat < ',filename,sep = ''),sep = ",", select = c("Chromosome","diffmeth.p.val"))
+          original.dataset <- comp.file
+
+          if(column_selected == "diffmeth.p.val"){
+            colselected <- comp.file$diffmeth.p.val
+          }
+          else{
+            colselected <- comp.file$diffmeth.p.val
+          }
+
+          # filtering the dataframe
+
+          if(equality == ">="){
+
+            filtered.dataset <- comp.file[colselected >= range_selected,]
+
+          }
+          else if(equality == ">"){
+
+            filtered.dataset <- comp.file[colselected > range_selected,]
+
+          }
+          else if(equality == "<="){
+
+
+            filtered.dataset <- comp.file[colselected <= range_selected,]
+
+          }
+          else if(equality == "<"){
+
+            filtered.dataset <- comp.file[colselected < range_selected,]
+
+          }
+
+          else {
+
+            filtered.dataset <- comp.file
+
+          }
+
+          comp.file <- filtered.dataset
         }
-        else if (nrows.value > 1000){
-          nrows.value = 1000
+        else{
+          # fread function from the library data.table
+          comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val"))
+          original.dataset <- comp.file
+
+          if(column_selected == "diffmeth.p.val"){
+            colselected <- comp.file$diffmeth.p.val
+          }
+          else{
+            colselected <- comp.file$diffmeth.p.val
+          }
+
+          # filtering the dataframe
+
+          if(equality == ">="){
+
+            filtered.dataset <- comp.file[colselected >= range_selected,]
+
+          }
+          else if(equality == ">"){
+
+            filtered.dataset <- comp.file[colselected > range_selected,]
+
+          }
+          else if(equality == "<="){
+
+
+            filtered.dataset <- comp.file[colselected <= range_selected,]
+
+          }
+          else if(equality == "<"){
+
+            filtered.dataset <- comp.file[colselected < range_selected,]
+
+          }
+
+          else {
+
+            filtered.dataset <- comp.file
+
+          }
+
+          comp.file <- filtered.dataset
+        }
+
+
+        if (length(comp.file$diffmeth.p.val) < nrows.value){
+          nrows.value = length(comp.file$diffmeth.p.val)
         }
 
 
         comp.file <- data.frame(comp.file[1:nrows.value,])
-        y <- comp.file
+
+        if (rrbs_analysis == TRUE)
+        {
+
+          #remove NA columns rows
+
+          completeFun <- function(data, desiredCols) {
+            completeVec <- complete.cases(data[, desiredCols])
+            return(data[completeVec, ])
+          }
+
+          filtered.comp.file <- completeFun(comp.file, "diffmeth.p.val")
 
 
+          y <- filtered.comp.file
+        }
+        else{
 
+
+          y <- comp.file
+        }
 
         # Make sure it closes when we exit this reactive, even if there's an error
         #on.exit(progress$close())
@@ -2186,34 +2936,109 @@ output$testingcompqqplot <- renderPlot({
 
           progress$set(message = "Making selected analysis QQ Plot", value = 50)
 
-          #x<- list.pvalues_1()
 
-          #my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
-          #q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
           pdf(NULL)
-#           q <- qqly(x, col = "#6087ea", size = 1, type = 20, abline_col = "pink",
-#                     abline_size = 0.5, abline_type = 1, highlight = NULL,
-#                     highlight_color = "#00FF00", xlab = "Expected -log10(p) (uniform distribution)",
-#                     ylab = "Observed -log10(p)", title = "")
-
-
 
           x <- list.pvalues_1()
           y <- list.pvalues_2()
 
-          p <- rnbi.qqplot.double(x,y)
+          a1.value <- as.character(input$input_dmcomp_choices_1)
+          a2.value <- as.character(input$input_dmcomp_choices_2)
 
-          q <- plotly::ggplotly(p)
+          #fucntion from the RnShinyBeads package
+          data_type1 = rnbi.analysis.datatype(results.dir() , a1.value)
+
+          if (grepl('idat files' , data_type1 )) # true if idat files is the data type of the analysis in the string data_type
+          {
+            rrbs_analysis1 = FALSE
+          }
+          else{
+            rrbs_analysis1 = TRUE
+          }
+
+          data_type2 = rnbi.analysis.datatype(results.dir() , a2.value)
+
+          if (grepl('idat files' , data_type2 )) # true if idat files is the data type of the analysis in the string data_type
+          {
+            rrbs_analysis2 = FALSE
+          }
+          else{
+            rrbs_analysis2 = TRUE
+          }
+
+
+          if (rrbs_analysis1 == TRUE && rrbs_analysis2 == TRUE)
+          {
+
+            if(length(list.pvalues_1()) != length(list.pvalues_2())){
+              Primates <- c('Could not draw qqplot! Please try again')
+              Bodywt <- c(0.5 )
+              Brainwt <- c(0.5)
+
+              data <- data.frame(Primates, Bodywt, Brainwt)
+
+              pdf(NULL)
+              q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                           mode = 'text', text = ~Primates, textposition = 'middle center',
+                           textfont = list(color = '#000000', size = 16))%>%
+                layout(title = 'Q-Q Plot',
+                       xaxis = list(title = ')',
+                                    zeroline = TRUE,
+                                    range = c(0, 1)),
+                       yaxis = list(title = '',
+                                    range = c(0,1)))
+
+
+              dev.off()
+
+              q
+            }
+            else{
+              p <- rnbi.qqplot.double.rrbs(x,y)
+              q <- plotly::ggplotly(p)
+            }
+
+          }
+          else if (rrbs_analysis1 == FALSE && rrbs_analysis2 == FALSE){
+
+            p <- rnbi.qqplot.double(x,y)
+            q <- plotly::ggplotly(p)
+          }
+          else{
+
+            Primates <- c('Please select the same analysis i.e. both either IDAT analysis or RRBS analysis')
+            Bodywt <- c(0.5 )
+            Brainwt <- c(0.5)
+
+            data <- data.frame(Primates, Bodywt, Brainwt)
+
+            pdf(NULL)
+            q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                         mode = 'text', text = ~Primates, textposition = 'middle center',
+                         textfont = list(color = '#000000', size = 16))%>%
+              layout(title = 'Q-Q Plot',
+                     xaxis = list(title = ')',
+                                  zeroline = TRUE,
+                                  range = c(0, 1)),
+                     yaxis = list(title = '',
+                                  range = c(0,1)))
+
+
+            dev.off()
+
+            q
+
+          }
+
+
+
+
 
           output$info.qqplot2 <- renderUI({
 
             HTML(paste("'<p>QQplot is generated from the diffmeth.p.values of the comparisons selected above for the two analysis.</p> <br/ > <p><b>diffmeth.p.val:</b> p-value obtained from a two-sided Welch t-test or alternatively from linear models employed in the limma package (which type of p-value is computed is specified in the differential.site.test.method option). In case of paired analysis, the paired Student's t-test is applied.",'</p>',sep=""))
 
           })
-
-          qqr <- rnbi.qqplot.data.double(x,y )
-
-          d2 <- qqr$data
 
 
           dev.off()
@@ -2398,7 +3223,8 @@ output$testingcompqqplot <- renderPlot({
           return()
         }
 
-        else {
+        else
+        {
 
 
             checkDisplay$data2 <- FALSE
@@ -2411,83 +3237,170 @@ output$testingcompqqplot <- renderPlot({
             if (qq.value == "" || qq.value == "NA"){
               dataset <- data.table( data = "No data available.")
             }
-            else{
+            else
+            {
 
 
+              data_type = rnbi.analysis.datatype(results.dir() , qq.value)
 
-              #index_list() contains the index of the selected file ffrom the dropdown
-              f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
-
-              if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-                # Create a Progress object
-                progress <- shiny::Progress$new()
-
-                progress$set(message = "Reading data! please wait...", value = 50)
-
-
-                filename <- file.path(qq.dir, 'differential_methylation_data',f)
-
-
-                filename= as.character(filename)
-
-                nrows.value <- as.character(input$input_tablebrowser_readtop)
-
-                if (nrows.value == 'ALL'){
-                  nrows.value = -1
-                }
-
-                # fread function from the library data.table
-                comp.file <- fread(filename,sep = ",", nrows = nrows.value )
-                #comp.file <- fread(filename,sep = ",")
-
-                comp.file <- as.data.frame(comp.file)
-
-
-
-                updateSelectInput(session, "input_tablebrowser_x_axis",
-                                  label = paste("Select x-axis:"),
-                                  choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
-
-                updateSelectInput(session, "input_tablebrowser_y_axis",
-                                  label = paste("Select y-axis:"),
-                                  choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
-
-                #comp.file <- sprintf("%.3f", names(comp.file[,6:ncol(comp.file)]))
-                comp.file <- rapply(object = comp.file, f = round, classes = "numeric", how = "replace", digits = 3)
-                dataset <- data.table( comp.file)
-                #%>% formatRound(columns =c('mean.diff'), digits= 3)
-
-
-                inFile <- input$file1
-
-                if (!is.null(inFile)){
-                  input.file <- fread(inFile$datapath, header = input$header,
-                                      sep = input$sep)
-
-                  dataset <- merge(dataset, input.file, by.x="cgid", by.y="cgid", all.x="TRUE")
-
-                }
-
-
-
-
-
-                # Make sure it closes when we exit this reactive, even if there's an error
-                on.exit(progress$close())
-
-                dataset
+              if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+              {
+                rrbs_analysis = FALSE
               }
               else{
-                dataset <- data.table( data = "No data available.")
+                rrbs_analysis = TRUE
               }
-            }
+
+              if (rrbs_analysis == TRUE)
+              {
+
+
+                #index() contains the index of the selected file ffrom the dropdown
+                f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv.gz",sep = '')
+
+                if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+                  # Create a Progress object
+                  progress <- shiny::Progress$new()
+
+                  progress$set(message = "Reading data! please wait...", value = 50)
+
+
+                  filename=file.path(qq.dir, 'differential_methylation_data',f)
+
+                  filename= as.character(filename)
+
+                  nrows.value <- as.character(input$input_tablebrowser_readtop)
+
+                  if (nrows.value == 'ALL'){
+                    nrows.value = -1
+                  }
+
+                  # fread function from the library data.table
+                  comp.file <- fread(input = paste('zcat < ',filename,sep = ''), nrows = nrows.value )
+
+                  comp.file <- as.data.frame(comp.file)
+
+                  updateSelectInput(session, "input_tablebrowser_x_axis",
+                                    label = paste("Select x-axis:"),
+                                    choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
+
+                  updateSelectInput(session, "input_tablebrowser_y_axis",
+                                    label = paste("Select y-axis:"),
+                                    choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
+
+                  #comp.file <- sprintf("%.3f", names(comp.file[,6:ncol(comp.file)]))
+                  comp.file <- rapply(object = comp.file, f = round, classes = "numeric", how = "replace", digits = 3)
+                  dataset <- data.table( comp.file)
+                  #%>% formatRound(columns =c('mean.diff'), digits= 3)
+
+
+                  inFile <- input$file1
+
+                  if (!is.null(inFile)){
+                    input.file <- fread(inFile$datapath, header = input$header,
+                                        sep = input$sep)
+
+                    dataset <- merge(dataset, input.file, by.x="cgid", by.y="cgid", all.x="TRUE")
+
+                  }
 
 
 
 
 
-            dataset
+                  # Make sure it closes when we exit this reactive, even if there's an error
+                  on.exit(progress$close())
+
+                  dataset
+
+
+
+                }
+
+                else{
+                  dataset <- data.table( data = "No data available.")
+                }
+
+
+
+
+
+              }
+              else{
+
+                #index() contains the index of the selected file ffrom the dropdown
+                f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
+
+                if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+                  # Create a Progress object
+                  progress <- shiny::Progress$new()
+
+                  progress$set(message = "Reading data! please wait...", value = 50)
+
+
+                  filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+                  filename= as.character(filename)
+
+                  nrows.value <- as.character(input$input_tablebrowser_readtop)
+
+                  if (nrows.value == 'ALL'){
+                    nrows.value = -1
+                  }
+
+                  # fread function from the library data.table
+                  comp.file <- fread(filename,sep = ",", nrows = nrows.value )
+                  #comp.file <- fread(filename,sep = ",")
+
+                  comp.file <- as.data.frame(comp.file)
+
+                  updateSelectInput(session, "input_tablebrowser_x_axis",
+                                    label = paste("Select x-axis:"),
+                                    choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
+
+                  updateSelectInput(session, "input_tablebrowser_y_axis",
+                                    label = paste("Select y-axis:"),
+                                    choices = as.character(as.vector(names(comp.file[,6:ncol(comp.file)]))))
+
+                  #comp.file <- sprintf("%.3f", names(comp.file[,6:ncol(comp.file)]))
+                  comp.file <- rapply(object = comp.file, f = round, classes = "numeric", how = "replace", digits = 3)
+                  dataset <- data.table( comp.file)
+                  #%>% formatRound(columns =c('mean.diff'), digits= 3)
+
+
+                  inFile <- input$file1
+
+                  if (!is.null(inFile)){
+                    input.file <- fread(inFile$datapath, header = input$header,
+                                        sep = input$sep)
+
+                    dataset <- merge(dataset, input.file, by.x="cgid", by.y="cgid", all.x="TRUE")
+
+                  }
+
+
+
+
+
+                  # Make sure it closes when we exit this reactive, even if there's an error
+                  on.exit(progress$close())
+
+                  dataset
+
+                }
+
+                else{
+                  dataset <- data.table( data = "No data available.")
+                }
+
+              }
+
+
+          }
+          dataset
 
         }
 
@@ -2645,9 +3558,23 @@ output$testingcompqqplot <- renderPlot({
             else{
 
 
+              data_type = rnbi.analysis.datatype(results.dir() , qq.value)
 
-              #index_list() contains the index of the selected file ffrom the dropdown
-              f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
+              if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+              {
+                rrbs_analysis = FALSE
+              }
+              else{
+                rrbs_analysis = TRUE
+              }
+
+              if (rrbs_analysis == TRUE){
+                f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv.gz",sep = '')
+              }
+              else{
+                f = paste("diffMethTable_site_cmp",comp.file.index(), ".csv",sep = '')
+
+              }
 
               if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
 
@@ -2662,47 +3589,117 @@ output$testingcompqqplot <- renderPlot({
 
                 filename= as.character(filename)
 
-                # fread function from the library data.table
-                comp.file <- fread(filename,sep = ",")
-                #comp.file <- fread(filename,sep = ",")
+                nrows.value <- as.character(input$input_tablebrowser_readtop)
+
+                if (nrows.value == 'ALL'){
+                  nrows.value = -1
+                }
+
+
+                if (rrbs_analysis == TRUE){
+
+                  comp.file <- fread(input = paste('zcat < ',filename,sep = ''), nrows = nrows.value )
+
+
+                }
+                else{
+                  # fread function from the library data.table
+                  comp.file <- fread(filename, nrows = nrows.value)
+                  #comp.file <- fread(filename,sep = ",")
+
+                }
+
+
+
 
                 comp.file <- as.data.frame(comp.file)
 
 
                 filtered <- comp.file[filtered_data, , drop = FALSE]
+
+#               remove NA columns rows
+
+#                 completeFun <- function(data, desiredCols) {
+#                   completeVec <- complete.cases(data[, desiredCols])
+#                   return(data[completeVec, ])
+#                 }
+#
+#                 filtered <- completeFun(filtered, c(input$input_tablebrowser_x_axis, input$input_tablebrowser_y_axis))
+#
+
                 key <- colnames(comp.file) <- names(comp.file)
                 print(key)
 
                 pdf(NULL)
-                p <- plot_ly(filtered,
-                             type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
-                             x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
-                             y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
-                             #name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
-                             marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
-                               color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
-                             )) %>%
 
-                  add_trace(filtered,
-                            x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
-                            y = ~filtered[,c(input$input_tablebrowser_y_axis)],
-                            text = ~filtered[["cgid"]]
-#                             mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
-#                             line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
-#                               color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
-#                               dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
-#                             ),
+                if (rrbs_analysis == TRUE){
 
-                  ) %>%
+                  p <- plot_ly(filtered,
+                               type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
+                               x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                               y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
+                               #name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
+                               marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
+                                 color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
+                               )) %>%
 
-                  layout(                        # all of layout's properties: /r/reference/#layout
-                    title = "Plot", # layout's title: /r/reference/#layout-title
-                    xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
-                      title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
-                      showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
-                    yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
-                      title = input$input_tablebrowser_y_axis)     # yaxis's title: /r/reference/#layout-yaxis-title
-                  )
+                    add_trace(filtered,
+                              x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                              y = ~filtered[,c(input$input_tablebrowser_y_axis)],
+                              text = ~filtered[["Chromosome"]]
+                              #                             mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
+                              #                             line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
+                              #                               color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
+                              #                               dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
+                              #                             ),
+
+                    ) %>%
+
+                    layout(                        # all of layout's properties: /r/reference/#layout
+                      title = "Plot", # layout's title: /r/reference/#layout-title
+                      xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
+                        title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
+                        showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
+                      yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
+                        title = input$input_tablebrowser_y_axis)     # yaxis's title: /r/reference/#layout-yaxis-title
+                    )
+
+
+
+                }
+                else{
+                  p <- plot_ly(filtered,
+                               type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
+                               x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                               y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
+                               #name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
+                               marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
+                                 color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
+                               )) %>%
+
+                    add_trace(filtered,
+                              x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                              y = ~filtered[,c(input$input_tablebrowser_y_axis)],
+                              text = ~filtered[["cgid"]]
+                              #                             mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
+                              #                             line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
+                              #                               color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
+                              #                               dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
+                              #                             ),
+
+                    ) %>%
+
+                    layout(                        # all of layout's properties: /r/reference/#layout
+                      title = "Plot", # layout's title: /r/reference/#layout-title
+                      xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
+                        title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
+                        showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
+                      yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
+                        title = input$input_tablebrowser_y_axis)     # yaxis's title: /r/reference/#layout-yaxis-title
+                    )
+
+
+                }
 
                 # Make sure it closes when we exit this reactive, even if there's an error
                 on.exit(progress$close())
