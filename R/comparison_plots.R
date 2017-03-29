@@ -1,4 +1,4 @@
-#' RnBeads modules performed
+#' RnBeads
 #'
 #' Takes in a working directory and csv file name and returns a list of differential methylation p values from the comparisons csv files located in differential_methylation_data dir of Rnbeads Analysis
 #' @param wd path to the rnbeads results directory where csv files are located and name of csv file

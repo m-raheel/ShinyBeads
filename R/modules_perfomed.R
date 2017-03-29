@@ -6,13 +6,17 @@
 #' @export
 
 
-modules_performed <- function(wd) {
+########################################################################################################################
+
+#' rnbi.analysis.modules.performed
+#'
+#' return the list of RnBeads Modules performed on the selected analysis
+#'
+rnbi.analysis.modules.performed <- function(wd) {
 
 
-
+  # if analysis log file is peresent than searching the file for the completed modules
   if ( file.exists( isolate({ paste(wd,'analysis.log',sep="/") }) ) ){
-
-
 
     resulting.modules.list <- list()
     module.counter <- 1
@@ -41,7 +45,7 @@ modules_performed <- function(wd) {
       }
 
       if (count == 0) {
-        break
+
       }
       else{
         performed_modules <- i
@@ -70,3 +74,60 @@ modules_performed <- function(wd) {
   }
 
 }
+
+
+########################################################################################################################
+
+#' rnbi.analysis.rrbs.modules.performed
+#'
+#' return the list of RnBeads Modules performed on the selected analysis
+#'
+rnbi.analysis.rrbs.modules.performed <- function(wd) {
+
+  resulting.modules.list <- list()
+  module.counter <- 1
+
+  display_vectors <- c('Data Import', 'Quality Control', 'Preprocessing', 'Tracks and Tables','Covariate Inference','Exploratory Analysis','Differential Methylation')
+
+  # if analysis log file is peresent than searching the file for the completed modules
+  if ( file.exists( isolate({ paste(wd,'data_import.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[1]
+    module.counter <- module.counter + 1
+  }
+
+  if ( file.exists( isolate({ paste(wd,'quality_control.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[2]
+    module.counter <- module.counter + 1
+  }
+
+  if ( file.exists( isolate({ paste(wd,'preprocessing.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[3]
+    module.counter <- module.counter + 1
+  }
+
+  if ( file.exists( isolate({ paste(wd,'tracks_and_tables.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[4]
+    module.counter <- module.counter + 1
+  }
+
+  if ( file.exists( isolate({ paste(wd,'exploratory_analysis.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[6]
+    module.counter <- module.counter + 1
+  }
+  if ( file.exists( isolate({ paste(wd,'differential_methylation.html',sep="/") }) ) ){
+
+    resulting.modules.list[module.counter] <- display_vectors[7]
+    module.counter <- module.counter + 1
+  }
+
+
+  return(resulting.modules.list)
+
+}
+
+
