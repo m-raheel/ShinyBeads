@@ -1,4 +1,4 @@
-#' RnBeads modules performed
+#' rnbi.analysis.modules.performed
 #'
 #' Takes in a working directory and returns a list of rnbeads modules performed
 #' @param wd path to the rnbeads results directory where analysis.log file is located
@@ -6,12 +6,6 @@
 #' @export
 
 
-########################################################################################################################
-
-#' rnbi.analysis.modules.performed
-#'
-#' return the list of RnBeads Modules performed on the selected analysis
-#'
 rnbi.analysis.modules.performed <- function(wd) {
 
 
@@ -76,12 +70,13 @@ rnbi.analysis.modules.performed <- function(wd) {
 }
 
 
-########################################################################################################################
-
 #' rnbi.analysis.rrbs.modules.performed
 #'
-#' return the list of RnBeads Modules performed on the selected analysis
-#'
+#' Takes in a working directory and returns a list of rnbeads modules performed for RRBS analysis
+#' @param wd path to the rnbeads results directory where index.html file is located
+#' @return list of rnbeads modules performed
+#' @export
+
 rnbi.analysis.rrbs.modules.performed <- function(wd) {
 
   resulting.modules.list <- list()

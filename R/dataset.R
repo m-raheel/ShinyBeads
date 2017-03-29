@@ -1,5 +1,9 @@
 #' All Datasets List used in RnBeads Analysis
 #'
+#' rnbi.dataset
+#'
+#' return the list of datasets/sample sheet used in the RnBeads analysis found in the given path
+#'
 #' Takes in a results directory and returns the list of total common and uncommon datasets/sample sheet used in the RnBeads analysis found in the given path
 #' @param rd A path to the rnbeads analysis folder
 #' @return list of common and uncommon datasets index
@@ -9,10 +13,7 @@
 
 ########################################################################################################################
 
-#' rnbi.dataset
-#'
-#' return the list of datasets/sample sheet used in the RnBeads analysis found in the given path
-#'
+
 
 rnbi.dataset <- function(rd) {
 

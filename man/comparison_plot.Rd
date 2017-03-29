@@ -2,7 +2,7 @@
 % Please edit documentation in R/comparison_plots.R
 \name{comparison_plot}
 \alias{comparison_plot}
-\title{RnBeads modules performed}
+\title{RnBeads}
 \usage{
 comparison_plot(wd, f)
 }

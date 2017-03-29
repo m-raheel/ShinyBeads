@@ -1,4 +1,5 @@
-#' RnBeads Analysis found
+#' rnbi.total.analysis
+#' return the list of RnBeads analysis found in the given path
 #'
 #' Takes in a results directory and returns a list of analysis found in that directories
 #' @param wd A path to the rnbeads analysis folder
@@ -6,11 +7,6 @@
 #' @export
 
 
-########################################################################################################################
-#' rnbi.total.analysis
-#'
-#' return the list of RnBeads analysis found in the given path
-#'
 rnbi.total.analysis <- function(wd) {
 
   choices <- list.files(path = wd)

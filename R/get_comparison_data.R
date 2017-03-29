@@ -1,18 +1,18 @@
 #' Get differential methylation data comparison file data
 #'
+#' rnbi.read.comparisondata
 #' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the results.
-#' @param qq.value The analysis name, qq.dir analysis path, comp.index the comparison file index (e.g. 1,2,3..), topRows reading top n rows, columnSelected which column to read the data
+#' @param qq.value The analysis name
+#' @param qq.dir analysis path
+#' @param comp.index the comparison file index (e.g. 1,2,3..)
+#' @param columnSelected which column to read the data
+#' @param topRows  reading top n rows
 #' @return dataframe of the data read from csv file
 #' @export
 
 
 
-#########################################################################################################################
 
-#' rnbi.read.comparisondata
-#'
-#' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the results.
-#'
 rnbi.read.comparisondata <- function(qq.value, qq.dir , comp.index , topRows, columnSelected) {
 
   if (qq.value == "" || qq.value == "NA"){
@@ -50,12 +50,19 @@ rnbi.read.comparisondata <- function(qq.value, qq.dir , comp.index , topRows, co
 
 }
 
-#########################################################################################################################
-
 #' rnbi.read.comparisondata.rrbs
-#'
 #' Reads the rrbs comparison csv file under differential_methylation_data folder of the selected analysis and returns the results.
-#'
+#' @param qq.value The analysis name
+#' @param qq.dir analysis path
+#' @param comp.index the comparison file index (e.g. 1,2,3..)
+#' @param columnSelected which column to read the data
+#' @param topRows  reading top n rows
+#' @param results.dir absolute path to the analysis folder
+#' @return dataframe of the data read from csv file
+#' @export
+
+
+
 rnbi.read.comparisondata.rrbs <- function(qq.value, qq.dir , comp.index , topRows, columnSelected , results.dir) {
 
   if (qq.value == "" || qq.value == "NA"){
@@ -120,14 +127,18 @@ rnbi.read.comparisondata.rrbs <- function(qq.value, qq.dir , comp.index , topRow
 
 }
 
-
-########################################################################################################################
-# For Top scorer tab
-
 #' rnbi.read.comparisondatalogical
 #'
 #' Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the Logical (True, False) results used for Venn Diagram purpose.
-#'
+#' @param dataset dataframe of differential methylation comparison data,
+#' @param column column selected from the interface to read the data
+#' @param equality the assignment operator selected form the interface
+#' @param range range of value selected from the interface
+#' @return dataframe of the data read from csv file
+#' @export
+
+
+
 rnbi.read.comparisondatalogical <- function(dataset, column ,equality,range ) {
 
   print("inside the get logical data colums")
@@ -146,7 +157,6 @@ rnbi.read.comparisondatalogical <- function(dataset, column ,equality,range ) {
   print(d)
   return(d)
 }
-
 
 
 

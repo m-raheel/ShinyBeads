@@ -1,18 +1,12 @@
-#' Draw qqplots
-#'
-#' Takes in a results directory and returns a list of analysis found in that directories
-#' @param wd A path to the rnbeads analysis folder
-#' @return list of analysis found
-#' @export
-
-
-
-########################################################################################################################
 
 #' rnbi.qqplot.single
 #'
 #' Draw the qqplot for single data for idat analysis
-#'
+#' Takes in a differential methlytion p-value data frame and return a plot object which can be used to draw qqplot of p-values using plotly
+#' @param x a dataframe of differential methlytion p-value
+#' @return return a plot object which can be used to draw qqplot of p-values using plotly
+#' @export
+
 rnbi.qqplot.single <- function(x) {
   col = "#252525"
   size = 1
@@ -53,10 +47,15 @@ rnbi.qqplot.single <- function(x) {
 
 ########################################################################################################################
 
+
 #' rnbi.qqplot.data.single
-#'  For Idat analysis
+#' For Idat analysis
 #' convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
 #'
+#' @param x a dataframe of differential methlytion p-value
+#' @return return an object of class qqplot.data which will be used to draw qqplot .
+#' @export
+
 rnbi.qqplot.data.single <- function(x,p = "P") {
 
   ## Make sure you have p column exists in x.
@@ -100,6 +99,10 @@ rnbi.qqplot.data.single <- function(x,p = "P") {
 #'
 #' Draw the qqplot for single data for RRBS analysis
 #'
+#' @param x a dataframe of differential methlytion p-value
+#' @return return an object to draw the qqplot for single data for RRBS analysis
+#' @export
+
 rnbi.qqplot.single.rrbs <- function(x) {
   col = "#252525"
   size = 1
@@ -142,9 +145,13 @@ rnbi.qqplot.single.rrbs <- function(x) {
 ########################################################################################################################
 
 #' rnbi.qqplot.data.single
-#'  For RRBS analysis
+#' For RRBS analysis
 #' convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
 #'
+#' @param x a dataframe of differential methlytion p-value
+#' @return return an object of class qqplot.data which will be used to draw qqplot for RRBS analysis
+#' @export
+
 rnbi.qqplot.data.single.rrbs <- function(x,p = "P") {
 
   ## Make sure you have p column exists in x.
@@ -191,6 +198,11 @@ rnbi.qqplot.data.single.rrbs <- function(x,p = "P") {
 #'
 #' draw qqplot for two analysis
 #'
+#' @param x a dataframe of differential methlytion p-value from one analysis
+#' @param y a dataframe of differential methlytion p-value from second analysis
+#' @return return an object to draw qqplot for two analysis simultaneously using plotly
+#' @export
+
 rnbi.qqplot.double <- function(x,y) {
   col = "#252525"
   size = 1
@@ -234,6 +246,12 @@ rnbi.qqplot.double <- function(x,y) {
 #'
 #' convert the p-values of the two analysis in to an object of class qqplot.data which will be used to draw qqplot.
 #'
+#' @param x a dataframe of differential methlytion p-value from one analysis
+#' @param y a dataframe of differential methlytion p-value from second analysis
+#' @return return an object of class qqplot.data which will be used to draw qqplot for two analysis
+#' @export
+
+
 rnbi.qqplot.data.double <- function(x,y,
                                     p = "diffmeth.p.val",
 
@@ -305,6 +323,11 @@ rnbi.qqplot.data.double <- function(x,y,
 #'  For RRBS analysis
 #' draw qqplot for two analysis
 #'
+#' @param x a dataframe of differential methlytion p-value from one analysis
+#' @param y a dataframe of differential methlytion p-value from second analysis
+#' @return return an object to draw qqplot for two analysis simultaneously using plotly for RRBS analysis
+#' @export
+
 rnbi.qqplot.double.rrbs <- function(x,y) {
   col = "#252525"
   size = 1
@@ -350,6 +373,11 @@ rnbi.qqplot.double.rrbs <- function(x,y) {
 #'  For RRBS analaysis
 #' convert the p-values of the two analysis in to an object of class qqplot.data which will be used to draw qqplot.
 #'
+#' @param x a dataframe of differential methlytion p-value from one analysis
+#' @param y a dataframe of differential methlytion p-value from second analysis
+#' @return return an object of class qqplot.data which will be used to draw qqplot for two RRBS analysis
+#' @export
+
 rnbi.qqplot.data.double.rrbs <- function(x,y,
                                          p = "diffmeth.p.val",
 
@@ -433,6 +461,13 @@ rnbi.qqplot.data.double.rrbs <- function(x,y,
 #association exists should follow a uniform(0,1) distribution. Since we're usually most
 #interested in really small p-values, we generally transform the p-values by -log10 so
 #that the smallest values near zero become the larger values and are thus easier to see.
+
+#' qqunif.plot
+#'
+#' Takes in a p-values
+#' @param pvalues p-values
+#' @return functiont to draw qqplot
+#' @export
 
 qqunif.plot<-function(pvalues,
                       should.thin=T, thin.obs.places=2, thin.exp.places=2,
