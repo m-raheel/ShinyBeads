@@ -23,5 +23,5 @@ runApplication <- function()
        stop("Could not find app directory. Try re-installing RnShinyBeads", call. = FALSE)
      }
 
-     shiny::runApp(appDir, display.mode = "normal" , dirPath = filename)
+     shiny::runApp(appDir, display.mode = "normal")
 }
