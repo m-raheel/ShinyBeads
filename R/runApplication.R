@@ -15,6 +15,8 @@ runApplication <- function()
     }
 
 
+    .GlobalEnv$.aecay.filename <- filename
+    on.exit(rm(.aecay.filename, envir=.GlobalEnv))
 
      appDir <- system.file("RnShinyBeads", package = "RnShinyBeads")
      if (appDir == "") {
