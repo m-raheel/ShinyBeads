@@ -110,15 +110,6 @@ shinyServer(function(input, output, session) {
 
   #updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
 
-  observe({
-    #if(input$folder != NULL){
-
-      #updatedDir <- normalizePath(parseDirPath(roots=volumes, input$folder), winslash = "\\", mustWork = NA)
-
-    #}
-  })
-
-
   selectedDir <-  as.character(updatedDir)
 
   analysis <- rnbi.total.analysis(selectedDir)

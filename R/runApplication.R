@@ -7,21 +7,54 @@ runApplication <- function()
 {
 
     library(tcltk2)
-    filename <- tclvalue(tkchooseDirectory()) # Very simple, isn't it?
-    if (!nchar(filename)) {
-      tkmessageBox(message = "No file was selected!")
+    analysisDir <- tclvalue(tkchooseDirectory()) # Very simple, isn't it?
+    if (!nchar(analysisDir)) {
+      tkmessageBox(message = "No directory was selected!")
     } else {
-      tkmessageBox(message = paste("The file selected was", filename))
+
+      choices <- list.files(path = analysisDir)
+
+
+      total.analysis.list <- list()
+      counter <- 1
+      check = FALSE
+      for (i in 1:length(choices)) {
+
+        # if index.html file exist in the directory than it is considered as an RnBeads analysis
+        if ( file.exists( isolate({ paste(analysisDir,choices[i],'index.html',sep="/") }) ) )
+        {
+          total.analysis.list[counter] <- choices[i]
+          counter <- counter + 1
+          check = TRUE
+
+        }
+      }
+
+
+      if (check == TRUE){
+        .GlobalEnv$.global.filename <- analysisDir
+        on.exit(rm(.global.filename, envir=.GlobalEnv))
+
+        appDir <- system.file("RnShinyBeads", package = "RnShinyBeads")
+        if (appDir == "") {
+          stop("Could not find app directory. Try re-installing RnShinyBeads", call. = FALSE)
+        }
+
+        shiny::runApp(appDir, display.mode = "normal")
+
+      }
+      else{
+        tkmessageBox(message = paste("Not a valid RnBeads repository -> ", analysisDir))
+
+      }
+
+
     }
 
 
-    .GlobalEnv$.global.filename <- filename
-    on.exit(rm(.global.filename, envir=.GlobalEnv))
 
-     appDir <- system.file("RnShinyBeads", package = "RnShinyBeads")
-     if (appDir == "") {
-       stop("Could not find app directory. Try re-installing RnShinyBeads", call. = FALSE)
-     }
 
-     shiny::runApp(appDir, display.mode = "normal")
+
+
+
 }
