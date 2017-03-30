@@ -20,11 +20,12 @@ library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
 library(RnShinyBeads, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-library(manhattanly)
+#library(manhattanly)
 library(VennDiagram)
 library(plyr)
 library(shinydashboard)
 library(limma)
+
 #####################################################################
 
 
@@ -33,6 +34,7 @@ library(limma)
 options(shiny.maxRequestSize=30*1024^2)
 
 shinyServer(function(input, output, session) {
+
 
   # update timestamp when update is clicked
   shinyjs::onclick("update", shinyjs::html("time", date()))
@@ -80,13 +82,28 @@ shinyServer(function(input, output, session) {
 
   #Remove working directory
   observeEvent(input$clearDirButton,{
-    session$reload()
+    #session$reload()
 
   })
 
   #updatedDir <- normalizePath("/projects/factorization/raw_data/Demo_Repository", winslash = "\\", mustWork = NA)
 
+
+#   volumes <- getVolumes() #c('R Installation'=R.home())
+#
+#   shinyDirChoose(input, 'folder', roots=volumes)
+#
+#   output$directorypath <- renderPrint({parseDirPath(roots=volumes, input$folder)})
+
   updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
+
+  observe({
+    #if(input$folder != NULL){
+
+      #updatedDir <- normalizePath(parseDirPath(roots=volumes, input$folder), winslash = "\\", mustWork = NA)
+
+    #}
+  })
 
 
   selectedDir <-  as.character(updatedDir)
