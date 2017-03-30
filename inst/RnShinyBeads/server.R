@@ -105,9 +105,10 @@ shinyServer(function(input, output, session) {
 #     abs(gn) > input$cutoff
 #   })
 
-  output$directorypath <- renderText({.aecay.filename})
+  #output$directorypath <- renderText({.aecay.filename})
+  updatedDir <- normalizePath(.global.filename, winslash = "\\", mustWork = NA)
 
-  updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
+  #updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
 
   observe({
     #if(input$folder != NULL){
