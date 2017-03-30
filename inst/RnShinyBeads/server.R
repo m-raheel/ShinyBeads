@@ -728,7 +728,7 @@ shinyServer(function(input, output, session) {
         }
 
         output[[paste0('annotation1')]] <- renderDataTable({
-
+          common <- unlist(common)
           DT <- data.table( Analysis_Dir = common)
 
           DT
