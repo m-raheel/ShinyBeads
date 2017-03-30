@@ -19,8 +19,7 @@ library(qqman)
 library(tcltk)# OS independent file dir selection
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
-library(RnShinyBeads, lib.loc = '/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4')
-#library(manhattanly)
+library(RnShinyBeads)
 library(VennDiagram)
 library(plyr)
 library(shinydashboard)
