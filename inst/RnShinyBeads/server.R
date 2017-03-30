@@ -95,6 +95,18 @@ shinyServer(function(input, output, session) {
 #
 #   output$directorypath <- renderPrint({parseDirPath(roots=volumes, input$folder)})
 
+#   filter <- reactive({
+#     if (!exists("gn"))
+#       stop(paste("'gn' var doesn't exist. This Shiny App is intended to be run",
+#                  "as a part of a larger workflow in which some objects would ",
+#                  "already be defined in this environment prior to `runApp` being",
+#                  "executed. Try evaluating the code in `ReconstructGRN.Rmd` which",
+#                  "wraps this Shiny app in a larger workflow."))
+#     abs(gn) > input$cutoff
+#   })
+  dirPath <- args[["dirPath"]]
+  output$directorypath <- renderPrint({dirPath})
+
   updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
 
   observe({

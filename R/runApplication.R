@@ -14,12 +14,12 @@ runApplication <- function()
       tkmessageBox(message = paste("The file selected was", filename))
     }
 
-    filename
+
 
      appDir <- system.file("RnShinyBeads", package = "RnShinyBeads")
      if (appDir == "") {
        stop("Could not find app directory. Try re-installing RnShinyBeads", call. = FALSE)
      }
 
-     shiny::runApp(appDir, display.mode = "normal")
+     shiny::runApp(appDir, display.mode = "normal" , dirPath = filename)
 }
