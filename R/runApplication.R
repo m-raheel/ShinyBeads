@@ -21,7 +21,7 @@ runApplication <- function()
       for (i in 1:length(choices)) {
 
         # if index.html file exist in the directory than it is considered as an RnBeads analysis
-        if ( file.exists( isolate({ paste(analysisDir,choices[i],'index.html',sep="/") }) ) )
+        if ( file.exists( paste(analysisDir,choices[i],'index.html',sep="/") ) )
         {
           total.analysis.list[counter] <- choices[i]
           counter <- counter + 1
