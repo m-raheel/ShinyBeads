@@ -80,12 +80,6 @@ shinyServer(function(input, output, session) {
     }
   })
 
-  #Remove working directory
-  observeEvent(input$clearDirButton,{
-    #session$reload()
-
-  })
-
   #updatedDir <- normalizePath("/projects/factorization/raw_data/Demo_Repository", winslash = "\\", mustWork = NA)
 
 
@@ -95,18 +89,9 @@ shinyServer(function(input, output, session) {
 #
 #   output$directorypath <- renderPrint({parseDirPath(roots=volumes, input$folder)})
 
-#   filter <- reactive({
-#     if (!exists("gn"))
-#       stop(paste("'gn' var doesn't exist. This Shiny App is intended to be run",
-#                  "as a part of a larger workflow in which some objects would ",
-#                  "already be defined in this environment prior to `runApp` being",
-#                  "executed. Try evaluating the code in `ReconstructGRN.Rmd` which",
-#                  "wraps this Shiny app in a larger workflow."))
-#     abs(gn) > input$cutoff
-#   })
 
-  #output$directorypath <- renderText({.aecay.filename})
-  updatedDir <- normalizePath(.global.filename, winslash = "\\", mustWork = NA)
+  # .global.analysisDir is the path to the RnBeads repository selected before running shiny app
+  updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
 
   #updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
 
@@ -212,8 +197,8 @@ shinyServer(function(input, output, session) {
     if ( length(choices) != 0 ){
 
       output$list_folders <- renderDataTable({
-        DT <- data.table( RnBeads_Analysis = choices)
-        return(DT)
+       choices
+
 
       },selection = 'single', escape = FALSE)
 

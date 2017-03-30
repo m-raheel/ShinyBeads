@@ -32,8 +32,8 @@ runApplication <- function()
 
 
       if (check == TRUE){
-        .GlobalEnv$.global.filename <- analysisDir
-        on.exit(rm(.global.filename, envir=.GlobalEnv))
+        .GlobalEnv$.global.analysisDir <- analysisDir
+        on.exit(rm(.global.analysisDir, envir=.GlobalEnv))
 
         appDir <- system.file("RnShinyBeads", package = "RnShinyBeads")
         if (appDir == "") {
