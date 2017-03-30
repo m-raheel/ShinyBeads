@@ -194,12 +194,13 @@ shinyServer(function(input, output, session) {
 
     })
 
-    if ( length(choices) > 0 ){
+    if ( length(choices) != 0 ){
 
-      df <- data.frame(RnBeadsAnalysis = choices)
       output$list_folders <- renderDataTable({
-        df
+        choices <- unlist(choices)
+        DT <- data.table( RnBeads_Reports = choices)
 
+        DT
 
       },selection = 'single', escape = FALSE)
 
