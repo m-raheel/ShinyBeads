@@ -304,7 +304,7 @@ shinyServer(function(input, output, session) {
 
 
       output$common_datasets_used <- renderDataTable({
-        cd_list <- unlist(cd_list)
+        commond_list <- unlist(commond_list)
         DT <- data.table( Datasets_Used = commond_list)
 
         DT
