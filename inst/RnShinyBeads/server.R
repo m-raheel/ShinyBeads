@@ -104,8 +104,8 @@ shinyServer(function(input, output, session) {
 #                  "wraps this Shiny app in a larger workflow."))
 #     abs(gn) > input$cutoff
 #   })
-  dirPath <- args[["dirPath"]]
-  output$directorypath <- renderPrint({.aecay.filename})
+
+  output$directorypath <- renderText({.aecay.filename})
 
   updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
 
