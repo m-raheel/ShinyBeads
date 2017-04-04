@@ -532,7 +532,8 @@ shinyServer(function(input, output, session) {
       if ( file.exists( isolate({ paste(wd_modules(),'index.html',sep="/") }) ) ){
 
           #browseURL(paste('http://internal.genetik.uni-sb.de/dataT7600','as.character(input$select_ia)','index.html',sep="/"))
-          HTML(paste('<a class = "btn btn-primary" target = "_blank" href = "http://internal.genetik.uni-sb.de/dataT7600/',paste(as.character(input$select_ia),'index.html"',sep="/"),'>View Reports','</a>',sep=""))
+          #HTML(paste('<a class = "btn btn-primary" target = "_blank" href = "http://internal.genetik.uni-sb.de/dataT7600/',paste(as.character(input$select_ia),'index.html"',sep="/"),'>View Reports','</a>',sep=""))
+          HTML(paste('<a class = "btn btn-primary" target = "_blank" href = "file:///',paste(as.character(results.dir()),as.character(input$select_ia),'index.html"',sep="/"),'>View Reports','</a>',sep=""))
 
 
       }
