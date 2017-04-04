@@ -533,7 +533,7 @@ shinyServer(function(input, output, session) {
 
           #browseURL(paste('http://internal.genetik.uni-sb.de/dataT7600','as.character(input$select_ia)','index.html',sep="/"))
           #HTML(paste('<a class = "btn btn-primary" target = "_blank" href = "http://internal.genetik.uni-sb.de/dataT7600/',paste(as.character(input$select_ia),'index.html"',sep="/"),'>View Reports','</a>',sep=""))
-          HTML(paste('<a class = "btn btn-primary" target = "_blank" href = "/'paste(as.character(results.dir()),as.character(input$select_ia),'index.html"',sep="/"),'>View Reports','</a>',sep=""))
+          HTML(paste('<a class = "btn btn-primary" target = "_blank" href = "',paste(as.character(results.dir()),as.character(input$select_ia),'index.html"',sep="/"),'>View Reports','</a>',sep=""))
 
 
       }
