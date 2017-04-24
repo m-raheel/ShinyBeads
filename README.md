@@ -18,7 +18,7 @@ To install the latest development version from GitHub:
 To run the applicaiton:
 
     library(RnShinyBeads)
-    RnShinyBeads::runApplication()
+    RnShinyBeads::runApplication('/path_to_RnBeads_generated_reports')
     
     
 You can view a [live interactive
