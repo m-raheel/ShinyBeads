@@ -77,10 +77,10 @@ shinyServer(function(input, output, session) {
   })
 
   # comment uncomment to use dynamic path of the repository
-#   # .global.analysisDir is the path to the RnBeads repository selected before running shiny app
-#   updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
+  # .global.analysisDir is the path to the RnBeads repository selected before running shiny app
+  updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
 
-  updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
+  #updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
 
   selectedDir <-  as.character(updatedDir)
 
