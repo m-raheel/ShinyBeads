@@ -407,11 +407,20 @@ body <- dashboardBody(
 
 
                                              div(id="id_qqplot",
+
                                                  fluidRow(
-                                                   column(width = 9,
+                                                   column(width = 12,
                                                           plotlyOutput('compqqplotly'),
                                                           br(),
-
+                                                          br(),
+                                                          br(),
+                                                          br(),
+                                                          br(),
+                                                          br(),
+                                                          br(),
+                                                          br(),
+                                                          br(),
+                                                          br(),
                                                           HTML(paste(
                                                             uiOutput('info.qqplot')
                                                           )),
@@ -498,11 +507,20 @@ body <- dashboardBody(
 
                                              fluidRow(
 
-                                               column(width = 10,
+                                               column(width = 12,
                                                       tags$h4(style="color:black;","QQ-plot"),
 
                                                       plotlyOutput('multicompqqplot1'),
                                                       #tableOutput('testingdata'),
+                                                      br(),
+                                                      br(),
+                                                      br(),
+                                                      br(),
+                                                      br(),
+                                                      br(),
+                                                      br(),
+                                                      br(),
+                                                      br(),
                                                       br(),
                                                       HTML(paste(
                                                         uiOutput('info.qqplot2')
@@ -642,7 +660,17 @@ body <- dashboardBody(
 
                                        br(),
                                        br(),
-                                       plotlyOutput('x5')
+                                       plotlyOutput('x5'),
+                                       br(),
+                                       br(),
+                                       br(),
+                                       br(),
+                                       br(),
+                                       br(),
+                                       br(),
+                                       br(),
+                                       br(),
+                                       br()
                                    )
 
                                )
@@ -743,17 +771,37 @@ body <- dashboardBody(
                            selectInput("input_topscorer_readtop", "Read total n rows:", topRowsChoices),
 
                            actionButton('btnMultipleShowVenn', 'Display',class="btn btn-primary btn-md"),
+
+
+
+
+                           #tags$p(textOutput("comparison.check")),
+                           tags$p(textOutput("ts.venn.overlapping.error.value"  )),
+                           fluidRow(
+                             column(width = 12,
+
+                                    plotOutput('output.ts.multivenn.plot')
+
+                             )
+
+
+
+
+                           ),# end  of  fluid row
+
+
                            br(),
+                           br(),
+                           br(),
+                           br(),
+                           br(),
+                           br(),
+                           br(),
+                           br(),
+                           tableOutput('output.ts.table.multivenn.plot.labels'),
 
-                           div(class="",
 
-                               #tags$p(textOutput("comparison.check")),
-                               tags$p(textOutput("ts.venn.overlapping.error.value"  )),
-                               plotOutput('output.ts.multivenn.plot'),
-                               tableOutput('output.ts.table.multivenn.plot.labels'),
-                               br()
 
-                           ),
 
 
                            collapsible = TRUE,

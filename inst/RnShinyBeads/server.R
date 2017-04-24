@@ -1188,7 +1188,13 @@ shinyServer(function(input, output, session) {
         }
 
 
-        p <- plotly::ggplotly(q)
+        p <- plotly::ggplotly(q)%>%
+          layout(
+                 autosize = FALSE,
+                 width = 600,
+                 height =  600
+
+          )
 
 
         output$info.qqplot <- renderUI({
@@ -1222,11 +1228,15 @@ shinyServer(function(input, output, session) {
                      mode = 'text', text = ~Primates, textposition = 'middle center',
                      textfont = list(color = '#000000', size = 16))%>%
           layout(title = 'Q-Q Plot',
-                 xaxis = list(title = 'Expected -log10(p) (uniform distribution)',
-                              zeroline = TRUE,
-                              range = c(0, 1)),
-                 yaxis = list(title = 'Observed -log10(p)',
-                              range = c(0,1)))
+                 autosize = FALSE,
+                 width = 500,
+                 height =  500,
+                 xaxis = list(title = 'Expected -log10(p) (uniform distribution)'
+
+                              ),
+                 yaxis = list(title = 'Observed -log10(p)'
+                              )
+                 )
 
 
       }
@@ -2097,14 +2107,26 @@ output$testingcompqqplot <- renderPlot({
             }
             else{
               p <- rnbi.qqplot.double.rrbs(x,y)
-              q <- plotly::ggplotly(p)
+              q <- plotly::ggplotly(p)%>%
+                layout(
+                  autosize = FALSE,
+                  width = 720,
+                  height =  600
+
+                )
             }
 
           }
           else if (rrbs_analysis1 == FALSE && rrbs_analysis2 == FALSE){
 
             p <- rnbi.qqplot.double(x,y)
-            q <- plotly::ggplotly(p)
+            q <- plotly::ggplotly(p)%>%
+              layout(
+                autosize = FALSE,
+                width = 720,
+                height =  600
+
+              )
           }
           else{
 
@@ -2759,6 +2781,12 @@ output$testingcompqqplot <- renderPlot({
 
                     layout(                        # all of layout's properties: /r/reference/#layout
                       title = "Plot", # layout's title: /r/reference/#layout-title
+
+                      autosize = FALSE,
+                      width = 700,
+                      height =  600,
+
+
                       xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
                         title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
                         showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
@@ -2793,6 +2821,9 @@ output$testingcompqqplot <- renderPlot({
 
                     layout(                        # all of layout's properties: /r/reference/#layout
                       title = "Plot", # layout's title: /r/reference/#layout-title
+                      autosize = FALSE,
+                      width = 700,
+                      height =  600,
                       xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
                         title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
                         showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
@@ -3452,11 +3483,12 @@ observeEvent(input$cb_ts_comp_venn, {
           data.table(result)
         })
 
+
         p <- vennDiagram(dataset.venn.count.list[[1]], include = "both",
-                         names = paste (paste("A = ",cb.checked[1])),
+                         names = paste (paste("",cb.checked[1])),
                          cex = 1, counts.col = "red", circle.col = c("green"))
 
-
+        #par(mar= c(50,50,50,50))
 
 
         output$ts.selector.overlapping.value <- renderUI({
@@ -3941,7 +3973,7 @@ observeEvent(input$cb_ts_comp_venn, {
 
       p
 
-    })
+    }, width = 600, height = 600)
 
   })
 
