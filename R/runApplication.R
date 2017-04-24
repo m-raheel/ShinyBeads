@@ -1,15 +1,16 @@
 #' Launch RnShinyBeads app
 #'
-#' Run the RnShinyBeads application
+#' Takes in a results directory and Run the RnShinyBeads application
+#' @param wd A path to the rnbeads analysis folder
 #' @export
 
-runApplication <- function()
+runApplication <- function(wd)
 {
 
-    library(tcltk2)
-    analysisDir <- tclvalue(tkchooseDirectory()) # Very simple, isn't it?
+
+    analysisDir <- wd
     if (!nchar(analysisDir)) {
-      tkmessageBox(message = "No directory was selected!")
+      print("No directory was selected!")
     } else {
 
       choices <- list.files(path = analysisDir)
@@ -44,7 +45,7 @@ runApplication <- function()
 
       }
       else{
-        tkmessageBox(message = paste("Not a valid RnBeads repository -> ", analysisDir))
+        print(paste("Not a valid RnBeads repository -> ", analysisDir))
 
       }
 

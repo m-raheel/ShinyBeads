@@ -1,16 +1,15 @@
 Package: RnShinyBeads
 Type: Package
-Title: Interface for RnBeads analysis
+Title: Interface for RnBeads generated reports
 Version: 0.1.0
 Author: Muhammad Raheel
 Maintainer: <s8murahe@stud.uni-saarland.de>
-Description: It is a package used to work with Rnbeads analysis performed by the
-    users. It makes it easier to visualize and compare different analysis performed
+Description: It is a package used to work with Rnbeads generated reports. It makes it easier to visualize and compare different reports performed
     on same or different datasets and much more...
 URL: https://github.com/m-raheel/RnShinyBeads
 BugReports: https://github.com/m-raheel/RnShinyBeads/issues
 Depends: R (>= 3.1.0)
-Imports:  shiny (>= 0.13.0), shinyjs (>= 0.5.2), DT, data.table, plotly, VennDiagram, shinydashboard, limma, plyr, ggplot2,tcltk2
+Imports:  shiny, shinyjs, DT, data.table, plotly, shinydashboard, limma, plyr, ggplot2,lattice
 Suggests:  rmarkdown
 License: MIT
 LazyData: TRUE

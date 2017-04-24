@@ -12,9 +12,7 @@
 ######################################################################
 library(DT)
 library(shiny)
-#library(shinyFiles)
 library(shinyjs)
-library(shinythemes)
 library(plyr)
 library(ggplot2)
 library(plotly) #interactive graphics with D3
