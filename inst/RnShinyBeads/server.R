@@ -16,8 +16,8 @@ library(XML)
 library(data.table) # using the function fread for reading large csv files
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
-#library(RnShinyBeads, lib.loc = "/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4")
-library(RnShinyBeads)
+library(RnShinyBeads, lib.loc = "/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4")
+#library(RnShinyBeads)
 library(plyr)
 library(shinydashboard)
 library(limma)
@@ -78,9 +78,9 @@ shinyServer(function(input, output, session) {
 
   # comment uncomment to use dynamic path of the repository
   # .global.analysisDir is the path to the RnBeads repository selected before running shiny app
-  updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
+  #updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
 
-  #updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
+  updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
   #updatedDir <- normalizePath("/projects/factorization/raw_data/Demo_Repository", winslash = "\\", mustWork = NA)
 
   selectedDir <-  as.character(updatedDir)
@@ -2397,7 +2397,7 @@ output$testingcompqqplot <- renderPlot({
 
                   nrows.value <- as.character(input$input_tablebrowser_readtop)
 
-                  if (nrows.value == 'ALL'){
+                  if (nrows.value == 'All'){
                     nrows.value = -1
                   }
 
@@ -2472,7 +2472,7 @@ output$testingcompqqplot <- renderPlot({
 
                   nrows.value <- as.character(input$input_tablebrowser_readtop)
 
-                  if (nrows.value == 'ALL'){
+                  if (nrows.value == 'All'){
                     nrows.value = -1
                   }
 
@@ -2716,7 +2716,7 @@ output$testingcompqqplot <- renderPlot({
 
                 nrows.value <- as.character(input$input_tablebrowser_readtop)
 
-                if (nrows.value == 'ALL'){
+                if (nrows.value == 'All'){
                   nrows.value = -1
                 }
 
@@ -3342,6 +3342,15 @@ observeEvent(input$cb_ts_comp_venn, {
       filtered.logical.dataset.list <- list()
       dataset.venn.count.list <- list()
 
+      vec_length <- c()
+      xyz <- 0
+
+      # Create a Progress object
+      progress <- shiny::Progress$new()
+
+      progress$set(message = "Reading data! please wait...", value = 50)
+
+
       for (i in 1:length(cb.checked)) {
 
         analysis.selected <- as.character(cb.checked[i])
@@ -3349,7 +3358,7 @@ observeEvent(input$cb_ts_comp_venn, {
 
         nrows.value <- as.character(input$input_topscorer_readtop)
 
-        if (nrows.value == 'ALL'){
+        if (nrows.value == 'All'){
           nrows.value = -1
         }
 
@@ -3359,6 +3368,15 @@ observeEvent(input$cb_ts_comp_venn, {
         }
         #dataset <- rnbi.read.comparisondata.rrbs(analysis.selected,analysis.path,as.integer(unlist(get.choice.index()[i])), nrows.value,column_selected , results.dir())
         dataset <- rnbi.read.comparisondata(analysis.selected,analysis.path,as.integer(unlist(get.choice.index()[i])), nrows.value,column_selected)
+
+
+        # checking the length of each comparison data and ommit rows
+        vec_length <- c(vec_length,nrow(dataset))
+        xyz <- xyz+1
+
+        max_rows_index <- which.max(vec_length)
+        max_rows <- vec_length[max_rows_index]
+        dataset <- dataset[1:max_rows,]
 
         if(column_selected == "diffmeth.p.val"){
           colselected <- dataset$diffmeth.p.val
@@ -3472,6 +3490,11 @@ observeEvent(input$cb_ts_comp_venn, {
         }
 
         dataset.venn.count.list[[i]] <- vennCounts(clogicaldf)
+
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
       }#end of forloop
 
 
@@ -3506,7 +3529,7 @@ observeEvent(input$cb_ts_comp_venn, {
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Reading data! please wait...", value = 50)
+          progress$set(message = "Drawing venn diagram! please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value
@@ -3578,7 +3601,7 @@ observeEvent(input$cb_ts_comp_venn, {
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Reading data! please wait...", value = 50)
+          progress$set(message = "Drawing venn diagram please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value
@@ -3685,7 +3708,7 @@ observeEvent(input$cb_ts_comp_venn, {
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Reading data! please wait...", value = 50)
+          progress$set(message = "Drawing venn diagram please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value
@@ -3782,7 +3805,7 @@ observeEvent(input$cb_ts_comp_venn, {
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Reading data! please wait...", value = 50)
+          progress$set(message = "Drawing venn diagram please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value
@@ -3883,7 +3906,7 @@ observeEvent(input$cb_ts_comp_venn, {
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Reading data! please wait...", value = 50)
+          progress$set(message = "Drawing venn diagram please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value

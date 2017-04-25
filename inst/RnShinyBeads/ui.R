@@ -22,7 +22,7 @@ library(shinydashboard)
 
 choices = "NA"
 topRowsPlotChoices = c('100', '500' , '1000','5000')
-topRowsChoices = c('100', '500' , '1000', '10000', '20000','50000' , '100000' , '-1')
+topRowsChoices = c('All', '100000' ,'50000' , '20000', '10000', '1000' , '500' ,'100')
 check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPLETED Preprocessing', 'COMPLETED Tracks and Tables','COMPLETED Covariate Inference','COMPLETED Exploratory Analysis','COMPLETED Differential Methylation')
 
 
