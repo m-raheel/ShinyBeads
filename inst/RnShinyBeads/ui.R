@@ -117,6 +117,8 @@ body <- dashboardBody(
 #     ),
     tags$style(HTML("
                       .customtabbox { height: 30vh; overflow-y: auto; }
+                      .dataTables_wrapper { overflow-y: scroll; height: auto; }
+
                       " )
     ),
     tags$style(HTML("
