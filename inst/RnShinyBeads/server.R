@@ -29,6 +29,7 @@ library(limma)
 
 options(shiny.maxRequestSize=30*1024^2)
 topRowsPlotChoices = c('100', '500' , '1000','5000')
+topRowsChoices = c('All', '100000' ,'50000' , '20000', '10000', '1000' , '500' ,'100')
 
 shinyServer(function(input, output, session) {
 
@@ -3151,21 +3152,26 @@ output$testingcompqqplot <- renderPlot({
 
   })
 
+  output$input_topscorer_readtop <- renderUI({
+    selectInput("input_topscorer_readtop", "Read total n rows:", topRowsChoices)
+
+  })
+
   output$ts.columns <- renderUI({
     selectInput("input_topscorer_columns",
-                label = paste(""),
+                label = paste("Fitler by"),
                 choices = c("mean.diff","diffmeth.p.val","diffmeth.p.adj.fdr","mean.quot.log2"))
   })
 
   output$ts.columns.equality <- renderUI({
     selectInput("input_topscorer_columns_equality",
-                label = paste(""),
+                label = paste("_"),
                 choices = c(">","<", ">=","<=","="))
   })
 
   output$ts.columns.range <- renderUI({
     selectInput("input_topscorer_columns_range",
-                label = paste(""),
+                label = paste("_"),
                 choices = c("0.01","0.1", "0.05","0.5","0","1"))
   })
 

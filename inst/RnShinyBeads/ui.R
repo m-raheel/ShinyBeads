@@ -582,63 +582,76 @@ body <- dashboardBody(
 
                            ),
 
-                           tabBox(  width = NULL,
-                                    tabPanel("analysis",
-                                             br(),
-                                             selectInput("input_tablebrowser_choices", "Select analysis folder:", choices),
-                                             selectInput("input_tablebrowser_files", "Select comparison:", ""),
-                                             selectInput("input_tablebrowser_readtop", "Read top n rows:", topRowsChoices),
+                           br(),
+                           fluidRow(
+                             column(width = 4,
+                                     selectInput("input_tablebrowser_choices", "Select analysis folder:", choices),
+                                     selectInput("input_tablebrowser_files", "Select comparison:", ""),
+                                     selectInput("input_tablebrowser_readtop", "Read top n rows:", topRowsChoices),
 
-                                             br()
-                                    ),
-                                    tabPanel("file upload",
+                                    br(),
+                                      actionButton('displayTableBrowserBtn', 'Display',class="btn btn-primary btn-md"),
 
+                                      br(),
+                                      br(),
+                                      tags$p("The table below lists the data from the selected analysis."),
 
-                                             br(),
-
-                                             tags$h3(style="color:black;",paste("Filter with external files",
-                                                                                "e.g 450K annotation etc")),
-
-
-
-
-                                             fileInput('file1', 'Choose file to filter the table on the right',
-                                                       accept = c(
-                                                         'text/csv',
-                                                         'text/comma-separated-values',
-                                                         'text/tab-separated-values',
-                                                         'text/plain',
-                                                         '.csv',
-                                                         '.tsv'
-                                                       )
-                                             ),
-                                             tags$hr(),
-                                             checkboxInput('header', 'Header', TRUE),
-                                             radioButtons('sep', 'Separator',
-                                                          c(Comma=',',
-                                                            Semicolon=';',
-                                                            Tab='\t'),
-                                                          ','),
-
-                                             br()
-
-
-                                    )# end of tab panel
+                                     br(),
+                                     br()
+                             ),
+                             column(width = 3
+                             ),
+                             column(width = 5,
+                                     tags$h3(style="color:black;",paste("Filter with external files",
+                                                                        "e.g 450K annotation etc")),
 
 
 
-                           ),# end of tab box
+
+                                     fileInput('file1', 'Choose file to filter the table below',
+                                               accept = c(
+                                                 'text/csv',
+                                                 'text/comma-separated-values',
+                                                 'text/tab-separated-values',
+                                                 'text/plain',
+                                                 '.csv',
+                                                 '.tsv'
+                                               )
+                                     ),
+                                     tags$hr(),
+                                     checkboxInput('header', 'Header', TRUE),
+                                     radioButtons('sep', 'Separator',
+                                                  c(Comma=',',
+                                                    Semicolon=';',
+                                                    Tab='\t'),
+                                                  ','),
+
+                                     br()
+                                  )
+                           ),#end of fluid row
+
+
+#                            tabBox(  width = NULL,
+#                                     tabPanel("analysis",
+#
+#
+#                                     ),
+#                                     tabPanel("file upload",
+#
+#
+#
+#
+#                                     )# end of tab panel
+#
+#
+#
+#                            ),# end of tab box
 
 
                            div(class="",
 
 
 
-                               actionButton('displayTableBrowserBtn', 'Display',class="btn btn-primary btn-md"),
-
-                               br(),
-                               br(),
-                               tags$p("The table below lists the data from the selected analysis."),
 
                                HTML(paste(
 
@@ -660,10 +673,10 @@ body <- dashboardBody(
                                    tags$p("Customize the plot by selecting x-axis and y-axis from the options. The plot will contains data from the above table."),
 
                                    fluidRow(
-                                     column(width = 4,
+                                     column(width = 2,
                                             selectInput("input_tablebrowser_x_axis", "Select x-axis:", '')
                                      ),
-                                     column(width = 4,
+                                     column(width = 2,
                                             selectInput("input_tablebrowser_y_axis", "Select y-axis:", '')
                                      )
                                    ),
@@ -709,7 +722,7 @@ body <- dashboardBody(
     tabItem(tabName = "topscorer",
             fluidRow(
               column(width = 4,
-                     tabBox(  width = NULL, height = "250px",
+                     tabBox(  width = NULL, height = "auto",
                               tabPanel("analysis",
                                        br(),
                                        tags$div(id = "div_analysis_checkboxes", class="customtabbox",
@@ -724,7 +737,7 @@ body <- dashboardBody(
 
 
                      ),
-                     tabBox(  width = NULL, height = "250px",
+                     tabBox(  width = NULL, height = "auto",
                               tabPanel("comparisons",
 
                                      br(),
@@ -749,7 +762,7 @@ body <- dashboardBody(
 
                            ),
 
-                           tags$h4(style="color:black;","Multiple analysis Venn Diagram"),
+                           tags$h4(style="color:black;","Venn Diagram"),
                            tags$p(paste("Check the analysis on the left for which you want to see the overlappings.")),
                            tags$p(paste("Note: Please select atleast 1 and atmost 6 analysis to draw Venn Diagram!")),
 
@@ -759,12 +772,19 @@ body <- dashboardBody(
 
                            tags$div(id = "", class="",
                                     fluidRow(
-                                      column(width = 5,
+                                      column(width = 4,
+
+                                             uiOutput("input_topscorer_readtop")
+
+
+                                      ),
+
+                                      column(width = 4,
 
                                              uiOutput("ts.columns")
 
                                       ),
-                                      column(width = 3,
+                                      column(width = 2,
 
                                              uiOutput("ts.columns.equality")
 
@@ -772,7 +792,7 @@ body <- dashboardBody(
 
                                       ),
 
-                                      column(width = 4,
+                                      column(width = 2,
 
                                              uiOutput("ts.columns.range")
 
@@ -781,7 +801,6 @@ body <- dashboardBody(
                                     )# end  of  fluid row
                            ),
 
-                           selectInput("input_topscorer_readtop", "Read total n rows:", topRowsChoices),
 
                            actionButton('btnMultipleShowVenn', 'Display',class="btn btn-primary btn-md"),
 
