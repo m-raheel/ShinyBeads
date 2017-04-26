@@ -179,6 +179,17 @@ shinyServer(function(input, output, session) {
 
     choices <- rnbi.total.analysis(results.dir())
 
+    analysis.datetime.list <- list()
+
+
+    for (i in 1:length(choices)) {
+
+      analysis.datetime.list[i] <- as.character(file.info(paste(results.dir(),choices[i], sep="/"))$ctime)
+
+
+    }
+
+
     output$count_rfolders <- renderText({
       paste("Total RnBeads reports in this repository = ", length(choices), sep = " ")
 
@@ -187,8 +198,12 @@ shinyServer(function(input, output, session) {
     if ( length(choices) != 0 ){
 
       output$list_folders <- renderDataTable({
+
+
+
         choices <- unlist(choices)
-        DT <- data.table( RnBeads_Reports = choices)
+        ana_datetime <- unlist(analysis.datetime.list)
+        DT <- data.table( RnBeads_Reports = choices , Reports_Generated_Date = ana_datetime)
 
         DT
 
@@ -718,9 +733,21 @@ shinyServer(function(input, output, session) {
 
         }
 
+        analysis.datetime.list <- list()
+
+
+        for (i in 1:length(common)) {
+
+          analysis.datetime.list[i] <- as.character(file.info(paste(results.dir(),common[i], sep="/"))$ctime)
+
+
+        }
+
+
         output[[paste0('annotation1')]] <- renderDataTable({
           common <- unlist(common)
-          DT <- data.table( Analysis_directory = common)
+          analysis.datetime <- unlist(analysis.datetime.list)
+          DT <- data.table( Analysis_directory = common, Reports_Generated_Date = analysis.datetime)
 
           DT
 
@@ -733,9 +760,11 @@ shinyServer(function(input, output, session) {
 
         # if no dataset is shared among other analysis
 
+        analysis.datetime <- as.character(file.info(paste(results.dir(),analysis[last_character], sep="/"))$ctime)
+
         output[[paste0('annotation1')]] <- renderDataTable({
 
-          DT <- data.table( Analysis_Dir = analysis[last_character])
+          DT <- data.table( Analysis_Dir = analysis[last_character], Reports_Generated_Date = analysis.datetime)
 
           DT
 
