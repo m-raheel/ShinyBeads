@@ -283,8 +283,8 @@ shinyServer(function(input, output, session) {
 
 
       output$list_datasets <- renderDataTable({
-        cd_list <- unlist(cd_list)
-        DT <- data.table( Datasets_Used = cd_list)
+        #cd_list <- unlist(cd_list)
+        DT <- data.table( Datasets_Used = dataset_choices)
 
         DT
 
@@ -576,7 +576,7 @@ shinyServer(function(input, output, session) {
 
       # if no datasets returned means that we have only one analysis so in else showing it
       if (length(path_) != 0){
-        a.file <- reactive({read.csv(as.character(path_))})
+        a.file <- reactive({fread(as.character(path_), sep=',')})
 
 
         # Generate a summary of the dataset
@@ -619,7 +619,7 @@ shinyServer(function(input, output, session) {
 
         if ( file.exists( isolate({ paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/") }) ) )
         {
-          a.file <- reactive({read.csv(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA))})
+          a.file <- reactive({fread(normalizePath(paste(results.dir(),input$select_ia,'data_import_data','annotation.csv',sep="/"), winslash = "\\", mustWork = NA),sep=',')})
 
           # Generate a summary of the dataset
           output[[paste0('annotation')]] <- renderDataTable({
@@ -718,7 +718,7 @@ shinyServer(function(input, output, session) {
 
         output[[paste0('annotation1')]] <- renderDataTable({
           common <- unlist(common)
-          DT <- data.table( Analysis_Dir = common)
+          DT <- data.table( Analysis_directory = common)
 
           DT
 

@@ -202,22 +202,22 @@ body <- dashboardBody(
 
                                                           fluidRow(
 
-                                                            column(width = 6,
+                                                            column(width = 12,
                                                                    box( width = NULL,
                                                                             dataTableOutput("list_datasets"),
 
                                                                             br(),
                                                                      collapsible = TRUE,
-                                                                    title = "Unique Datasets / Sample sheets", status = "primary", solidHeader = TRUE)
-                                                            ),
-                                                            column(width = 6,
-                                                                   box( width = NULL,
-                                                                           dataTableOutput("common_datasets_used"),
-                                                                           br(),
-                                                                    collapsible = TRUE,
-                                                                   title = "Shared Datasets / Sample sheets", status = "primary", solidHeader = TRUE)
-
+                                                                    title = "Datasets / Sample sheets", status = "primary", solidHeader = TRUE)
                                                             )
+#                                                             column(width = 6,
+#                                                                    box( width = NULL,
+#                                                                            dataTableOutput("common_datasets_used"),
+#                                                                            br(),
+#                                                                     collapsible = TRUE,
+#                                                                    title = "Shared Datasets / Sample sheets", status = "primary", solidHeader = TRUE)
+#
+#                                                             )
                                                           )
                                                  )
                      ), collapsible = TRUE,
@@ -238,13 +238,12 @@ body <- dashboardBody(
 
                      box(  width = NULL, selectInput("select_ia", "Select analysis folder:", choices),
 
-                                          tabBox( width = NULL,
-                                                 tabPanel("RnBeads Reports",
+#                                           tabBox( width = NULL,
+#                                                  tabPanel("RnBeads Reports",
+#
 
 
-
-                                                  HTML(paste('<div class="">',
-                                                             '<div class="container">',
+                                                  HTML(paste(
                                                                #'<h2>Rnbeads modules performed!</h2>',
                                                                #tags$h2(style="color:black;","Rnbeads modules performed"),
                                                                  tableOutput("list_module"),
@@ -256,32 +255,38 @@ body <- dashboardBody(
 
 
                                                              #                                                  actionButton("view_rnbeads_reports", label = "Reports", class=""),
-                                                             #                                                  br(),
+                                                             #
                                                              uiOutput('rnbeadsReports'),
+                                                             br()
 
 
-                                                             '</div>',
-                                                             '</div>'
 
 
 
 
                                                   )),
 
-                                                  br()
-
-                         ),
-                         tabPanel("Analysis options",
-
-                                  br(),
-                                  tags$strong("RnBeads options"),
-                                  br(),
-                                  br(),
-                                  dataTableOutput("list_options"),
-                                  br()
+                                                  br(),
+                                                  tags$strong("RnBeads options"),
+                                                  br(),
+                                                  br(),
+                                                  dataTableOutput("list_options"),
 
 
-                         )
+                                                  br(),
+
+#                          )
+#                          tabPanel("Analysis options",
+#
+#                                   br(),
+#                                   tags$strong("RnBeads options"),
+#                                   br(),
+#                                   br(),
+#                                   dataTableOutput("list_options"),
+#                                   br()
+#
+#
+#                          )
 
 #                          tabPanel("Modules performed",
 #
@@ -291,7 +296,7 @@ body <- dashboardBody(
 #                                   br()
 #
 #                          )
-                     ),
+#                      ),
                      collapsible = TRUE,
                            title = "Analysis", status = "primary", solidHeader = TRUE)
               ))
@@ -310,28 +315,33 @@ body <- dashboardBody(
 
                      box(  width = NULL,
                            selectInput("dd_ids_datasets", "Datasets:", choices),
-                           tabBox( width = NULL,
 
-                                    tabPanel("dataset",
+                           tags$strong("Selected dataset is used in following analysis."),
+                           dataTableOutput(paste0('annotationtest')),
+                           br(),
 
-                                          tags$strong("Selected dataset is used in following analysis."),
-                                          dataTableOutput(paste0('annotationtest')),
-                                          br(),
-                                          br(),
-                                          dataTableOutput(paste0('annotation1')),
+                           dataTableOutput(paste0('annotation1')),
 
-                                          br()
-                                  ),
-                                  tabPanel("annotation file",
-                                           br(),
-                                           tags$strong("Sample Annotations."),
+                           br(),
+                           br(),
+                           tags$strong("Data set / Sample Annotation file content."),
+                           br(),
+                           br(),
+                           dataTableOutput(paste0('annotation')),
+                           br(),
 
-                                           dataTableOutput(paste0('annotation')),
-                                           br()
-                                  )
-
-
-                           ),
+#                            tabBox( width = NULL,
+#
+#                                     tabPanel("dataset",
+#
+#
+#                                   ),
+#                                   tabPanel("annotation file",
+#
+#                                   )
+#
+#
+#                            ),
                            collapsible = TRUE,
                            title = "Dataset Information", status = "primary", solidHeader = TRUE)
               ))
@@ -867,45 +877,44 @@ body <- dashboardBody(
 
                        #shinythemes::themeSelector(),
 
-                       HTML(paste('<div class="jumbotron">',
-                                    '<div class="container">',
+                       HTML(paste(
 
                                         '<h2>RnShinyBeads!</h2>',
                                         '<p>It is a tool to provide user friendly interactive interface for RnBeads generated reports. It allows to keep track of the analysis performed and prevent performing same analysis again and again. It makes it interactive and easier to compare same or different RnBeads analysis. Target users are the ones who uses RnBeads for analyzing DNA methylation data either individually or as a group.</p>',
-
-                                    '</div>',
-                                  '</div>'
+                                        br()
 
                                   )),
 
                        HTML(paste(
 
-                         '<div class="container">',
-                         '<!-- Example row of columns -->',
+
                          '<div class="row">',
 
 
                          '<div class="col-md-12">',
 
                          tags$a(class='pull-left', href = '.', tags$img(src = 'RnBeads.png')),
-
-                         '</div>',
-                         '<div class="col-md-12">',
-
-
-
-                         '<p>RnBeads is an R package for comprehensive analysis of DNA methylation data obtained with any experimental protocol that provides single-CpG resolution. </p>',
+                         br(),
+                         br(),
+                         br(),
+                           '<p>RnBeads is an R package for comprehensive analysis of DNA methylation data obtained with any experimental protocol that provides single-CpG resolution. </p>',
+                         br(),
                          '<p><a class="btn btn-primary btn-md" href="http://rnbeads.mpi-inf.mpg.de/" target = "blank" role="button">Learn more &raquo;</a></p>',
 
+                         '</div>',
 
+                         '<div class="col-md-12">',
 
-
-
+                         '<h2>Contact!</h2>',
+                         '<p>Questions and/or comments? Contact the developer. </p>',
+                         '<p class= "text-info">Muhammad Raheel, s8murahe@stud.uni-saarland.de </p>',
+                         '<p>Or contact my thesis supervisor. </p>',
+                         '<p class= "text-info" >Pavlo Lutsik, pavlo.lutsik@gmail.com </p>',
+                         '<p></p>',
 
                          '</div>',
 
 
-                         '</div>',
                          '</div>',
 
                          '<br/>')),
