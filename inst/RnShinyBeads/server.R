@@ -28,6 +28,7 @@ library(limma)
 ## S H I N Y S E R V E R ###################################################################################################
 
 options(shiny.maxRequestSize=30*1024^2)
+topRowsPlotChoices = c('100', '500' , '1000','5000')
 
 shinyServer(function(input, output, session) {
 
@@ -771,161 +772,165 @@ shinyServer(function(input, output, session) {
   # Differential Methylation options getting it from the HTML file
   ############################################################################################
 
-  observe({
-
-    value.options <- reactive({as.character(input$input_dmcomp_choices) })
-
-    if (value.options() != "NA"){
-
-
-      wd_options <- reactive({file.path(results.dir(), value.options()) })
-
-
-      if ( file.exists( isolate({ paste(wd_options(),'differential_methylation.html',sep="/") }) ) ){
-
-        filename <- reactive({ normalizePath(file.path(wd_options(),'differential_methylation.html'), winslash = "\\", mustWork = NA) })
-
-        #filename= as.character(filename)
-
-        differential.methylation.path <- filename()
-
-        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-        # Extract table header and contents of the analysis option table of differential methylation
-        tablehead <- xpathSApply(pagetree, "//*/table[@class='tindex']/thead/tr/th", xmlValue)
-        results <- xpathSApply(pagetree, "//*/table[@class='tindex']/tbody/tr/td", xmlValue)
-
-
-        # Convert character vector to dataframe
-        content <- as.data.frame(matrix(results, ncol =2, byrow = TRUE))
-
-        # Clean up the results
-        content[,1] <- gsub("Â ", "", content[,1])
-        tablehead <- gsub("Â ", "", tablehead)
-        names(content) <- tablehead
-
-        output$htmlTable = renderTable({
-          content
-        })
-
-        output$htmlcomparisonTable = renderTable({
-          "comparisonTable No data avaialbe"
-        })
-
-      }
-
-      else{
-
-        output$htmlTable = renderTable({
-          paste("No data available")
-        })
-
-        output$htmlcomparisonTable = renderTable({
-          paste("No data available")
-        })
-
-      }
-
-
-
-    }
-
-
-  })
+#   observe({
+#
+#     value.options <- reactive({as.character(input$input_dmcomp_choices) })
+#
+#     if (value.options() != "NA"){
+#
+#
+#       wd_options <- reactive({file.path(results.dir(), value.options()) })
+#
+#
+#       if ( file.exists( isolate({ paste(wd_options(),'differential_methylation.html',sep="/") }) ) ){
+#
+#         filename <- reactive({ normalizePath(file.path(wd_options(),'differential_methylation.html'), winslash = "\\", mustWork = NA) })
+#
+#         #filename= as.character(filename)
+#
+#         differential.methylation.path <- filename()
+#
+#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+#
+#         # Extract table header and contents of the analysis option table of differential methylation
+#         tablehead <- xpathSApply(pagetree, "//*/table[@class='tindex']/thead/tr/th", xmlValue)
+#         results <- xpathSApply(pagetree, "//*/table[@class='tindex']/tbody/tr/td", xmlValue)
+#
+#
+#         # Convert character vector to dataframe
+#         content <- as.data.frame(matrix(results, ncol =2, byrow = TRUE))
+#
+#         # Clean up the results
+#         content[,1] <- gsub("Â ", "", content[,1])
+#         tablehead <- gsub("Â ", "", tablehead)
+#         names(content) <- tablehead
+#
+#         output$htmlTable = renderTable({
+#           content
+#         })
+#
+#         output$htmlcomparisonTable = renderTable({
+#           "comparisonTable No data avaialbe"
+#         })
+#
+#       }
+#
+#       else{
+#
+#         output$htmlTable = renderTable({
+#           paste("No data available")
+#         })
+#
+#         output$htmlcomparisonTable = renderTable({
+#           paste("No data available")
+#         })
+#
+#       }
+#
+#
+#
+#     }
+#
+#
+#   })
 
   ############################################################################################
 
   # showing comparisons performed from the HTML file and displaying in the dropdown for qqplot 1
   ############################################################################################
 
-  observeEvent(input$input_dmcomp_choices,{
-
-    shinyjs::hide(id = "id_qqplot")
-
-    input_choices <- as.character(input$input_dmcomp_choices)
-
-    qq.dir <- file.path(results.dir(), input_choices)
-
-    # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
-
-    if (input_choices != "NA"){
-
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
-
-        filename <- file.path(qq.dir,'differential_methylation.html')
-
-        differential.methylation.path <- filename
-
-
-        webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
-        pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
-
-        query = "//*/div[@id='section3']/ul/li"
-        dates = xpathSApply(pagetree, query, xmlValue)
-        dates
-        comp_names <- list()
-        comp_names_counter <- 1
-        for (i in 1:length(dates)) {
-
-          comp_names[comp_names_counter] <- dates[i]
-          comp_names_counter = comp_names_counter + 1
-
-        }
-
-
-        choices.list <- comp_names
-
-
-      }
-      else{
-        choices.list <- 'NA'
-      }
-    }
-    else{
-      choices.list <- 'NA'
-
-    }
-
-
-
-    updateSelectInput(session, "input_dmcomp_files",
-                      label = paste("Comparison", ""),
-                      choices = choices.list)
-
-    if (length(choices.list) > 0){
-
-      updateCheckboxGroupInput(session, "check_comp",
-
-                               label = paste("Select comparison", ""),
-                               choices = choices.list
-      )
-
-
-
-    }
-    else{
-
-
-      updateCheckboxGroupInput(session, "check_comp",
-
-                               label = paste("Select comparison", ""),
-                               choices = ""
-      )
-
-    }
-
-
-
-
-  })
+#   observeEvent(input$input_dmcomp_choices,{
+#
+#     shinyjs::hide(id = "id_qqplot")
+#
+#     input_choices <- as.character(input$input_dmcomp_choices)
+#
+#     qq.dir <- file.path(results.dir(), input_choices)
+#
+#     # Extracting the values from the table from differential methylation html file and displaying the values of comparisons in the dropdown
+#
+#     if (input_choices != "NA"){
+#
+#
+#       if ( file.exists( isolate({ paste(qq.dir,'differential_methylation.html',sep="/") }) ) ){
+#
+#         filename <- file.path(qq.dir,'differential_methylation.html')
+#
+#         differential.methylation.path <- filename
+#
+#
+#         webpage <- readLines(tc <- textConnection(differential.methylation.path)); close(tc)
+#         pagetree <- htmlTreeParse(webpage, error=function(...){}, useInternalNodes = TRUE)
+#
+#         query = "//*/div[@id='section3']/ul/li"
+#         dates = xpathSApply(pagetree, query, xmlValue)
+#         dates
+#         comp_names <- list()
+#         comp_names_counter <- 1
+#         for (i in 1:length(dates)) {
+#
+#           comp_names[comp_names_counter] <- dates[i]
+#           comp_names_counter = comp_names_counter + 1
+#
+#         }
+#
+#
+#         choices.list <- comp_names
+#
+#
+#       }
+#       else{
+#         choices.list <- 'NA'
+#       }
+#     }
+#     else{
+#       choices.list <- 'NA'
+#
+#     }
+#
+#
+#
+#     updateSelectInput(session, "input_dmcomp_files",
+#                       label = paste("Comparison", ""),
+#                       choices = choices.list)
+#
+#     if (length(choices.list) > 0){
+#
+#       updateCheckboxGroupInput(session, "check_comp",
+#
+#                                label = paste("Select comparison", ""),
+#                                choices = choices.list
+#       )
+#
+#
+#
+#     }
+#     else{
+#
+#
+#       updateCheckboxGroupInput(session, "check_comp",
+#
+#                                label = paste("Select comparison", ""),
+#                                choices = ""
+#       )
+#
+#     }
+#
+#
+#
+#
+#   })
 
 
   ############################################################################################
 
   # qqplots 1 of diff methylation p- values
   ############################################################################################
+
+  output$input_multiqqplot_readtop <- renderUI({
+    selectInput("input_multiqqplot_readtop", "Read top n rows:", topRowsPlotChoices)
+  })
 
   output$qq.columns <- renderUI({
     selectInput("input_qq_columns",
@@ -935,7 +940,7 @@ shinyServer(function(input, output, session) {
 
   output$qq.columns.equality <- renderUI({
     selectInput("input_qq_columns_equality",
-                label = paste(""),
+                label = paste(" "),
                 choices = c(">","<", ">=","<=","all"))
   })
 
@@ -948,19 +953,19 @@ shinyServer(function(input, output, session) {
 
   output$qq.multi.columns <- renderUI({
     selectInput("input_qq_multi_columns",
-                label = paste(""),
+                label = paste("Filter the p-values"),
                 choices = c("diffmeth.p.val"))
   })
 
   output$qq.multi.columns.equality <- renderUI({
     selectInput("input_qq_multi_columns_equality",
-                label = paste(""),
+                label = paste("_"),
                 choices = c(">","<", ">=","<=","all"))
   })
 
   output$qq.multi.columns.range <- renderUI({
     selectInput("input_qq_multi_columns_range",
-                label = paste(""),
+                label = paste("_"),
                 choices = c("0.01","0.1", "0.05","0.5","0","1"))
   })
 
@@ -1462,6 +1467,12 @@ output$testingcompqqplot <- renderPlot({
     else{
       #fucntion from the RnShinyBeads package
 
+      # Create a Progress object
+      progress <- shiny::Progress$new()
+
+      progress$set(message = "Reading data from analysis 1", value = 50)
+
+
       data_type = rnbi.analysis.datatype(results.dir() , qq.value)
 
       if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
@@ -1621,6 +1632,10 @@ output$testingcompqqplot <- renderPlot({
         x <- list()
         x
       }
+      # Make sure it closes when we exit this reactive, even if there's an error
+      on.exit(progress$close())
+
+      x
     }
 
 
@@ -1776,6 +1791,13 @@ output$testingcompqqplot <- renderPlot({
       x
     }
     else{
+
+      # Create a Progress object
+      progress <- shiny::Progress$new()
+
+      progress$set(message = "Reading data from analysis 2", value = 50)
+
+
       #fucntion from the RnShinyBeads package
       data_type = rnbi.analysis.datatype(results.dir() , qq.value)
 
@@ -1938,6 +1960,12 @@ output$testingcompqqplot <- renderPlot({
         y <- list()
         y
       }
+
+      # Make sure it closes when we exit this reactive, even if there's an error
+      on.exit(progress$close())
+
+      y
+
     }
 
 
@@ -3249,9 +3277,11 @@ get.choice.index <- reactive({
 })
 
 
-# returns the index of selected comparison file in QQplot 1
+# returns
 observeEvent(input$cb_ts_comp_venn, {
   # preparing data to display in Venn diagram and in data table
+
+
   cb.checked <- c(input$cb_ts_comp_venn)
 
 
@@ -3306,6 +3336,8 @@ observeEvent(input$cb_ts_comp_venn, {
     })
 
   })
+
+
 
 })
 
