@@ -3827,6 +3827,8 @@ observeEvent(input$cb_ts_comp_venn, {
 
           selected_value = input$input_ts_selector_overlapping_value
 
+          outputTableData <- data.frame()
+
           if(identical(as.character(selected_value) , as.character(paste("!AB", " = " , dataset.venn.count.list[[2]][1,3])))){
 
             df <- data.frame(clogicaldf)
@@ -3998,6 +4000,7 @@ observeEvent(input$cb_ts_comp_venn, {
           df <- data.frame(clogicaldf)
           colnames(df) <- c("colA", "colB", "colC")
 
+          outputTableData <- data.frame()
           for (i in 1:8) {
             if(identical(as.character(selected_value) , as.character(paste(combination[i] , dataset.venn.count.list[[3]][i,4]))))
             {
@@ -4144,6 +4147,7 @@ observeEvent(input$cb_ts_comp_venn, {
           selected_value = input$input_ts_selector_overlapping_value
 
 
+          outputTableData <- data.frame()
           for (i in 1:16) {
             if(identical(as.character(selected_value) , as.character(paste(combination[i] , dataset.venn.count.list[[4]][i,5]))))
             {
@@ -4340,6 +4344,7 @@ observeEvent(input$cb_ts_comp_venn, {
           selected_value = input$input_ts_selector_overlapping_value
 
 
+          outputTableData <- data.frame()
           for (i in 1:32) {
             if(identical(as.character(selected_value) , as.character(paste(combination[i] , dataset.venn.count.list[[5]][i,6]))))
             {
