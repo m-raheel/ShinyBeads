@@ -16,8 +16,8 @@ library(XML)
 library(data.table) # using the function fread for reading large csv files
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
-#library(RnShinyBeads, lib.loc = "/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4")
-library(RnShinyBeads)
+library(RnShinyBeads, lib.loc = "/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4")
+#library(RnShinyBeads)
 library(plyr)
 library(shinydashboard)
 library(limma)
@@ -80,9 +80,9 @@ shinyServer(function(input, output, session) {
 
   # comment uncomment to use dynamic path of the repository
   # .global.analysisDir is the path to the RnBeads repository selected before running shiny app
-  updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
+  #updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
 
-  #updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
+  updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
   #updatedDir <- normalizePath("/projects/factorization/raw_data/Demo_Repository", winslash = "\\", mustWork = NA)
 
   selectedDir <-  as.character(updatedDir)
@@ -3847,6 +3847,7 @@ observeEvent(input$cb_ts_comp_venn, {
 
             outputTableData <- merge(c1, c2, by = c("customrowname") , all = F)
             outputTableData$customrowname      <- NULL
+            outputTableData
             #colnames(outputTableData) <- c("cgid.A", "Chromosome.A", "Start.A", "Strand.A", paste(colselected,".A"), "cgod.B", "Chromosome.B", "Strand.A",paste(colselected,".B"))
 
 
@@ -3904,6 +3905,7 @@ observeEvent(input$cb_ts_comp_venn, {
 
             outputTableData <- merge(c1, c2, by = c("customrowname") , all = F)
             outputTableData$customrowname      <- NULL
+            outputTableData
             #colnames(outputTableData) <- c("cgid.A", "Chromosome.A", "Start.A", "Strand.A", paste(colselected,".A"), "cgod.B", "Chromosome.B", "Strand.A",paste(colselected,".B"))
 
 
@@ -4053,6 +4055,7 @@ observeEvent(input$cb_ts_comp_venn, {
               }
 
               outputTableData$customrowname      <- NULL
+              outputTableData
 
 
               break
@@ -4250,7 +4253,7 @@ observeEvent(input$cb_ts_comp_venn, {
               }
 
               outputTableData$customrowname      <- NULL
-
+              outputTableData
               break
             }
           }
@@ -4485,6 +4488,7 @@ observeEvent(input$cb_ts_comp_venn, {
               }
 
               outputTableData$customrowname      <- NULL
+              outputTableData
 
 
 
