@@ -673,10 +673,10 @@ body <- dashboardBody(
                                    tags$p("Customize the plot by selecting x-axis and y-axis from the options. The plot will contains data from the above table."),
 
                                    fluidRow(
-                                     column(width = 2,
+                                     column(width = 3,
                                             selectInput("input_tablebrowser_x_axis", "Select x-axis:", '')
                                      ),
-                                     column(width = 2,
+                                     column(width = 3,
                                             selectInput("input_tablebrowser_y_axis", "Select y-axis:", '')
                                      )
                                    ),
@@ -764,7 +764,7 @@ body <- dashboardBody(
 
                            tags$h4(style="color:black;","Venn Diagram"),
                            tags$p(paste("Check the analysis on the left for which you want to see the overlappings.")),
-                           tags$p(paste("Note: Please select atleast 1 and atmost 6 analysis to draw Venn Diagram!")),
+                           tags$p(paste("Note: Please select atleast 1 and atmost 5 analysis to draw Venn Diagram!")),
 
 
                            #checkboxGroupInput("cb_ts_comp_venn", label = h3("Select analysis"),

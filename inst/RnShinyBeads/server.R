@@ -3438,12 +3438,12 @@ observeEvent(input$cb_ts_comp_venn, {
 
 
         # checking the length of each comparison data and ommit rows
-        vec_length <- c(vec_length,nrow(dataset))
-        xyz <- xyz+1
-
-        max_rows_index <- which.max(vec_length)
-        max_rows <- vec_length[max_rows_index]
-        dataset <- dataset[1:max_rows,]
+#         vec_length <- c(vec_length,nrow(dataset))
+#         xyz <- xyz+1
+#
+#         max_rows_index <- which.min(vec_length)
+#         max_rows <- vec_length[max_rows_index]
+#         dataset <- dataset[1:max_rows,]
 
         if(column_selected == "diffmeth.p.val"){
           colselected <- dataset$diffmeth.p.val
@@ -3465,7 +3465,7 @@ observeEvent(input$cb_ts_comp_venn, {
 
         if(equality == ">="){
           original.dataset.list[[i]] <- dataset
-          filtered.dataset.list[[i]] <- dataset[colselected > range_selected,]
+          filtered.dataset.list[[i]] <- dataset[colselected >= range_selected,]
           filtered.logical.dataset.list[[i]] <- (subset(dataset, select = c(column_selected) ) >= as.numeric( range_selected))
           original.dataset.list[[i]][,"logical"] <- filtered.logical.dataset.list[[i]]
 
@@ -3532,23 +3532,177 @@ observeEvent(input$cb_ts_comp_venn, {
 
         }
         else if (i == 2){
+
+          # checking if the two dataframe are unequal if yes than in order to cbind we need to make them equal size
+          if (length(filtered.logical.dataset.list[[1]]) < length(filtered.logical.dataset.list[[2]]))
+          {
+            # creating a logical vector of False of length and rbind it to the orginal dataframe
+            temp <- cbind(logical(length = (length(filtered.logical.dataset.list[[2]]) - length(filtered.logical.dataset.list[[1]]))))
+            filtered.logical.dataset.list[[1]] <- rbind(filtered.logical.dataset.list[[1]], temp)
+          }else if (length(filtered.logical.dataset.list[[2]]) < length(filtered.logical.dataset.list[[1]]))
+          {
+            temp <- cbind(logical(length = (length(filtered.logical.dataset.list[[1]]) - length(filtered.logical.dataset.list[[2]]))))
+            filtered.logical.dataset.list[[2]] <- rbind(filtered.logical.dataset.list[[2]],temp )
+
+          }
+
+
           clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]])
 
         }
         else if (i == 3){
+
+          test <- c(length(filtered.logical.dataset.list[[1]]),length(filtered.logical.dataset.list[[2]]),length(filtered.logical.dataset.list[[3]]))
+          max_index = which.max(test)
+          max_length = test[max_index]
+
+          # checking if the two dataframe are unequal if yes than in order to cbind we need to make them equal size
+          if (length(filtered.logical.dataset.list[[1]]) < max_length)
+          {
+            # creating a logical vector of False of length and rbind it to the orginal dataframe
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[1]]))))
+            filtered.logical.dataset.list[[1]] <- rbind(filtered.logical.dataset.list[[1]], temp)
+          }
+          if (length(filtered.logical.dataset.list[[2]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[2]]))))
+            filtered.logical.dataset.list[[2]] <- rbind(filtered.logical.dataset.list[[2]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[3]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[3]]))))
+            filtered.logical.dataset.list[[3]] <- rbind(filtered.logical.dataset.list[[3]],temp )
+
+          }
+
+
           clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]], filtered.logical.dataset.list[[3]])
 
         }
 
         else if (i == 4){
+
+          test <- c(length(filtered.logical.dataset.list[[1]]),length(filtered.logical.dataset.list[[2]]),length(filtered.logical.dataset.list[[3]]),length(filtered.logical.dataset.list[[4]]))
+          max_index = which.max(test)
+          max_length = test[max_index]
+
+          # checking if the two dataframe are unequal if yes than in order to cbind we need to make them equal size
+          if (length(filtered.logical.dataset.list[[1]]) < max_length)
+          {
+            # creating a logical vector of False of length and rbind it to the orginal dataframe
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[1]]))))
+            filtered.logical.dataset.list[[1]] <- rbind(filtered.logical.dataset.list[[1]], temp)
+          }
+          if (length(filtered.logical.dataset.list[[2]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[2]]))))
+            filtered.logical.dataset.list[[2]] <- rbind(filtered.logical.dataset.list[[2]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[3]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[3]]))))
+            filtered.logical.dataset.list[[3]] <- rbind(filtered.logical.dataset.list[[3]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[4]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[4]]))))
+            filtered.logical.dataset.list[[4]] <- rbind(filtered.logical.dataset.list[[4]],temp )
+
+          }
+
+
+
           clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]], filtered.logical.dataset.list[[3]], filtered.logical.dataset.list[[4]])
 
         }
         else if (i == 5){
+
+          test <- c(length(filtered.logical.dataset.list[[1]]),length(filtered.logical.dataset.list[[2]]),length(filtered.logical.dataset.list[[3]]),length(filtered.logical.dataset.list[[4]]),length(filtered.logical.dataset.list[[5]]))
+          max_index = which.max(test)
+          max_length = test[max_index]
+
+          # checking if the two dataframe are unequal if yes than in order to cbind we need to make them equal size
+          if (length(filtered.logical.dataset.list[[1]]) < max_length)
+          {
+            # creating a logical vector of False of length and rbind it to the orginal dataframe
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[1]]))))
+            filtered.logical.dataset.list[[1]] <- rbind(filtered.logical.dataset.list[[1]], temp)
+          }
+          if (length(filtered.logical.dataset.list[[2]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[2]]))))
+            filtered.logical.dataset.list[[2]] <- rbind(filtered.logical.dataset.list[[2]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[3]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[3]]))))
+            filtered.logical.dataset.list[[3]] <- rbind(filtered.logical.dataset.list[[3]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[4]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[4]]))))
+            filtered.logical.dataset.list[[4]] <- rbind(filtered.logical.dataset.list[[4]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[5]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[5]]))))
+            filtered.logical.dataset.list[[5]] <- rbind(filtered.logical.dataset.list[[5]],temp )
+
+          }
+
           clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]], filtered.logical.dataset.list[[3]], filtered.logical.dataset.list[[4]], filtered.logical.dataset.list[[5]])
 
         }
         else if (i == 6){
+
+          test <- c(length(filtered.logical.dataset.list[[1]]),length(filtered.logical.dataset.list[[2]]),length(filtered.logical.dataset.list[[3]]),length(filtered.logical.dataset.list[[4]]),length(filtered.logical.dataset.list[[5]]),length(filtered.logical.dataset.list[[6]]))
+          max_index = which.max(test)
+          max_length = test[max_index]
+
+          # checking if the two dataframe are unequal if yes than in order to cbind we need to make them equal size
+          if (length(filtered.logical.dataset.list[[1]]) < max_length)
+          {
+            # creating a logical vector of False of length and rbind it to the orginal dataframe
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[1]]))))
+            filtered.logical.dataset.list[[1]] <- rbind(filtered.logical.dataset.list[[1]], temp)
+          }
+          if (length(filtered.logical.dataset.list[[2]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[2]]))))
+            filtered.logical.dataset.list[[2]] <- rbind(filtered.logical.dataset.list[[2]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[3]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[3]]))))
+            filtered.logical.dataset.list[[3]] <- rbind(filtered.logical.dataset.list[[3]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[4]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[4]]))))
+            filtered.logical.dataset.list[[4]] <- rbind(filtered.logical.dataset.list[[4]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[5]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[5]]))))
+            filtered.logical.dataset.list[[5]] <- rbind(filtered.logical.dataset.list[[5]],temp )
+
+          }
+          if(length(filtered.logical.dataset.list[[6]]) < max_length)
+          {
+            temp <- cbind(logical(length = (max_length - length(filtered.logical.dataset.list[[6]]))))
+            filtered.logical.dataset.list[[6]] <- rbind(filtered.logical.dataset.list[[6]],temp )
+
+          }
+
           clogicaldf <- cbind(filtered.logical.dataset.list[[1]], filtered.logical.dataset.list[[2]], filtered.logical.dataset.list[[3]], filtered.logical.dataset.list[[4]], filtered.logical.dataset.list[[5]], filtered.logical.dataset.list[[6]])
 
         }
@@ -3668,33 +3822,90 @@ observeEvent(input$cb_ts_comp_venn, {
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Drawing venn diagram please wait...", value = 50)
+          progress$set(message = "populating table below! please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value
 
           if(identical(as.character(selected_value) , as.character(paste("!AB", " = " , dataset.venn.count.list[[2]][1,3])))){
-            c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "FALSE" ) ]
 
-            c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "FALSE" )]
+            df <- data.frame(clogicaldf)
+            colnames(df) <- c("colA", "colB")
+
+            new.data <- df[ which( df$colA == FALSE & df$colB == FALSE) , ]
+            rnames <- row.names(new.data)
+            odf1 <- data.frame(original.dataset.list[[1]])
+            c1 <-  odf1[rnames,]
+            c1[,"customrowname"] <- rnames
+
+            odf2 <- data.frame(original.dataset.list[[2]])
+            c2 <-  odf2[rnames,]
+            c2[,"customrowname"] <- rnames
+
+            c1$logical      <- NULL
+            c2$logical      <- NULL
+
+            outputTableData <- merge(c1, c2, by = c("customrowname") , all = F)
+            outputTableData$customrowname      <- NULL
+            #colnames(outputTableData) <- c("cgid.A", "Chromosome.A", "Start.A", "Strand.A", paste(colselected,".A"), "cgod.B", "Chromosome.B", "Strand.A",paste(colselected,".B"))
+
 
           }
           else if(identical(as.character(selected_value) , as.character(paste("B", " = " , dataset.venn.count.list[[2]][2,3])))){
-            c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "FALSE" ) ]
+            df <- data.frame(clogicaldf)
+            colnames(df) <- c("colA", "colB")
 
-            c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "TRUE" )]
+            new.data <- df[ which( df$colA == FALSE & df$colB == TRUE) , ]
+            rnames <- row.names(new.data)
+            odf1 <- data.frame(original.dataset.list[[2]])
+            c2 <-  odf1[rnames,]
+
+
+            #c1$logical      <- NULL
+            c2$logical      <- NULL
+
+            outputTableData <- c2
+
 
           }
           else if(identical(as.character(selected_value) , as.character(paste("A", " = " , dataset.venn.count.list[[2]][3,3])))){
-            c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "TRUE" ) ]
+            df <- data.frame(clogicaldf)
+            colnames(df) <- c("colA", "colB")
 
-            c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "FALSE" )]
+            new.data <- df[ which( df$colA == TRUE & df$colB == FALSE) , ]
+            rnames <- row.names(new.data)
+            odf1 <- data.frame(original.dataset.list[[1]])
+            c1 <-  odf1[rnames,]
+
+            c1$logical      <- NULL
+            #c2$logical      <- NULL
+
+            outputTableData <- c1
+
+
 
           }
           else if(identical(as.character(selected_value) , as.character(paste("AB", " = " , dataset.venn.count.list[[2]][4,3])))){
-            c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == "TRUE" ) ]
+            df <- data.frame(clogicaldf)
+            colnames(df) <- c("colA", "colB")
 
-            c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "TRUE" )]
+            new.data <- df[ which( df$colA == TRUE & df$colB == TRUE) , ]
+            rnames <- row.names(new.data)
+            odf1 <- data.frame(original.dataset.list[[1]])
+            c1 <-  odf1[rnames,]
+            c1[,"customrowname"] <- rnames
+
+            odf2 <- data.frame(original.dataset.list[[2]])
+            c2 <-  odf2[rnames,]
+            c2[,"customrowname"] <- rnames
+
+            c1$logical      <- NULL
+            c2$logical      <- NULL
+
+            outputTableData <- merge(c1, c2, by = c("customrowname") , all = F)
+            outputTableData$customrowname      <- NULL
+            #colnames(outputTableData) <- c("cgid.A", "Chromosome.A", "Start.A", "Strand.A", paste(colselected,".A"), "cgod.B", "Chromosome.B", "Strand.A",paste(colselected,".B"))
+
 
           }
           else{
@@ -3702,12 +3913,14 @@ observeEvent(input$cb_ts_comp_venn, {
 
             c2 = original.dataset.list[[2]] [ (original.dataset.list[[2]]$logical == "FALSE" )]
 
+            c1$logical      <- NULL
+            c2$logical      <- NULL
+
+            outputTableData <- merge(c1, c2, by = c("cgid","Chromosome","Start","Strand") , all = F)
+
+
           }
 
-          c1$logical      <- NULL
-          c2$logical      <- NULL
-
-          outputTableData <- merge(c1, c2, by = c("cgid","Chromosome","Start","Strand") , all = F)
 
           # Make sure it closes when we exit this reactive, even if there's an error
           on.exit(progress$close())
@@ -3721,7 +3934,7 @@ observeEvent(input$cb_ts_comp_venn, {
                        scrollY = 400,
                        scroller = TRUE,
                        #fixedHeader = TRUE,
-                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5,6))),
+                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5))),
                        #pageLength = 100,
                        initComplete = JS(
                          "function(settings, json) {",
@@ -3775,26 +3988,72 @@ observeEvent(input$cb_ts_comp_venn, {
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Drawing venn diagram please wait...", value = 50)
+          progress$set(message = "populating table below! please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value
 
+          df <- data.frame(clogicaldf)
+          colnames(df) <- c("colA", "colB", "colC")
 
           for (i in 1:8) {
             if(identical(as.character(selected_value) , as.character(paste(combination[i] , dataset.venn.count.list[[3]][i,4]))))
             {
-              c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == as.character(combinationLogicalA[i]) ) ]
-              c2 = original.dataset.list[[2]] [(original.dataset.list[[2]]$logical == as.character(combinationLogicalB[i]) ) ]
-              c3 = original.dataset.list[[3]] [(original.dataset.list[[3]]$logical == as.character(combinationLogicalC[i]) ) ]
+              new.data <- df[ which( df$colA == combinationLogicalA[i] & df$colB == combinationLogicalB[i] & df$colC == combinationLogicalC[i] ) , ]
+              rnames <- row.names(new.data)
+              odf1 <- data.frame(original.dataset.list[[1]])
+              c1 <-  odf1[rnames,]
+              c1[,"customrowname"] <- rnames
+
+              odf1 <- data.frame(original.dataset.list[[2]])
+              c2 <-  odf1[rnames,]
+              c2[,"customrowname"] <- rnames
+
+              odf1 <- data.frame(original.dataset.list[[3]])
+              c3 <-  odf1[rnames,]
+              c3[,"customrowname"] <- rnames
 
               c1$logical      <- NULL
               c2$logical      <- NULL
               c3$logical      <- NULL
-              #outputTableData <- Reduce(function(x, y) merge(x, y, by = c("cgid","Chromosome","Start","Strand"), all=F), list(c1, c2))
-              c <- merge(c1, c2, by = c("cgid","Chromosome","Start","Strand") , all = F)
 
-              outputTableData <- merge(c, c3, by = c("cgid","Chromosome","Start","Strand") , all = F)
+              if(identical(as.character("C = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c3
+              }
+              else if(identical(as.character("A = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c1
+              }
+              else if(identical(as.character("B = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c2
+              }
+              else if(identical(as.character("AC = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c3, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("AB = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c2, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BC = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c2, c3, by = c("customrowname") , all = F)
+              }
+              else{
+                c <- merge(c1, c2, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c3, by = c("customrowname") , all = F)
+              }
+
+              outputTableData$customrowname      <- NULL
+
 
               break
             }
@@ -3815,7 +4074,7 @@ observeEvent(input$cb_ts_comp_venn, {
                        scrollY = 400,
                        scroller = TRUE,
                        #fixedHeader = TRUE,
-                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5,6,7))),
+                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5))),
                        #pageLength = 100,
                        initComplete = JS(
                          "function(settings, json) {",
@@ -3866,13 +4125,17 @@ observeEvent(input$cb_ts_comp_venn, {
 
         # updating the table and showing content
 
+        df <- data.frame(clogicaldf)
+        colnames(df) <- c("colA", "colB", "colC", "colD")
+
+
         # output the datatable according to the venn diagram count number selected
         output$output.topscorer.overlappingComparison <- renderDataTable({
 
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Drawing venn diagram please wait...", value = 50)
+          progress$set(message = "populating table data! please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value
@@ -3881,21 +4144,112 @@ observeEvent(input$cb_ts_comp_venn, {
           for (i in 1:16) {
             if(identical(as.character(selected_value) , as.character(paste(combination[i] , dataset.venn.count.list[[4]][i,5]))))
             {
-              c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == as.character(combinationLogicalA[i]) ) ]
-              c2 = original.dataset.list[[2]] [(original.dataset.list[[2]]$logical == as.character(combinationLogicalB[i]) ) ]
-              c3 = original.dataset.list[[3]] [(original.dataset.list[[3]]$logical == as.character(combinationLogicalC[i]) ) ]
-              c4 = original.dataset.list[[4]] [(original.dataset.list[[4]]$logical == as.character(combinationLogicalD[i]) ) ]
+              new.data <- df[ which( df$colA == combinationLogicalA[i] & df$colB == combinationLogicalB[i] & df$colC == combinationLogicalC[i] & df$colD == combinationLogicalD[i]) , ]
+              rnames <- row.names(new.data)
+              odf1 <- data.frame(original.dataset.list[[1]])
+              c1 <-  odf1[rnames,]
+              c1[,"customrowname"] <- rnames
+
+              odf1 <- data.frame(original.dataset.list[[2]])
+              c2 <-  odf1[rnames,]
+              c2[,"customrowname"] <- rnames
+
+              odf1 <- data.frame(original.dataset.list[[3]])
+              c3 <-  odf1[rnames,]
+              c3[,"customrowname"] <- rnames
+
+
+              odf1 <- data.frame(original.dataset.list[[4]])
+              c4 <-  odf1[rnames,]
+              c4[,"customrowname"] <- rnames
+
 
               c1$logical      <- NULL
               c2$logical      <- NULL
               c3$logical      <- NULL
               c4$logical      <- NULL
-              #outputTableData <- Reduce(function(x, y) merge(x, y, by = c("cgid","Chromosome","Start","Strand"), all=F), list(c1, c2))
-              c12 <- merge(c1, c2, by = c("cgid","Chromosome","Start","Strand") , all = F)
-              c34 <- merge(c3, c4, by = c("cgid","Chromosome","Start","Strand") , all = F)
-              c1234 <- merge(c12, c34, by = c("cgid","Chromosome","Start","Strand") , all = F)
 
-              outputTableData <- c1234
+              outputTableData <- c1
+
+
+              if(identical(as.character("C = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c3
+              }
+              else if(identical(as.character("A = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c1
+              }
+              else if(identical(as.character("B = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c2
+              }
+              else if(identical(as.character("D = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c4
+              }
+              else if(identical(as.character("AC = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c3, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("AB = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c2, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("AD = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BC = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c2, c3, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BD = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c2, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("ABC = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c1, c2, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c3, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("ABD = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c1, c2, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("ACD = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c1, c3, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BCD = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c2, c3, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c4, by = c("customrowname") , all = F)
+              }
+              else{
+                c12 <- merge(c1, c2, by = c("customrowname") , all = F)
+                c34 <- merge(c3, c4, by = c("customrowname") , all = F)
+                c1234 <- merge(c12, c34, by = c("customrowname") , all = F)
+
+                outputTableData <- c1234
+              }
+
+              outputTableData$customrowname      <- NULL
 
               break
             }
@@ -3913,16 +4267,17 @@ observeEvent(input$cb_ts_comp_venn, {
         },selection = 'single', filter = 'top',
         extensions = list("ColReorder" = NULL,"Buttons" = NULL,"KeyTable" = NULL,'Scroller'= NULL),
         options = list(deferRender = TRUE,
-                       scrollY = 400,
-                       scroller = TRUE,
+#                        scrollY = 400,
+#                        scroller = TRUE,
                        #fixedHeader = TRUE,
-                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5,6,7,8))),
+                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5))),
                        #pageLength = 100,
                        initComplete = JS(
                          "function(settings, json) {",
                          "$(this.api().table().header()).css({'background-color': '#368BC1', 'color': '#000'});",
                          "}"),
-                       scrollX = TRUE, scrollY = TRUE, dom = 'Blfrtip',buttons = list(  'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
+                       #scrollX = TRUE, #scrollY = TRUE,
+                      dom = 'Blfrtip',buttons = list(  'print',list( extend = 'collection',buttons = c('csv', 'excel', 'pdf'), text = 'Download'), I('colvis')),br(), keys = TRUE
         ), escape = TRUE)
 
       }
@@ -3967,13 +4322,16 @@ observeEvent(input$cb_ts_comp_venn, {
 
         # updating the table and showing content
 
+        df <- data.frame(clogicaldf)
+        colnames(df) <- c("colA", "colB", "colC", "colD", "colE")
+
         # output the datatable according to the venn diagram count number selected
         output$output.topscorer.overlappingComparison <- renderDataTable({
 
           # Create a Progress object
           progress <- shiny::Progress$new()
 
-          progress$set(message = "Drawing venn diagram please wait...", value = 50)
+          progress$set(message = "Populating table data! please wait...", value = 50)
 
 
           selected_value = input$input_ts_selector_overlapping_value
@@ -3982,11 +4340,30 @@ observeEvent(input$cb_ts_comp_venn, {
           for (i in 1:32) {
             if(identical(as.character(selected_value) , as.character(paste(combination[i] , dataset.venn.count.list[[5]][i,6]))))
             {
-              c1 = original.dataset.list[[1]] [(original.dataset.list[[1]]$logical == as.character(combinationLogicalA[i]) ) ]
-              c2 = original.dataset.list[[2]] [(original.dataset.list[[2]]$logical == as.character(combinationLogicalB[i]) ) ]
-              c3 = original.dataset.list[[3]] [(original.dataset.list[[3]]$logical == as.character(combinationLogicalC[i]) ) ]
-              c4 = original.dataset.list[[4]] [(original.dataset.list[[4]]$logical == as.character(combinationLogicalD[i]) ) ]
-              c5 = original.dataset.list[[5]] [(original.dataset.list[[5]]$logical == as.character(combinationLogicalE[i]) ) ]
+
+              new.data <- df[ which( df$colA == combinationLogicalA[i] & df$colB == combinationLogicalB[i] & df$colC == combinationLogicalC[i] & df$colD == combinationLogicalD[i] & df$colE == combinationLogicalE[i]) , ]
+              rnames <- row.names(new.data)
+              odf1 <- data.frame(original.dataset.list[[1]])
+              c1 <-  odf1[rnames,]
+              c1[,"customrowname"] <- rnames
+
+              odf1 <- data.frame(original.dataset.list[[2]])
+              c2 <-  odf1[rnames,]
+              c2[,"customrowname"] <- rnames
+
+              odf1 <- data.frame(original.dataset.list[[3]])
+              c3 <-  odf1[rnames,]
+              c3[,"customrowname"] <- rnames
+
+
+              odf1 <- data.frame(original.dataset.list[[4]])
+              c4 <-  odf1[rnames,]
+              c4[,"customrowname"] <- rnames
+
+              odf1 <- data.frame(original.dataset.list[[5]])
+              c5 <-  odf1[rnames,]
+              c5[,"customrowname"] <- rnames
+
 
               c1$logical      <- NULL
               c2$logical      <- NULL
@@ -3994,13 +4371,122 @@ observeEvent(input$cb_ts_comp_venn, {
               c4$logical      <- NULL
               c5$logical      <- NULL
 
-              #outputTableData <- Reduce(function(x, y) merge(x, y, by = c("cgid","Chromosome","Start","Strand"), all=F), list(c1, c2))
-              c12 <- merge(c1, c2, by = c("cgid","Chromosome","Start","Strand") , all = F)
-              c34 <- merge(c3, c4, by = c("cgid","Chromosome","Start","Strand") , all = F)
-              c1234 <- merge(c12, c34, by = c("cgid","Chromosome","Start","Strand") , all = F)
-              c12345 <- merge(c1234, c5, by = c("cgid","Chromosome","Start","Strand") , all = F)
+              outputTableData <- c1
 
-              outputTableData <- c12345
+              if(identical(as.character("C = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c3
+              }
+              else if(identical(as.character("A = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c1
+              }
+              else if(identical(as.character("B = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c2
+              }
+              else if(identical(as.character("D = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c4
+              }
+              else if(identical(as.character("E = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- c5
+              }
+              else if(identical(as.character("AC = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c3, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("AB = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c2, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("AD = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("AE = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c1, c5, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BC = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c2, c3, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BD = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c2, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BE = ") , as.character(combination[i])))
+              {
+
+                outputTableData <- merge(c2, c5, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("ABC = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c1, c2, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c3, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("ABD = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c1, c2, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("ABE = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c1, c2, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c5, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("ACD = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c1, c3, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("ACE = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c1, c3, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BCD = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c2, c3, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c4, by = c("customrowname") , all = F)
+              }
+              else if(identical(as.character("BCE = ") , as.character(combination[i])))
+              {
+
+                c <- merge(c2, c3, by = c("customrowname"), all = F)
+                outputTableData <- merge(c, c5, by = c("customrowname") , all = F)
+              }
+              else{
+                c12 <- merge(c1, c2, by = c("customrowname") , all = F)
+                c34 <- merge(c3, c4, by = c("customrowname") , all = F)
+                c1234 <- merge(c12, c34, by = c("customrowname") , all = F)
+                c12345 <- merge(c1234, c5, by = c("customrowname") , all = F)
+
+                outputTableData <- c12345
+              }
+
+              outputTableData$customrowname      <- NULL
+
+
 
               break
             }
@@ -4021,7 +4507,7 @@ observeEvent(input$cb_ts_comp_venn, {
                        scrollY = 400,
                        scroller = TRUE,
                        #fixedHeader = TRUE,
-                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5,6,7,8,9))),
+                       columnDefs = list(list(className = 'dt-center', targets = c(1,2, 3,4,5))),
                        #pageLength = 100,
                        initComplete = JS(
                          "function(settings, json) {",
