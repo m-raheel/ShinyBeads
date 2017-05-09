@@ -21,7 +21,7 @@ library(shinydashboard)
 
 
 choices = "NA"
-topRowsPlotChoices = c('100', '500' , '1000','5000')
+topRowsPlotChoices = c('All','5000', '1000' , '500' ,'100')
 topRowsChoices = c('All', '100000' ,'50000' , '20000', '10000', '1000' , '500' ,'100')
 check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPLETED Preprocessing', 'COMPLETED Tracks and Tables','COMPLETED Covariate Inference','COMPLETED Exploratory Analysis','COMPLETED Differential Methylation')
 
@@ -126,6 +126,8 @@ body <- dashboardBody(
                       " )
     )
   ),
+
+
 
   tabItems(
     tabItem(tabName = "readme"
@@ -324,6 +326,13 @@ body <- dashboardBody(
 
                            br(),
                            br(),
+                           fluidRow(
+
+                             column(width = 6,
+                               verbatimTextOutput('totalDatasetSamples'),
+                               br()
+                             )),
+
                            tags$strong("Data set / Sample Annotation file content."),
                            br(),
                            br(),
@@ -522,22 +531,22 @@ body <- dashboardBody(
 
                                                column(width = 12,
                                                       tags$h4(style="color:black;","QQ-plot"),
-
-                                                      plotlyOutput('multicompqqplot1'),
-                                                      #tableOutput('testingdata'),
-                                                      br(),
-                                                      br(),
-                                                      br(),
-                                                      br(),
-                                                      br(),
-                                                      br(),
-                                                      br(),
-                                                      br(),
-                                                      br(),
-                                                      br(),
                                                       HTML(paste(
                                                         uiOutput('info.qqplot2')
                                                       )),
+                                                      br(),
+                                                      plotOutput('compqqplot',height = "auto"),
+                                                      tags$div(id='id_plotly_qqplot',
+                                                              plotlyOutput('multicompqqplot1',height = "auto")
+                                                      ),
+
+
+                                                      #tableOutput('testingdata'),
+
+
+
+
+
                                                       br()
 
                                                )

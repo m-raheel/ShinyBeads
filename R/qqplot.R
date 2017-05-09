@@ -448,6 +448,96 @@ rnbi.qqplot.data.double.rrbs <- function(x,y,
 }
 
 
+#' rnbi.qqplot.data.static
+#'  For 450K analysis
+#' read and convert the p values data into a list so that it can be used to in the qqplot function "qqunif.plot"
+#'
+#' @param wd a working directory of RnBeads reports
+#' @param f a index of the comparison file
+#' @return return an object that can be used to in the qqplot function "qqunif.plot"
+#' @export
+
+
+rnbi.qqplot.data.static.idat <- function(wd,f) {
+
+  if ( file.exists( isolate({ paste(wd,'differential_methylation_data',f,sep="/") }) ) ){
+    filename <- file.path(wd, 'differential_methylation_data',f)
+
+
+    filename= as.character(filename)
+
+    # fread function from the library data.table
+    list.diff.p.values <- fread(filename,sep = ",", select = c("diffmeth.p.val"))
+
+    # converting the data into list so that it can be plotted
+
+    list.diff.p.values <- as.data.frame(list.diff.p.values)
+
+    list.diff.p.values <- as.matrix(list.diff.p.values)
+
+    list.diff.p.values <- lapply(seq_len(ncol(list.diff.p.values)), function(col) list.diff.p.values[,col])
+
+    list.diff.p.values <- unlist(list.diff.p.values)
+
+    return(list.diff.p.values)
+  }
+
+  else{
+
+    empty_list <- list()
+
+    return(empty_list)
+  }
+
+
+}
+
+
+#' rnbi.qqplot.data.static
+#'  For RRBS analysis
+#' read and convert the p values data into a list so that it can be used to in the qqplot function "qqunif.plot"
+#'
+#' @param wd a working directory of RnBeads reports
+#' @param f a index of the comparison file
+#' @return return an object that can be used to in the qqplot function "qqunif.plot"
+#' @export
+
+
+rnbi.qqplot.data.static.rrbs <- function(wd,f) {
+
+  if ( file.exists( isolate({ paste(wd,'differential_methylation_data',f,sep="/") }) ) ){
+    filename <- file.path(wd, 'differential_methylation_data',f)
+
+
+
+    filename= as.character(filename)
+
+    # fread function from the library data.table
+    list.diff.p.values <- fread(input = paste('zcat < ',filename,sep = ''), select = c("diffmeth.p.val"))
+
+    # converting the data into list so that it can be plotted
+
+    list.diff.p.values <- as.data.frame(list.diff.p.values)
+
+    list.diff.p.values <- as.matrix(list.diff.p.values)
+
+    list.diff.p.values <- lapply(seq_len(ncol(list.diff.p.values)), function(col) list.diff.p.values[,col])
+
+    list.diff.p.values <- unlist(list.diff.p.values)
+
+    return(list.diff.p.values)
+  }
+
+  else{
+
+    empty_list <- list()
+
+    return(empty_list)
+  }
+
+
+}
+
 
 
 
@@ -560,8 +650,8 @@ qqunif.plot<-function(pvalues,
 
   prepanel.qqunif= function(x,y,...) {
     A = list()
-    A$xlim = range(x, y)*1.02
-    A$xlim[1]=0
+    A$xlim = range(x,y)*1.02
+    #A$xlim[1]=0
     A$ylim = A$xlim
     return(A)
   }
@@ -579,11 +669,6 @@ qqunif.plot<-function(pvalues,
          }, par.settings=par.settings, ...
   )
 
-
-
-
-
-
-
 }
+
 

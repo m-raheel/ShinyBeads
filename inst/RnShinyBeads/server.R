@@ -25,10 +25,11 @@ library(limma)
 #####################################################################
 
 
+
 ## S H I N Y S E R V E R ###################################################################################################
 
 options(shiny.maxRequestSize=30*1024^2)
-topRowsPlotChoices = c('100', '500' , '1000','5000')
+topRowsPlotChoices = c('All','5000', '1000' , '500' ,'100')
 topRowsChoices = c('All', '100000' ,'50000' , '20000', '10000', '1000' , '500' ,'100')
 
 shinyServer(function(input, output, session) {
@@ -594,6 +595,14 @@ shinyServer(function(input, output, session) {
       # if no datasets returned means that we have only one analysis so in else showing it
       if (length(path_) != 0){
         a.file <- reactive({fread(as.character(path_), sep=',')})
+
+
+        output$totalDatasetSamples <- renderText({
+
+          #HTML(paste('<b><p> Total samples used in the selected data set = ',nrow(data.frame(a.file())),'</p> </b>',sep=""))
+          paste('Total samples used in the selected data set = ',nrow(data.frame(a.file())),sep="")
+        })
+
 
 
         # Generate a summary of the dataset
@@ -1354,6 +1363,30 @@ output$testingcompqqplot <- renderPlot({
 
   v <- reactiveValues(data = TRUE)
 
+
+  observeEvent(input$input_multiqqplot_readtop,{
+
+    nrows.value <- reactive({as.character(input$input_multiqqplot_readtop)})
+    # everytime it will run else code !
+    if (nrows.value() == 'All'){
+
+      output$multicompqqplot1 <- renderPlotly({
+
+        return()
+
+      })
+
+    }
+    else{
+      output$compqqplot <- renderPlot({
+
+        return()
+
+      },height = "0")
+    }
+
+
+  })
   # for Repository 1
   observeEvent(input$input_dmcomp_choices_1,{
 
@@ -1481,194 +1514,207 @@ output$testingcompqqplot <- renderPlot({
 
   list.pvalues_1 <- reactive({
 
+    nrows.value <- reactive({as.character(input$input_multiqqplot_readtop)})
+    # everytime it will run else code !
+    if (nrows.value() != 'All'){
 
 
-    qq.value <- as.character(input$input_dmcomp_choices_1)
+      qq.value <- as.character(input$input_dmcomp_choices_1)
 
-    qq.dir <- file.path(results.dir(), qq.value)
+      qq.dir <- file.path(results.dir(), qq.value)
 
-    #qq.value <- as.character(input$input_dmcomp_files_1)
+      #qq.value <- as.character(input$input_dmcomp_files_1)
 
 
-    if (qq.value == "" || qq.value == "NA"){
-      x <- list()
-      x
-    }
-    else{
-      #fucntion from the RnShinyBeads package
-
-      # Create a Progress object
-      progress <- shiny::Progress$new()
-
-      progress$set(message = "Reading data from analysis 1", value = 50)
-
-
-      data_type = rnbi.analysis.datatype(results.dir() , qq.value)
-
-      if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
-      {
-        rrbs_analysis = FALSE
-      }
-      else{
-        rrbs_analysis = TRUE
-      }
-
-      if (rrbs_analysis == TRUE)
-      {
-
-        f = paste("diffMethTable_site_cmp",index_list_1(), ".csv.gz",sep = '')
-      }
-      else{
-        f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
-      }
-
-
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-
-        filename <- file.path(qq.dir, 'differential_methylation_data',f)
-        filename= as.character(filename)
-        nrows.value <- as.integer(input$input_multiqqplot_readtop)
-
-
-
-        column_selected = as.character(input$input_qq_multi_columns)
-        equality = as.character(input$input_qq_multi_columns_equality)
-        range_selected = as.numeric(input$input_qq_multi_columns_range)
-
-        if (rrbs_analysis == TRUE)
-        {
-          # fread function from the library data.table
-          comp.file <- fread(input = paste('zcat < ',filename,sep = ''),sep = ",", select = c("Chromosome","diffmeth.p.val"))
-          original.dataset <- comp.file
-
-          if(column_selected == "diffmeth.p.val"){
-            colselected <- comp.file$diffmeth.p.val
-          }
-          else{
-            colselected <- comp.file$diffmeth.p.val
-          }
-
-          # filtering the dataframe
-
-          if(equality == ">="){
-
-            filtered.dataset <- comp.file[colselected >= range_selected,]
-
-          }
-          else if(equality == ">"){
-
-            filtered.dataset <- comp.file[colselected > range_selected,]
-
-          }
-          else if(equality == "<="){
-
-
-            filtered.dataset <- comp.file[colselected <= range_selected,]
-
-          }
-          else if(equality == "<"){
-
-            filtered.dataset <- comp.file[colselected < range_selected,]
-
-          }
-
-          else {
-
-            filtered.dataset <- comp.file
-
-          }
-
-          comp.file <- filtered.dataset
-        }
-        else{
-          # fread function from the library data.table
-          comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val"))
-          original.dataset <- comp.file
-
-          if(column_selected == "diffmeth.p.val"){
-            colselected <- comp.file$diffmeth.p.val
-          }
-          else{
-            colselected <- comp.file$diffmeth.p.val
-          }
-
-          # filtering the dataframe
-
-          if(equality == ">="){
-
-            filtered.dataset <- comp.file[colselected >= range_selected,]
-
-          }
-          else if(equality == ">"){
-
-            filtered.dataset <- comp.file[colselected > range_selected,]
-
-          }
-          else if(equality == "<="){
-
-
-            filtered.dataset <- comp.file[colselected <= range_selected,]
-
-          }
-          else if(equality == "<"){
-
-            filtered.dataset <- comp.file[colselected < range_selected,]
-
-          }
-
-          else {
-
-            filtered.dataset <- comp.file
-
-          }
-
-          comp.file <- filtered.dataset
-        }
-
-
-        if (length(comp.file$diffmeth.p.val) < nrows.value){
-          nrows.value = length(comp.file$diffmeth.p.val)
-        }
-
-
-        comp.file <- data.frame(comp.file[1:nrows.value,])
-
-        if (rrbs_analysis == TRUE)
-        {
-
-          #remove NA columns rows
-
-          completeFun <- function(data, desiredCols) {
-            completeVec <- complete.cases(data[, desiredCols])
-            return(data[completeVec, ])
-          }
-
-          filtered.comp.file <- completeFun(comp.file, "diffmeth.p.val")
-
-          x <- filtered.comp.file
-        }
-        else{
-
-          x <- comp.file
-        }
-
-        # Make sure it closes when we exit this reactive, even if there's an error
-        #on.exit(progress$close())
-
-        x
-      }
-      else{
+      if (qq.value == "" || qq.value == "NA"){
         x <- list()
         x
       }
-      # Make sure it closes when we exit this reactive, even if there's an error
-      on.exit(progress$close())
+      else{
+        #fucntion from the RnShinyBeads package
 
-      x
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Reading data from analysis 1", value = 50)
+
+
+        data_type = rnbi.analysis.datatype(results.dir() , qq.value)
+
+        if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+        {
+          rrbs_analysis = FALSE
+        }
+        else{
+          rrbs_analysis = TRUE
+        }
+
+        if (rrbs_analysis == TRUE)
+        {
+
+          f = paste("diffMethTable_site_cmp",index_list_1(), ".csv.gz",sep = '')
+        }
+        else{
+          f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
+        }
+
+
+        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+
+          filename <- file.path(qq.dir, 'differential_methylation_data',f)
+          filename= as.character(filename)
+
+
+
+          column_selected = as.character(input$input_qq_multi_columns)
+          equality = as.character(input$input_qq_multi_columns_equality)
+          range_selected = as.numeric(input$input_qq_multi_columns_range)
+
+          if (rrbs_analysis == TRUE)
+          {
+            # fread function from the library data.table
+            comp.file <- fread(input = paste('zcat < ',filename,sep = ''),sep = ",", select = c("Chromosome","diffmeth.p.val"))
+            original.dataset <- comp.file
+
+            if(column_selected == "diffmeth.p.val"){
+              colselected <- comp.file$diffmeth.p.val
+            }
+            else{
+              colselected <- comp.file$diffmeth.p.val
+            }
+
+            # filtering the dataframe
+
+            if(equality == ">="){
+
+              filtered.dataset <- comp.file[colselected >= range_selected,]
+
+            }
+            else if(equality == ">"){
+
+              filtered.dataset <- comp.file[colselected > range_selected,]
+
+            }
+            else if(equality == "<="){
+
+
+              filtered.dataset <- comp.file[colselected <= range_selected,]
+
+            }
+            else if(equality == "<"){
+
+              filtered.dataset <- comp.file[colselected < range_selected,]
+
+            }
+
+            else {
+
+              filtered.dataset <- comp.file
+
+            }
+
+            comp.file <- filtered.dataset
+          }
+          else{
+            # fread function from the library data.table
+            comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val"))
+            original.dataset <- comp.file
+
+            if(column_selected == "diffmeth.p.val"){
+              colselected <- comp.file$diffmeth.p.val
+            }
+            else{
+              colselected <- comp.file$diffmeth.p.val
+            }
+
+            # filtering the dataframe
+
+            if(equality == ">="){
+
+              filtered.dataset <- comp.file[colselected >= range_selected,]
+
+            }
+            else if(equality == ">"){
+
+              filtered.dataset <- comp.file[colselected > range_selected,]
+
+            }
+            else if(equality == "<="){
+
+
+              filtered.dataset <- comp.file[colselected <= range_selected,]
+
+            }
+            else if(equality == "<"){
+
+              filtered.dataset <- comp.file[colselected < range_selected,]
+
+            }
+
+            else {
+
+              filtered.dataset <- comp.file
+
+            }
+
+            comp.file <- filtered.dataset
+          }
+
+
+          if (as.character(input$input_multiqqplot_readtop) == "All"){
+            nrows.value = as.integer(5000)
+
+          }
+          else
+          {
+            nrows.value <- as.integer(input$input_multiqqplot_readtop)
+
+          }
+
+
+          if (length(comp.file$diffmeth.p.val) < nrows.value){
+            nrows.value = length(comp.file$diffmeth.p.val)
+          }
+
+
+          comp.file <- data.frame(comp.file[1:nrows.value,])
+
+          if (rrbs_analysis == TRUE)
+          {
+
+            #remove NA columns rows
+
+            completeFun <- function(data, desiredCols) {
+              completeVec <- complete.cases(data[, desiredCols])
+              return(data[completeVec, ])
+            }
+
+            filtered.comp.file <- completeFun(comp.file, "diffmeth.p.val")
+
+            x <- filtered.comp.file
+          }
+          else{
+
+            x <- comp.file
+          }
+
+          # Make sure it closes when we exit this reactive, even if there's an error
+          #on.exit(progress$close())
+
+          x
+        }
+        else{
+          x <- list()
+          x
+        }
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        x
+      }
+
     }
-
-
   })
 
 
@@ -1809,6 +1855,280 @@ output$testingcompqqplot <- renderPlot({
 
 
 
+    nrows.value <- reactive({as.character(input$input_multiqqplot_readtop)})
+
+    # everytime it will run else code !
+    if (nrows.value() != 'All'){
+
+
+      qq.value <- as.character(input$input_dmcomp_choices_2)
+
+      qq.dir <- file.path(results.dir(), qq.value)
+
+      #qq.value <- as.character(input$input_dmcomp_files_2)
+
+
+      if (qq.value == "" || qq.value == "NA"){
+        x <- list()
+        x
+      }
+      else{
+
+        # Create a Progress object
+        progress <- shiny::Progress$new()
+
+        progress$set(message = "Reading data from analysis 2", value = 50)
+
+
+        #fucntion from the RnShinyBeads package
+        data_type = rnbi.analysis.datatype(results.dir() , qq.value)
+
+        if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+        {
+          rrbs_analysis = FALSE
+        }
+        else{
+          rrbs_analysis = TRUE
+        }
+
+        if (rrbs_analysis == TRUE)
+        {
+
+          f = paste("diffMethTable_site_cmp",index_list_2(), ".csv.gz",sep = '')
+        }
+        else{
+          f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
+        }
+
+
+        if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
+
+
+          filename <- file.path(qq.dir, 'differential_methylation_data',f)
+          filename= as.character(filename)
+
+          column_selected = as.character(input$input_qq_multi_columns)
+          equality = as.character(input$input_qq_multi_columns_equality)
+          range_selected = as.numeric(input$input_qq_multi_columns_range)
+
+
+          if (rrbs_analysis == TRUE)
+          {
+            # fread function from the library data.table
+            comp.file <- fread(input = paste('zcat < ',filename,sep = ''),sep = ",", select = c("Chromosome","diffmeth.p.val"))
+            original.dataset <- comp.file
+
+            if(column_selected == "diffmeth.p.val"){
+              colselected <- comp.file$diffmeth.p.val
+            }
+            else{
+              colselected <- comp.file$diffmeth.p.val
+            }
+
+            # filtering the dataframe
+
+            if(equality == ">="){
+
+              filtered.dataset <- comp.file[colselected >= range_selected,]
+
+            }
+            else if(equality == ">"){
+
+              filtered.dataset <- comp.file[colselected > range_selected,]
+
+            }
+            else if(equality == "<="){
+
+
+              filtered.dataset <- comp.file[colselected <= range_selected,]
+
+            }
+            else if(equality == "<"){
+
+              filtered.dataset <- comp.file[colselected < range_selected,]
+
+            }
+
+            else {
+
+              filtered.dataset <- comp.file
+
+            }
+
+            comp.file <- filtered.dataset
+          }
+          else{
+            # fread function from the library data.table
+            comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val"))
+            original.dataset <- comp.file
+
+            if(column_selected == "diffmeth.p.val"){
+              colselected <- comp.file$diffmeth.p.val
+            }
+            else{
+              colselected <- comp.file$diffmeth.p.val
+            }
+
+            # filtering the dataframe
+
+            if(equality == ">="){
+
+              filtered.dataset <- comp.file[colselected >= range_selected,]
+
+            }
+            else if(equality == ">"){
+
+              filtered.dataset <- comp.file[colselected > range_selected,]
+
+            }
+            else if(equality == "<="){
+
+
+              filtered.dataset <- comp.file[colselected <= range_selected,]
+
+            }
+            else if(equality == "<"){
+
+              filtered.dataset <- comp.file[colselected < range_selected,]
+
+            }
+
+            else {
+
+              filtered.dataset <- comp.file
+
+            }
+
+            comp.file <- filtered.dataset
+          }
+
+          if (as.character(input$input_multiqqplot_readtop) == "All"){
+            nrows.value <- as.integer(5000)
+
+          }
+          else
+          {
+            nrows.value <- as.integer(input$input_multiqqplot_readtop)
+
+          }
+
+
+          if (length(comp.file$diffmeth.p.val) < nrows.value){
+            nrows.value = length(comp.file$diffmeth.p.val)
+          }
+
+
+          comp.file <- data.frame(comp.file[1:nrows.value,])
+
+          if (rrbs_analysis == TRUE)
+          {
+
+            #remove NA columns rows
+
+            completeFun <- function(data, desiredCols) {
+              completeVec <- complete.cases(data[, desiredCols])
+              return(data[completeVec, ])
+            }
+
+            filtered.comp.file <- completeFun(comp.file, "diffmeth.p.val")
+
+
+            y <- filtered.comp.file
+          }
+          else{
+
+
+            y <- comp.file
+          }
+
+          # Make sure it closes when we exit this reactive, even if there's an error
+          #on.exit(progress$close())
+
+          y
+        }
+        else{
+          y <- list()
+          y
+        }
+
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(progress$close())
+
+        y
+
+      }
+
+    }
+  })
+
+
+
+  ############################################################################################
+
+  # qqplots 2 of diff methylation p- values in which two comarprisons qqplots is displayed OLD code
+  ############################################################################################
+
+  list.pvalues1 <- reactive({
+
+
+
+    qq.value <- as.character(input$input_dmcomp_choices_1)
+
+    qq.dir <- file.path(results.dir(), qq.value)
+
+    #qq.value <- as.character(input$input_dmcomp_files_1)
+
+
+    if (qq.value == "" || qq.value == "NA"){
+      x <- list()
+      x
+    }
+    else{
+      # Create a Progress object
+      progress <- shiny::Progress$new()
+
+      progress$set(message = "Reading data from analysis 1", value = 50)
+
+
+      #fucntion from the RnShinyBeads package
+      data_type = rnbi.analysis.datatype(results.dir() , qq.value)
+
+      if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
+      {
+        rrbs_analysis = FALSE
+      }
+      else{
+        rrbs_analysis = TRUE
+      }
+
+      if (rrbs_analysis == TRUE)
+      {
+
+        f = paste("diffMethTable_site_cmp",index_list_1(), ".csv.gz",sep = '')
+        x <- rnbi.qqplot.data.static.rrbs(qq.dir , f)
+      }
+      else{
+        f = paste("diffMethTable_site_cmp",index_list_1(), ".csv",sep = '')
+        x <- rnbi.qqplot.data.static.idat(qq.dir , f)
+      }
+
+
+      on.exit(progress$close())
+      x
+
+
+    }
+
+
+  })
+
+  ################################################
+
+  list.pvalues2 <- reactive({
+
+
+
+
     qq.value <- as.character(input$input_dmcomp_choices_2)
 
     qq.dir <- file.path(results.dir(), qq.value)
@@ -1821,7 +2141,6 @@ output$testingcompqqplot <- renderPlot({
       x
     }
     else{
-
       # Create a Progress object
       progress <- shiny::Progress$new()
 
@@ -1843,165 +2162,21 @@ output$testingcompqqplot <- renderPlot({
       {
 
         f = paste("diffMethTable_site_cmp",index_list_2(), ".csv.gz",sep = '')
+        x <- rnbi.qqplot.data.static.rrbs(qq.dir , f)
       }
       else{
         f = paste("diffMethTable_site_cmp",index_list_2(), ".csv",sep = '')
+        x <- rnbi.qqplot.data.static.idat(qq.dir , f)
       }
 
 
-      if ( file.exists( isolate({ paste(qq.dir,'differential_methylation_data',f,sep="/") }) ) ){
-
-
-        filename <- file.path(qq.dir, 'differential_methylation_data',f)
-        filename= as.character(filename)
-        nrows.value <- as.integer(input$input_multiqqplot_readtop)
-
-
-        column_selected = as.character(input$input_qq_multi_columns)
-        equality = as.character(input$input_qq_multi_columns_equality)
-        range_selected = as.numeric(input$input_qq_multi_columns_range)
-
-
-        if (rrbs_analysis == TRUE)
-        {
-          # fread function from the library data.table
-          comp.file <- fread(input = paste('zcat < ',filename,sep = ''),sep = ",", select = c("Chromosome","diffmeth.p.val"))
-          original.dataset <- comp.file
-
-          if(column_selected == "diffmeth.p.val"){
-            colselected <- comp.file$diffmeth.p.val
-          }
-          else{
-            colselected <- comp.file$diffmeth.p.val
-          }
-
-          # filtering the dataframe
-
-          if(equality == ">="){
-
-            filtered.dataset <- comp.file[colselected >= range_selected,]
-
-          }
-          else if(equality == ">"){
-
-            filtered.dataset <- comp.file[colselected > range_selected,]
-
-          }
-          else if(equality == "<="){
-
-
-            filtered.dataset <- comp.file[colselected <= range_selected,]
-
-          }
-          else if(equality == "<"){
-
-            filtered.dataset <- comp.file[colselected < range_selected,]
-
-          }
-
-          else {
-
-            filtered.dataset <- comp.file
-
-          }
-
-          comp.file <- filtered.dataset
-        }
-        else{
-          # fread function from the library data.table
-          comp.file <- fread(filename,sep = ",", select = c("cgid","Chromosome","diffmeth.p.val"))
-          original.dataset <- comp.file
-
-          if(column_selected == "diffmeth.p.val"){
-            colselected <- comp.file$diffmeth.p.val
-          }
-          else{
-            colselected <- comp.file$diffmeth.p.val
-          }
-
-          # filtering the dataframe
-
-          if(equality == ">="){
-
-            filtered.dataset <- comp.file[colselected >= range_selected,]
-
-          }
-          else if(equality == ">"){
-
-            filtered.dataset <- comp.file[colselected > range_selected,]
-
-          }
-          else if(equality == "<="){
-
-
-            filtered.dataset <- comp.file[colselected <= range_selected,]
-
-          }
-          else if(equality == "<"){
-
-            filtered.dataset <- comp.file[colselected < range_selected,]
-
-          }
-
-          else {
-
-            filtered.dataset <- comp.file
-
-          }
-
-          comp.file <- filtered.dataset
-        }
-
-
-        if (length(comp.file$diffmeth.p.val) < nrows.value){
-          nrows.value = length(comp.file$diffmeth.p.val)
-        }
-
-
-        comp.file <- data.frame(comp.file[1:nrows.value,])
-
-        if (rrbs_analysis == TRUE)
-        {
-
-          #remove NA columns rows
-
-          completeFun <- function(data, desiredCols) {
-            completeVec <- complete.cases(data[, desiredCols])
-            return(data[completeVec, ])
-          }
-
-          filtered.comp.file <- completeFun(comp.file, "diffmeth.p.val")
-
-
-          y <- filtered.comp.file
-        }
-        else{
-
-
-          y <- comp.file
-        }
-
-        # Make sure it closes when we exit this reactive, even if there's an error
-        #on.exit(progress$close())
-
-        y
-      }
-      else{
-        y <- list()
-        y
-      }
-
-      # Make sure it closes when we exit this reactive, even if there's an error
       on.exit(progress$close())
-
-      y
-
+      x
     }
 
 
   })
-
-
+  ################################################################### old code ends
 
 
   observeEvent(input$displayBtn, {
@@ -2010,139 +2185,201 @@ output$testingcompqqplot <- renderPlot({
 
     print (v$data)
 
-    output$multicompqqplot1 <- renderPlotly({
 
-      # dist <- switch(input$dist,
-      #                unif = runif,
-      #                norm = rnorm,
-      #
-      #                # lnorm = rlnorm,
-      #                # exp = rexp,
-      #                rnorm)
+    nrows.value <- reactive({as.character(input$input_multiqqplot_readtop)})
 
-      if (is.null(v$data)) {
-        print (v$data)
+    # everytime it will run else code !
+    if (nrows.value() != 'All'){
+
+      output$compqqplot <- renderPlot({
         return()
-      }
+      }, height = "0")
 
-      else if (identical(v$data, FALSE)) {
-        print (v$data)
-        return()
-      }
-
-      else {
+      output$multicompqqplot1 <- renderPlotly({
 
 
 
 
-        if(length(list.pvalues_1()) == 0) {
+        # dist <- switch(input$dist,
+        #                unif = runif,
+        #                norm = rnorm,
+        #
+        #                # lnorm = rlnorm,
+        #                # exp = rexp,
+        #                rnorm)
 
-          # print error/ warning message
-
-
-#           qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-#           text(1,1,"No data available or no comparison file exist from repository 1")
-
-          Primates <- c('No Data Avaiable for analysis 1')
-          Bodywt <- c(0.5 )
-          Brainwt <- c(0.5)
-
-          data <- data.frame(Primates, Bodywt, Brainwt)
-
-          pdf(NULL)
-          q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
-                       mode = 'text', text = ~Primates, textposition = 'middle center',
-                       textfont = list(color = '#000000', size = 16))%>%
-            layout(title = 'Q-Q Plot',
-                   xaxis = list(title = 'Expected -log10(p) (uniform distribution)',
-                                zeroline = TRUE,
-                                range = c(0, 1)),
-                   yaxis = list(title = 'Observed -log10(p)',
-                                range = c(0,1)))
-
-
-          dev.off()
-
-          q
-
-
+        if (is.null(v$data)) {
+          print (v$data)
+          return()
         }
 
-        else if(length(list.pvalues_2()) == 0) {
-
-          # print error/ warning message
-
-
-          #           qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
-          #           text(1,1,"No data available or no comparison file exist from repository 1")
-
-          Primates <- c('No Data Avaiable for analysis 2')
-          Bodywt <- c(0.5 )
-          Brainwt <- c(0.5)
-
-          data <- data.frame(Primates, Bodywt, Brainwt)
-
-          pdf(NULL)
-          q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
-                       mode = 'text', text = ~Primates, textposition = 'middle center',
-                       textfont = list(color = '#000000', size = 16))%>%
-            layout(title = 'Q-Q Plot',
-                   xaxis = list(title = 'Expected -log10(p) (uniform distribution)',
-                                zeroline = TRUE,
-                                range = c(0, 1)),
-                   yaxis = list(title = 'Observed -log10(p)',
-                                range = c(0,1)))
-
-
-          dev.off()
-
-          q
-
-
+        else if (identical(v$data, FALSE)) {
+          print (v$data)
+          return()
         }
-        else{
 
-          # Create a Progress object
-          progress <- shiny::Progress$new()
-
-          progress$set(message = "Making selected analysis QQ Plot", value = 50)
+        else {
 
 
-          pdf(NULL)
 
-          x <- list.pvalues_1()
-          y <- list.pvalues_2()
 
-          a1.value <- as.character(input$input_dmcomp_choices_1)
-          a2.value <- as.character(input$input_dmcomp_choices_2)
+          if(length(list.pvalues_1()) == 0) {
 
-          #fucntion from the RnShinyBeads package
-          data_type1 = rnbi.analysis.datatype(results.dir() , a1.value)
+            # print error/ warning message
 
-          if (grepl('idat files' , data_type1 )) # true if idat files is the data type of the analysis in the string data_type
-          {
-            rrbs_analysis1 = FALSE
+
+  #           qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+  #           text(1,1,"No data available or no comparison file exist from repository 1")
+
+            Primates <- c('No Data Avaiable for analysis 1')
+            Bodywt <- c(0.5 )
+            Brainwt <- c(0.5)
+
+            data <- data.frame(Primates, Bodywt, Brainwt)
+
+            pdf(NULL)
+            q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                         mode = 'text', text = ~Primates, textposition = 'middle center',
+                         textfont = list(color = '#000000', size = 16))%>%
+              layout(title = 'Q-Q Plot',
+                     xaxis = list(title = 'Expected -log10(p) (uniform distribution)',
+                                  zeroline = TRUE,
+                                  range = c(0, 1)),
+                     yaxis = list(title = 'Observed -log10(p)',
+                                  range = c(0,1)))
+
+
+            dev.off()
+
+            q
+
+
+          }
+
+          else if(length(list.pvalues_2()) == 0) {
+
+            # print error/ warning message
+
+
+            #           qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+            #           text(1,1,"No data available or no comparison file exist from repository 1")
+
+            Primates <- c('No Data Avaiable for analysis 2')
+            Bodywt <- c(0.5 )
+            Brainwt <- c(0.5)
+
+            data <- data.frame(Primates, Bodywt, Brainwt)
+
+            pdf(NULL)
+            q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                         mode = 'text', text = ~Primates, textposition = 'middle center',
+                         textfont = list(color = '#000000', size = 16))%>%
+              layout(title = 'Q-Q Plot',
+                     xaxis = list(title = 'Expected -log10(p) (uniform distribution)',
+                                  zeroline = TRUE,
+                                  range = c(0, 1)),
+                     yaxis = list(title = 'Observed -log10(p)',
+                                  range = c(0,1)))
+
+
+            dev.off()
+
+            q
+
+
           }
           else{
-            rrbs_analysis1 = TRUE
-          }
 
-          data_type2 = rnbi.analysis.datatype(results.dir() , a2.value)
+            # Create a Progress object
+            progress <- shiny::Progress$new()
 
-          if (grepl('idat files' , data_type2 )) # true if idat files is the data type of the analysis in the string data_type
-          {
-            rrbs_analysis2 = FALSE
-          }
-          else{
-            rrbs_analysis2 = TRUE
-          }
+            progress$set(message = "Making selected analysis QQ Plot", value = 50)
 
 
-          if (rrbs_analysis1 == TRUE && rrbs_analysis2 == TRUE)
-          {
+            pdf(NULL)
 
-            if(length(list.pvalues_1()) != length(list.pvalues_2())){
-              Primates <- c('Could not draw qqplot! Please try again')
+            x <- list.pvalues_1()
+            y <- list.pvalues_2()
+
+            a1.value <- as.character(input$input_dmcomp_choices_1)
+            a2.value <- as.character(input$input_dmcomp_choices_2)
+
+            #fucntion from the RnShinyBeads package
+            data_type1 = rnbi.analysis.datatype(results.dir() , a1.value)
+
+            if (grepl('idat files' , data_type1 )) # true if idat files is the data type of the analysis in the string data_type
+            {
+              rrbs_analysis1 = FALSE
+            }
+            else{
+              rrbs_analysis1 = TRUE
+            }
+
+            data_type2 = rnbi.analysis.datatype(results.dir() , a2.value)
+
+            if (grepl('idat files' , data_type2 )) # true if idat files is the data type of the analysis in the string data_type
+            {
+              rrbs_analysis2 = FALSE
+            }
+            else{
+              rrbs_analysis2 = TRUE
+            }
+
+
+            if (rrbs_analysis1 == TRUE && rrbs_analysis2 == TRUE)
+            {
+
+              if(length(list.pvalues_1()) != length(list.pvalues_2())){
+                Primates <- c('Could not draw qqplot! Length of the p-values data are not equal! Please try again')
+                Bodywt <- c(0.5 )
+                Brainwt <- c(0.5)
+
+                data <- data.frame(Primates, Bodywt, Brainwt)
+
+                pdf(NULL)
+                q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
+                             mode = 'text', text = ~Primates, textposition = 'middle center',
+                             textfont = list(color = '#000000', size = 16))%>%
+                  layout(title = 'Q-Q Plot',
+                         xaxis = list(title = ')',
+                                      zeroline = TRUE,
+                                      range = c(0, 1)),
+                         yaxis = list(title = '',
+                                      range = c(0,1)))
+
+
+                dev.off()
+
+                q
+              }
+              else{
+                p <- rnbi.qqplot.double.rrbs(x,y)
+
+                q <- plotly::ggplotly(p)%>%
+                  layout(
+                    autosize = FALSE,
+                    width = 720,
+                    height =  600
+
+                  )
+              }
+
+            }
+            else if (rrbs_analysis1 == FALSE && rrbs_analysis2 == FALSE){
+
+              p <- rnbi.qqplot.double(x,y)
+
+              q <- plotly::ggplotly(p)%>%
+                layout(
+                  autosize = FALSE,
+                  width = 720,
+                  height =  600
+
+                )
+            }
+            else{
+
+              Primates <- c('Please select the same analysis i.e. both either IDAT analysis or RRBS analysis')
               Bodywt <- c(0.5 )
               Brainwt <- c(0.5)
 
@@ -2163,79 +2400,110 @@ output$testingcompqqplot <- renderPlot({
               dev.off()
 
               q
+
             }
-            else{
-              p <- rnbi.qqplot.double.rrbs(x,y)
-              q <- plotly::ggplotly(p)%>%
-                layout(
-                  autosize = FALSE,
-                  width = 720,
-                  height =  600
-
-                )
-            }
-
-          }
-          else if (rrbs_analysis1 == FALSE && rrbs_analysis2 == FALSE){
-
-            p <- rnbi.qqplot.double(x,y)
-            q <- plotly::ggplotly(p)%>%
-              layout(
-                autosize = FALSE,
-                width = 720,
-                height =  600
-
-              )
-          }
-          else{
-
-            Primates <- c('Please select the same analysis i.e. both either IDAT analysis or RRBS analysis')
-            Bodywt <- c(0.5 )
-            Brainwt <- c(0.5)
-
-            data <- data.frame(Primates, Bodywt, Brainwt)
-
-            pdf(NULL)
-            q <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
-                         mode = 'text', text = ~Primates, textposition = 'middle center',
-                         textfont = list(color = '#000000', size = 16))%>%
-              layout(title = 'Q-Q Plot',
-                     xaxis = list(title = ')',
-                                  zeroline = TRUE,
-                                  range = c(0, 1)),
-                     yaxis = list(title = '',
-                                  range = c(0,1)))
 
 
             dev.off()
+            # Make sure it closes when we exit this reactive, even if there's an error
+            on.exit(progress$close())
 
             q
 
           }
 
 
-
-
-
-          output$info.qqplot2 <- renderUI({
-
-            HTML(paste("'<p>QQplot is generated from the diffmeth.p.values of the comparisons selected above for the two analysis.</p> <br/ > <p><b>diffmeth.p.val:</b> p-value obtained from a two-sided Welch t-test or alternatively from linear models employed in the limma package (which type of p-value is computed is specified in the differential.site.test.method option). In case of paired analysis, the paired Student's t-test is applied.",'</p>',sep=""))
-
-          })
-
-
-          dev.off()
-          # Make sure it closes when we exit this reactive, even if there's an error
-          on.exit(progress$close())
-
-          q
-
         }
 
 
-      }
 
-    })
+      })# end of render plotly
+
+
+    }
+    else{
+
+
+      output$multicompqqplot1 <- renderPlotly({
+
+        return()
+
+      })
+
+      output$compqqplot <- renderPlot({
+
+
+        # dist <- switch(input$dist,
+        #                unif = runif,
+        #                norm = rnorm,
+        #
+        #                # lnorm = rlnorm,
+        #                # exp = rexp,
+        #                rnorm)
+
+        if (is.null(v$data)) {
+          print (v$data)
+          return()
+        }
+
+        else if (identical(v$data, FALSE)) {
+          print (v$data)
+          return()
+        }
+
+        else {
+
+
+
+          if(length(list.pvalues1()) == 0) {
+
+            # print error/ warning message
+            qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+            text(1,1,"No data available or no comparison file exist from repository 1")
+
+          }
+          else if (length(list.pvalues2()) == 0){
+            # print error/ warning message
+            qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+            text(1,1,"No data available or no comparison file exist from repository 2")
+          }
+          else{
+            x<- list.pvalues1()
+            y<- list.pvalues2()
+
+            # Create a Progress object
+            progress <- shiny::Progress$new()
+
+            progress$set(message = "Making static qqplot! please wait..", value = 50)
+
+
+            #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
+            my.pvalue.list<-list("Analysis_1"=x, "Analysis_2"=y)
+            q <- qqunif.plot2(my.pvalue.list, auto.key=list(corner=c(.95,.05)), aspect="fill")
+
+
+            # Make sure it closes when we exit this reactive, even if there's an error
+            on.exit(progress$close())
+            q
+    #         #Calculate expectations
+    #         exp.pvalues<-(rank(x, ties.method="first")+.5)/(length(x)+1)
+    #
+    #         #Make plot
+    #         plot(-log10(exp.pvalues), -log10(x), asp=1)
+    #         abline(0,1)
+
+
+          }
+        }
+
+      }, height = 650, width = 650)
+    }
+
+  output$info.qqplot2 <- renderUI({
+
+    HTML(paste("'<p>QQplot is generated from the diffmeth.p.values of the comparisons selected above for the two analysis.</p>  <p><b>diffmeth.p.val:</b> p-value obtained from a two-sided Welch t-test or alternatively from linear models employed in the limma package (which type of p-value is computed is specified in the differential.site.test.method option). In case of paired analysis, the paired Student's t-test is applied.",'</p>',sep=""))
+
+  })
 })
 
 
@@ -4580,6 +4848,66 @@ observeEvent(input$cb_ts_comp_venn, {
       #mydata = read.table(paste(getwd(),"data.txt",sep ="/"))
       paste(rnb.getOption("analyze.sites"))
     })
+
+
+
+#
+# observeEvent(input$displayBtn, {
+#
+#   v$data <- TRUE
+#
+#   print (v$data)
+#
+#   output$compqqplot <- renderPlot({
+#
+#     # dist <- switch(input$dist,
+#     #                unif = runif,
+#     #                norm = rnorm,
+#     #
+#     #                # lnorm = rlnorm,
+#     #                # exp = rexp,
+#     #                rnorm)
+#
+#     if (is.null(v$data)) {
+#       print (v$data)
+#       return()
+#     }
+#
+#     else if (identical(v$data, FALSE)) {
+#       print (v$data)
+#       return()
+#     }
+#
+#     else {
+#
+#
+#
+#       if(length(list.pvalues1()) == 0) {
+#
+#         # print error/ warning message
+#         qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+#         text(1,1,"No data available or no comparison file exist from repository 1")
+#
+#       }
+#       else if (length(list.pvalues2()) == 0){
+#         # print error/ warning message
+#         qqplot(1,1,main="Normal Q-Q Plot", ylab="diffmeth.p.val")
+#         text(1,1,"No data available or no comparison file exist from repository 2")
+#       }
+#       else{
+#         x<- list.pvalues1()
+#         y<- list.pvalues2()
+#
+#         #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
+#         my.pvalue.list<-list("Analysis 1"=x, "Analysis 2"=y)
+#         qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)))
+#       }
+#     }
+#
+#   }, height = 400, width = 500)
+#
+#
+# })
 
 })
 
