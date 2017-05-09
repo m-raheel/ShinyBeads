@@ -2476,11 +2476,12 @@ output$testingcompqqplot <- renderPlot({
 
             progress$set(message = "Making static qqplot! please wait..", value = 50)
 
-
+            pdf(NULL)
             #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
             my.pvalue.list<-list("Analysis_1"=x, "Analysis_2"=y)
             q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)), aspect="fill")
 
+            dev.off()
 
             # Make sure it closes when we exit this reactive, even if there's an error
             on.exit(progress$close())
