@@ -1,5 +1,5 @@
 
-RnShinyBeads - A Shiny app for [RnBeads](http://rnbeads.mpi-inf.mpg.de/)
+ShinyBeads - A Shiny app for [RnBeads](http://rnbeads.mpi-inf.mpg.de/)
 ===========================================================================
 
 `ShinyBeads` a shiny application to provide user friendly interactive interface for RnBeads generated reports. It features will make it easier to keep track of the analysis performed, make comparisons among same or different rnbeads analysis (w./w.o. normalization, covariate adjustment), study RnBeads results in details...
