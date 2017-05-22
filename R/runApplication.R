@@ -1,6 +1,6 @@
-#' Launch RnShinyBeads app
+#' Launch ShinyBeads app
 #'
-#' Takes in a results directory and Run the RnShinyBeads application
+#' Takes in a results directory and Run the ShinyBeads application
 #' @param wd A path to the rnbeads analysis folder
 #' @export
 
@@ -36,9 +36,9 @@ runApplication <- function(wd)
         .GlobalEnv$.global.analysisDir <- analysisDir
         on.exit(rm(.global.analysisDir, envir=.GlobalEnv))
 
-        appDir <- system.file("RnShinyBeads", package = "RnShinyBeads")
+        appDir <- system.file("ShinyBeads", package = "ShinyBeads")
         if (appDir == "") {
-          stop("Could not find app directory. Try re-installing RnShinyBeads", call. = FALSE)
+          stop("Could not find app directory. Try re-installing ShinyBeads", call. = FALSE)
         }
 
         shiny::runApp(appDir, display.mode = "normal")
