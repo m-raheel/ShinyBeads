@@ -4,7 +4,7 @@
 ## created: 2016-09-01
 ## creator: Muhammad Raheel
 ## ---------------------------------------------------------------------------------------------------------------------
-## Main User Interface of the RnShinyBeads tool.
+## Main User Interface of the ShinyBeads tool.
 ########################################################################################################################
 
 
@@ -922,7 +922,7 @@ body <- dashboardBody(
 
                        HTML(paste(
 
-                                        '<h2>RnShinyBeads!</h2>',
+                                        '<h2>ShinyBeads!</h2>',
                                         '<p>It is a tool to provide user friendly interactive interface for RnBeads generated reports. It allows to keep track of the analysis performed and prevent performing same analysis again and again. It makes it interactive and easier to compare same or different RnBeads analysis. Target users are the ones who uses RnBeads for analyzing DNA methylation data either individually or as a group.</p>',
                                         br()
 

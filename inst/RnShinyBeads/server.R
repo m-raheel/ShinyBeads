@@ -4,7 +4,7 @@
 ## created: 2016-09-01
 ## creator: Muhammad Raheel
 ## ---------------------------------------------------------------------------------------------------------------------
-## Main workflow of the RnShinyBeads tool.
+## Main workflow of the ShinyBeads tool.
 ########################################################################################################################
 
 
@@ -16,8 +16,8 @@ library(XML)
 library(data.table) # using the function fread for reading large csv files
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
-#library(RnShinyBeads, lib.loc = "/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4")
-library(RnShinyBeads)
+#library(ShinyBeads, lib.loc = "/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4")
+library(ShinyBeads)
 library(plyr)
 library(shinydashboard)
 library(limma)
@@ -509,7 +509,7 @@ shinyServer(function(input, output, session) {
 
 
         if ( length(Performed_Modules) > 0 ){
-          #fucntion from the RnShinyBeads package
+          #fucntion from the ShinyBeads package
 
           modules <- unlist(Performed_Modules)
 
@@ -532,7 +532,7 @@ shinyServer(function(input, output, session) {
       else{
 
         if ( file.exists( isolate({ paste(wd_modules(),'analysis.log',sep="/") }) ) ){
-          #fucntion from the RnShinyBeads package
+          #fucntion from the ShinyBeads package
 
 
           #Performed_Modules <-  modules_performed(wd_modules())
@@ -1564,7 +1564,7 @@ output$testingcompqqplot <- renderPlot({
         x
       }
       else{
-        #fucntion from the RnShinyBeads package
+        #fucntion from the ShinyBeads package
 
         # Create a Progress object
         progress <- shiny::Progress$new()
@@ -1913,7 +1913,7 @@ output$testingcompqqplot <- renderPlot({
         progress$set(message = "Reading data from analysis 2", value = 50)
 
 
-        #fucntion from the RnShinyBeads package
+        #fucntion from the ShinyBeads package
         data_type = rnbi.analysis.datatype(results.dir() , qq.value)
 
         if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
@@ -2123,7 +2123,7 @@ output$testingcompqqplot <- renderPlot({
       progress$set(message = "Reading data from analysis 1", value = 50)
 
 
-      #fucntion from the RnShinyBeads package
+      #fucntion from the ShinyBeads package
       data_type = rnbi.analysis.datatype(results.dir() , qq.value)
 
       if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
@@ -2180,7 +2180,7 @@ output$testingcompqqplot <- renderPlot({
       progress$set(message = "Reading data from analysis 2", value = 50)
 
 
-      #fucntion from the RnShinyBeads package
+      #fucntion from the ShinyBeads package
       data_type = rnbi.analysis.datatype(results.dir() , qq.value)
 
       if (grepl('idat files' , data_type )) # true if idat files is the data type of the analysis in the string data_type
@@ -2337,7 +2337,7 @@ output$testingcompqqplot <- renderPlot({
             a1.value <- as.character(input$input_dmcomp_choices_1)
             a2.value <- as.character(input$input_dmcomp_choices_2)
 
-            #fucntion from the RnShinyBeads package
+            #fucntion from the ShinyBeads package
             data_type1 = rnbi.analysis.datatype(results.dir() , a1.value)
 
             if (grepl('idat files' , data_type1 )) # true if idat files is the data type of the analysis in the string data_type
@@ -5081,7 +5081,7 @@ observeEvent(input$cb_ts_comp_venn, {
 .LOG.INFO <- new.env()
 
 .LOG.INDENT <- "    "
-.LOGGER <- "RnShinyBeads"
+.LOGGER <- "ShinyBeads"
 .LOG.STAT <- c("INFO" = "INFO", "STATUS" = "STATUS", "WARNING" = "WARNING", "ERROR" = "ERROR")
 
 logger.transform <- function(txt, indent = TRUE) {
