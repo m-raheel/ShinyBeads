@@ -13,7 +13,7 @@ Installation
 To install the latest development version from GitHub:
 
     install.packages("devtools")
-    devtools::install_github("m-raheel/RnShinyBeads")
+    devtools::install_github("m-raheel/ShinyBeads")
 
 To run the applicaiton:
 
