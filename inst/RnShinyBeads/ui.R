@@ -37,7 +37,7 @@ check_vectors <- c('COMPLETED Loading Data', 'COMPLETED Quality Control', 'COMPL
 header <- dashboardHeader(
 
   #title = tags$a(class='pull-left', href = '.', tags$img(src = 'RnBeads.png'), style = "background-color: 'white';")
-  title = HTML(paste('RnShinyBeads'))
+  title = HTML(paste('ShinyBeads'))
 
 #   tags$li(a(href = 'http://shinyapps.company.com',
 #             icon("power-off"),
@@ -85,6 +85,7 @@ sidebar <- dashboardSidebar(
 
 
               menuItem("About", tabName = "about", icon = icon("question"))
+              #menuItem("Testing", tabName = "testing", icon = icon("question"))
   ),
   hr(),
   br(),
@@ -695,7 +696,13 @@ body <- dashboardBody(
 
                                        br(),
                                        br(),
-                                       plotlyOutput('x5'),
+                                       HTML(paste(
+                                         uiOutput('info.tb.plot')
+                                       )),
+                                       plotOutput('basicfilteredplot',height = "auto"),
+                                       tags$div(id='id_plotly_filteredplot',
+                                                plotlyOutput('filteredplotly',height = "auto")
+                                       ),
                                        br(),
                                        br(),
                                        br(),
@@ -708,7 +715,14 @@ body <- dashboardBody(
                                        br()
                                    )
 
-                               )
+
+                               ),
+                               br(),
+                               br(),
+                               br(),
+                               br(),
+                               br(),
+                               br()
                            ),
 
 
@@ -975,7 +989,40 @@ body <- dashboardBody(
 
 
 
-    )# end of tabitem
+    ),# end of tabitem about
+
+
+    tabItem(tabName = "testing",
+
+                 box(  width = NULL,
+
+
+
+
+
+                      plotOutput('testingPlotly'),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+
+                      collapsible = TRUE,
+                       title = "Testing", status = "primary", solidHeader = TRUE
+                  )
+
+
+    ) #end of tabitems testing
+
+
+
+
   )# end of tab items
 )# end of dashboard body
 

@@ -24,6 +24,39 @@ library(limma)
 
 #####################################################################
 
+rnbi.qqplot.data.static.idat <- function(wd,f) {
+
+  if ( file.exists( isolate({ paste(wd,'differential_methylation_data',f,sep="/") }) ) ){
+    filename <- file.path(wd, 'differential_methylation_data',f)
+
+
+    filename= as.character(filename)
+
+    # fread function from the library data.table
+    list.diff.p.values <- fread(filename,sep = ",", select = c("diffmeth.p.val"))
+
+    # converting the data into list so that it can be plotted
+
+    list.diff.p.values <- as.data.frame(list.diff.p.values)
+
+    list.diff.p.values <- as.matrix(list.diff.p.values)
+
+    list.diff.p.values <- lapply(seq_len(ncol(list.diff.p.values)), function(col) list.diff.p.values[,col])
+
+    list.diff.p.values <- unlist(list.diff.p.values)
+
+    return(list.diff.p.values)
+  }
+
+  else{
+
+    empty_list <- list()
+
+    return(empty_list)
+  }
+
+
+}
 
 
 ## S H I N Y S E R V E R ###################################################################################################
@@ -2922,10 +2955,6 @@ output$testingcompqqplot <- renderPlot({
     checkDisplay$data2 <- TRUE
     shinyjs::show(id = "id_tb_filterPlot")
 
-    output$x5 <- renderPlotly({
-
-
-
       if (is.null(checkDisplay$data2)) {
 
 
@@ -2958,6 +2987,8 @@ output$testingcompqqplot <- renderPlot({
           data <- data.frame(Primates, Bodywt, Brainwt)
 
 
+          output$filteredplotly <- renderPlotly({
+
           pdf(NULL)
           p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
                        mode = 'text', text = ~Primates, textposition = 'middle center',
@@ -2972,31 +3003,9 @@ output$testingcompqqplot <- renderPlot({
             )
           dev.off()
           p
+          })
         }
-        else if (length(filtered_data) > 20000)
-        {
-          Primates <- c('Data too big to display in plot! please filter some data')
-          Bodywt <- c(0.5 )
-          Brainwt <- c(0.5)
 
-          data <- data.frame(Primates, Bodywt, Brainwt)
-
-          pdf(NULL)
-          p <- plot_ly(data,x = ~Bodywt, y = ~Brainwt, type = 'scatter',
-                       mode = 'text', text = ~Primates, textposition = 'middle center',
-                       textfont = list(color = '#000000', size = 14))%>%
-            layout(                        # all of layout's properties: /r/reference/#layout
-              title = "Plot", # layout's title: /r/reference/#layout-title
-              xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
-                title = "mean.diff",      # xaxis's title: /r/reference/#layout-xaxis-title
-                showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
-              yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
-                title = "diffmeth.p.val")     # yaxis's title: /r/reference/#layout-yaxis-title
-            )
-          dev.off()
-          p
-
-        }
         else{
 
             qq.value <- as.character(input$input_tablebrowser_choices)
@@ -3082,98 +3091,181 @@ output$testingcompqqplot <- renderPlot({
                 key <- colnames(comp.file) <- names(comp.file)
                 print(key)
 
-                pdf(NULL)
-
                 if (rrbs_analysis == TRUE){
 
-                  p <- plot_ly(filtered,
-                               type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
-                               x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
-                               y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
-                               #name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
-                               marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
-                                 color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
-                               )) %>%
+                  if (length(filtered_data) > 20000)
+                  {
 
-                    add_trace(filtered,
-                              x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
-                              y = ~filtered[,c(input$input_tablebrowser_y_axis)],
-                              text = ~filtered[["Chromosome"]]
-                              #                             mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
-                              #                             line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
-                              #                               color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
-                              #                               dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
-                              #                             ),
+                    output$filteredplotly <- renderPlotly({
+                      return ()
+                    })
+                    output$basicfilteredplot <- renderPlot({
 
-                    ) %>%
+                      pdf(NULL)
 
-                    layout(                        # all of layout's properties: /r/reference/#layout
-                      title = "Plot", # layout's title: /r/reference/#layout-title
-
-                      autosize = FALSE,
-                      width = 700,
-                      height =  600,
+                      x_axis = input$input_tablebrowser_x_axis
+                      y_axis = input$input_tablebrowser_y_axis
 
 
-                      xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
-                        title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
-                        showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
-                      yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
-                        title = input$input_tablebrowser_y_axis)     # yaxis's title: /r/reference/#layout-yaxis-title
-                    )
+                      df <- data.frame (x_axis= filtered[,c(input$input_tablebrowser_x_axis)] ,y_axis=filtered[,c(input$input_tablebrowser_y_axis)])
+                      p <- ggplot(df, aes(x_axis, y_axis)) + geom_point(size = 2) +
+                        xlab(input$input_tablebrowser_x_axis) +
+                        ylab(input$input_tablebrowser_y_axis)
+
+                      dev.off()
+
+                      p
+                    }, width = 700 , height = 600)
+
+                  }
+                  else{
 
 
+                    output$basicfilteredplot <- renderPlot({
+                      return ()
+                    })
 
+                    output$filteredplotly <- renderPlotly({
+
+                      pdf(NULL)
+                      p <- plot_ly(filtered,
+                                   type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
+                                   x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                                   y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
+                                   #name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
+                                   marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
+                                     color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
+                                   )) %>%
+
+                        add_trace(filtered,
+                                  x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                                  y = ~filtered[,c(input$input_tablebrowser_y_axis)],
+                                  text = ~filtered[["Chromosome"]]
+                                  #                             mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
+                                  #                             line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
+                                  #                               color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
+                                  #                               dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
+                                  #                             ),
+
+                        ) %>%
+
+                        layout(                        # all of layout's properties: /r/reference/#layout
+                          title = "Plot", # layout's title: /r/reference/#layout-title
+
+                          autosize = FALSE,
+                          width = 700,
+                          height =  600,
+
+
+                          xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
+                            title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
+                            showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
+                          yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
+                            title = input$input_tablebrowser_y_axis)     # yaxis's title: /r/reference/#layout-yaxis-title
+                        )
+
+                      dev.off()
+
+                      p
+
+                    })
+
+                  }
                 }
                 else{
-                  p <- plot_ly(filtered,
-                               type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
-                               x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
-                               y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
-                               #name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
-                               marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
-                                 color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
-                               )) %>%
 
-                    add_trace(filtered,
-                              x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
-                              y = ~filtered[,c(input$input_tablebrowser_y_axis)],
-                              text = ~filtered[["cgid"]]
-                              #                             mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
-                              #                             line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
-                              #                               color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
-                              #                               dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
-                              #                             ),
-
-                    ) %>%
-
-                    layout(                        # all of layout's properties: /r/reference/#layout
-                      title = "Plot", # layout's title: /r/reference/#layout-title
-                      autosize = FALSE,
-                      width = 700,
-                      height =  600,
-                      xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
-                        title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
-                        showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
-                      yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
-                        title = input$input_tablebrowser_y_axis)     # yaxis's title: /r/reference/#layout-yaxis-title
-                    )
+                  if (length(filtered_data) > 20000)
+                  {
+#                     output$info.tb.plot <- renderUI({
+#
+#                       HTML(paste("<p>please wait....! if the plot does not appear or change than click the button again.",'</p>',sep=""))
+#
+#                     })
 
 
-                }
+                    output$filteredplotly <- renderPlotly({
+                      return ()
+                    })
+
+                    output$basicfilteredplot <- renderPlot({
+
+                      pdf(NULL)
+
+                      x_axis = input$input_tablebrowser_x_axis
+                      y_axis = input$input_tablebrowser_y_axis
+
+
+                      df <- data.frame (x_axis= filtered[,c(input$input_tablebrowser_x_axis)] ,y_axis=filtered[,c(input$input_tablebrowser_y_axis)])
+                      p <- ggplot(df, aes(x_axis, y_axis)) + geom_point(size = 2) +
+                        xlab(input$input_tablebrowser_x_axis) +
+                        ylab(input$input_tablebrowser_y_axis)
+
+                      dev.off()
+
+                      p
+                    }, width = 700 , height = 600)
+
+                  }
+                  else{
+                    output$basicfilteredplot <- renderPlot({
+                      return ()
+                    })
+                    output$filteredplotly <- renderPlotly({
+
+                      pdf(NULL)
+
+
+                      p <- plot_ly(filtered,
+                                 type = "scatter",        # all "scatter" attributes: https://plot.ly/r/reference/#scatter
+                                 x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                                 y = ~filtered[,c(input$input_tablebrowser_y_axis)],            # more about scatter's "y": /r/reference/#scatter-y
+                                 #name = "Plot",   # more about scatter's "name": /r/reference/#scatter-name
+                                 marker = list(           # marker is a named list, valid keys: /r/reference/#scatter-marker
+                                   color="#264E86"        # more about marker's "color" attribute: /r/reference/#scatter-marker-color
+                                 )) %>%
+
+                      add_trace(filtered,
+                                x = ~filtered[,c(input$input_tablebrowser_x_axis)],               # more about scatter's "x": /r/reference/#scatter-x
+                                y = ~filtered[,c(input$input_tablebrowser_y_axis)],
+                                text = ~filtered[["cgid"]]
+                                #                             mode = 'lines',                                    # scatter's "y": /r/reference/#scatter-mode
+                                #                             line = list(                                       # line is a named list, valid keys: /r/reference/#scatter-line
+                                #                               color = "#5E88FC",                               # line's "color": /r/reference/#scatter-line-color
+                                #                               dash = "dashed"                                  # line's "dash" property: /r/reference/#scatter-line-dash
+                                #                             ),
+
+                      ) %>%
+
+                      layout(                        # all of layout's properties: /r/reference/#layout
+                        title = "Plot", # layout's title: /r/reference/#layout-title
+                        autosize = FALSE,
+                        width = 700,
+                        height =  600,
+                        xaxis = list(           # layout's xaxis is a named list. List of valid keys: /r/reference/#layout-xaxis
+                          title = input$input_tablebrowser_x_axis,      # xaxis's title: /r/reference/#layout-xaxis-title
+                          showgrid = F),       # xaxis's showgrid: /r/reference/#layout-xaxis-showgrid
+                        yaxis = list(           # layout's yaxis is a named list. List of valid keys: /r/reference/#layout-yaxis
+                          title = input$input_tablebrowser_y_axis)     # yaxis's title: /r/reference/#layout-yaxis-title
+                      )
+
+                      dev.off()
+
+                      p
+                    })
+                  }
+                }# rrbs or idat if else ends here
 
                 # Make sure it closes when we exit this reactive, even if there's an error
                 on.exit(progress$close())
-                dev.off()
 
-                p
-              }
 
-            }
+              }# file check else
+
+            }# check for NA
 
         }
       }
-    })
+
 
   })
 
@@ -4909,6 +5001,80 @@ observeEvent(input$cb_ts_comp_venn, {
 #
 #
 # })
+
+  output$testingPlotly <- renderPlot({
+
+
+    x <- runif(100000 , 0 , 1)
+    y <- runif(100000 ,  0, 1)
+
+    # Create a Progress object
+    progress <- shiny::Progress$new()
+
+    progress$set(message = "Drawing test plot", value = 50)
+
+
+    qq.value <- as.character('20150212_NeuronPD_SBvsBN_reports')
+
+    qq.dir <- file.path('/var/www/html/data', qq.value)
+
+    f = paste("diffMethTable_site_cmp1", ".csv",sep = '')
+    filename <- file.path(qq.dir, 'differential_methylation_data',f)
+
+
+    filename= as.character(filename)
+
+    # fread function from the library data.table
+    list.diff.p.values <- fread(filename,sep = ",", select = c("diffmeth.p.val"))
+
+    # converting the data into list so that it can be plotted
+    #options(scipen=100)
+    list.diff.p.values <- round(as.matrix(list.diff.p.values),digits=3)
+
+
+    x <- list.diff.p.values
+    #x <- runif(x , 0 , 1)
+
+    pdf(NULL)
+
+    # The summary data frame ds is used to plot larger red points on top
+    # of the raw data. Note that we don't need to supply `data` or `mapping`
+    # in each layer because the defaults from ggplot() are used.
+#     p <- ggplot(data)
+#     p <- p + stat_qq(aes(sample = x),distribution = stats::qunif)
+
+    #p <- ggplot(data, aes(sample = data$x)) + stat_qq(color="firebrick2", alpha=1) + geom_abline(intercept = mean(data$x), slope = sd(data$x))
+
+
+    gg_qqplot <- function(ps,ps1, ci = 0.95) {
+      N  <- length(ps)
+      #N  <- max(length(ps),length(ps1))
+      df <- data.frame(
+        observed = -log10(sort(ps)),
+        #observed1 = -log10(sort(ps1)),
+        expected = -log10(1:N / N),
+        clower   = -log10(qbeta(ci,     1:N, N - 1:N + 1)),
+        cupper   = -log10(qbeta(1 - ci, 1:N, N - 1:N + 1))
+      )
+      log10Pe <- expression(paste("Expected -log"[10], plain(P)))
+      log10Po <- expression(paste("Observed -log"[10], plain(P)))
+      ggplot(df) +
+        geom_point(aes(expected, observed), shape = 1, size = 3) +
+        #geom_point(aes(expected, observed1), shape = 1, size = 3) +
+        geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
+        geom_line(aes(expected, cupper), linetype = 2) +
+        geom_line(aes(expected, clower), linetype = 2, color = 'red') +
+        xlab(log10Pe) +
+        ylab(log10Po)
+    }
+
+    p <- gg_qqplot(x,y)
+    dev.off()
+
+    #closing the progress bar
+    on.exit(progress$close())
+    p
+  }, width = 600, height = 600)
 
 })
 
