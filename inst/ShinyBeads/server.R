@@ -3123,7 +3123,7 @@ output$testingcompqqplot <- renderPlot({
 
                     output$basicfilteredplot <- renderPlot({
                       return ()
-                    })
+                    },height = "0")
 
                     output$filteredplotly <- renderPlotly({
 
@@ -3209,7 +3209,7 @@ output$testingcompqqplot <- renderPlot({
                   else{
                     output$basicfilteredplot <- renderPlot({
                       return ()
-                    })
+                    },height = "0")
                     output$filteredplotly <- renderPlotly({
 
                       pdf(NULL)
