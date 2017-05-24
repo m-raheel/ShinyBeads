@@ -22,7 +22,7 @@ To run the applicaiton:
     
     
 You can view a [live interactive
-demo](http://internal.genetik.uni-sb.de/shiny/RnShinyBeads/) to see some of
+demo](http://internal.genetik.uni-sb.de/shiny/ShinyBeads/) to see some of
 its functionality.
 
 More information will be updated soon.

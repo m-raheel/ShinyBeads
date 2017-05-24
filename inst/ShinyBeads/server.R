@@ -16,8 +16,8 @@ library(XML)
 library(data.table) # using the function fread for reading large csv files
 library(lattice)# using qqunif.plot
 library(plotly) #interactive graphics with D3
-#library(ShinyBeads, lib.loc = "/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4")
-library(ShinyBeads)
+library(ShinyBeads, lib.loc = "/home/users/mraheel/R/x86_64-pc-linux-gnu-library/3.4")
+#library(ShinyBeads)
 library(plyr)
 library(shinydashboard)
 library(limma)
@@ -114,9 +114,9 @@ shinyServer(function(input, output, session) {
 
   # comment uncomment to use dynamic path of the repository
   # .global.analysisDir is the path to the RnBeads repository selected before running shiny app
-  updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
+  #updatedDir <- normalizePath(.global.analysisDir, winslash = "\\", mustWork = NA)
 
-  #updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
+  updatedDir <- normalizePath("/var/www/html/data", winslash = "\\", mustWork = NA)
   #updatedDir <- normalizePath("/projects/factorization/raw_data/Demo_Repository", winslash = "\\", mustWork = NA)
 
   selectedDir <-  as.character(updatedDir)
