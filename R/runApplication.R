@@ -6,15 +6,12 @@
 
 runApplication <- function(wd)
 {
-
-
     analysisDir <- wd
     if (!nchar(analysisDir)) {
       print("No directory was selected!")
     } else {
 
       choices <- list.files(path = analysisDir)
-
 
       total.analysis.list <- list()
       counter <- 1
@@ -30,8 +27,6 @@ runApplication <- function(wd)
 
         }
       }
-
-
       if (check == TRUE){
         .GlobalEnv$.global.analysisDir <- analysisDir
         on.exit(rm(.global.analysisDir, envir=.GlobalEnv))
@@ -48,14 +43,5 @@ runApplication <- function(wd)
         print(paste("Not a valid RnBeads repository -> ", analysisDir))
 
       }
-
-
     }
-
-
-
-
-
-
-
 }
