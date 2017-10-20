@@ -3,6 +3,8 @@
 language: R
 sudo: false
 cache: packages
+r: bioc-release
 branches:
   only:
     - master
+warnings_are_erros: false
