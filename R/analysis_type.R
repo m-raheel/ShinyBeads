@@ -6,6 +6,7 @@
 #'
 #' Takes in a working directory and analysis name and return the analysis data type of a specified analysis from the table in data_import.html file
 #' @param wd path to the rnbeads results directory and analysis.name is the selected analysis
+#' @param name of the RnBeads generated report (root directory name)
 #' @return text containg idat identifier to check and declare idat analysis or not
 #' @export
 

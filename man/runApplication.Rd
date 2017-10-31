@@ -2,11 +2,11 @@
 % Please edit documentation in R/runApplication.R
 \name{runApplication}
 \alias{runApplication}
-\title{Launch RnShinyBeads app}
+\title{Launch ShinyBeads app}
 \usage{
-runApplication()
+runApplication(wd)
 }
 \description{
-Run the RnShinyBeads application
+Run the ShinyBeads application
 }
 

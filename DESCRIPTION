@@ -10,7 +10,8 @@ URL: https://github.com/m-raheel/ShinyBeads
 BugReports: https://github.com/m-raheel/ShinyBeads/issues
 Depends: R (>= 3.1.0)
 Imports:  shiny, shinyjs, DT, data.table, plotly, shinydashboard, limma, plyr, ggplot2,lattice
-Suggests:  rmarkdown
+Suggests:  rmarkdown, knitr
 License: MIT
 LazyData: TRUE
+VignetteBuilder: knitr
 RoxygenNote: 5.0.1

@@ -53,6 +53,7 @@ rnbi.qqplot.single <- function(x) {
 #' convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
 #'
 #' @param x a dataframe of differential methlytion p-value
+#' @param p column consist of differential methylation p-values
 #' @return return an object of class qqplot.data which will be used to draw qqplot .
 #' @export
 
@@ -149,6 +150,7 @@ rnbi.qqplot.single.rrbs <- function(x) {
 #' convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
 #'
 #' @param x a dataframe of differential methlytion p-value
+#' @param p column consist of differential methylation p-values
 #' @return return an object of class qqplot.data which will be used to draw qqplot for RRBS analysis
 #' @export
 
@@ -248,6 +250,7 @@ rnbi.qqplot.double <- function(x,y) {
 #'
 #' @param x a dataframe of differential methlytion p-value from one analysis
 #' @param y a dataframe of differential methlytion p-value from second analysis
+#' @param p column consist of differential methylation p-values
 #' @return return an object of class qqplot.data which will be used to draw qqplot for two analysis
 #' @export
 
@@ -375,6 +378,7 @@ rnbi.qqplot.double.rrbs <- function(x,y) {
 #'
 #' @param x a dataframe of differential methlytion p-value from one analysis
 #' @param y a dataframe of differential methlytion p-value from second analysis
+#' @param p column consist of differential methylation p-values
 #' @return return an object of class qqplot.data which will be used to draw qqplot for two RRBS analysis
 #' @export
 
@@ -556,6 +560,19 @@ rnbi.qqplot.data.static.rrbs <- function(wd,f) {
 #'
 #' Takes in a p-values
 #' @param pvalues p-values
+#' @param should.thin
+#' @param thin.obs.places
+#' @param thin.exp.places
+#' @param xlab
+#' @param ylab
+#' @param draw.conf
+#' @param conf.points
+#' @param conf.col
+#' @param conf.alpha
+#' @param already.transformed
+#' @param pch
+#' @param prepanel
+#' @param par.settings
 #' @return functiont to draw qqplot
 #' @export
 
