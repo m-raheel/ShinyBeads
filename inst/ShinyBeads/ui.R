@@ -680,7 +680,7 @@ body <- dashboardBody(
 
                                div(id="id_tb_filterPlot_Btn",
                                    tags$h2(style="color:black;","Filtered Plot"),
-                                   tags$p("Customize the plot by selecting x-axis and y-axis from the options. The plot will contains data from the above table."),
+                                   tags$p("Customize the plot by selecting x-axis and y-axis from the options. The plot will contains data from the above table. If the table data is quite big then please wait for some time untill the plot is displayed"),
 
                                    fluidRow(
                                      column(width = 3,

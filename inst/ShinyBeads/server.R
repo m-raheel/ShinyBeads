@@ -2386,15 +2386,49 @@ output$testingcompqqplot <- renderPlot({
                 q
               }
               else{
-                p <- rnbi.qqplot.double.rrbs(x,y)
+                q <- tryCatch({
 
-                q <- plotly::ggplotly(p)%>%
-                  layout(
-                    autosize = FALSE,
-                    width = 720,
-                    height =  600
+                  p <- rnbi.qqplot.double.rrbs(x,y)
 
-                  )
+                  q <- plotly::ggplotly(p)%>%
+                    layout(
+                      autosize = FALSE,
+                      width = 720,
+                      height =  600
+
+                    )
+
+                },error = function(err) {
+
+                  # error handler picks up where error was generated
+                  print(paste("MY_ERROR:  ",err))
+
+                  pdf(NULL)
+                  data <- c(paste("Error occured! Please try again.. Details -> ", err))
+                  x <- c(0.5 )
+                  y <- c(0.5)
+
+                  data <- data.frame(data, x, y)
+
+                  pdf(NULL)
+                  q <- plot_ly(data,x = ~x, y = ~y, type = 'scatter',
+                               mode = 'text', text = ~data, textposition = 'middle center',
+                               textfont = list(color = '#000000', size = 12))%>%
+                    layout(title = 'Q-Q Plot',
+                           xaxis = list(title = ')',
+                                        zeroline = TRUE,
+                                        range = c(0, 1)),
+                           yaxis = list(title = '',
+                                        range = c(0,1)))
+
+
+                  dev.off()
+                  on.exit(progress$close())
+                  q
+
+
+                }) # END tryCatch
+
               }
 
             }
@@ -2507,14 +2541,43 @@ output$testingcompqqplot <- renderPlot({
             # Create a Progress object
             progress <- shiny::Progress$new()
 
-            progress$set(message = "Making static qqplot! please wait..", value = 50)
+            progress$set(message = "Making qqplot! please wait..", value = 50)
 
-            pdf(NULL)
-            #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
-            my.pvalue.list<-list("Analysis_1"=x, "Analysis_2"=y)
-            q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)), aspect="fill")
+            q <- tryCatch({
 
-            dev.off()
+              pdf(NULL)
+              #qqplot(x,y,main="Normal Q-Q Plot", xlab="diffmeth.p.val 1", ylab="diffmeth.p.val 2")
+              my.pvalue.list<-list("Analysis_1"=x, "Analysis_2"=y)
+              # omitting the NA values
+              my.pvalue.list <- lapply(my.pvalue.list, function(x) x[!is.na(x)])
+              q <- qqunif.plot(my.pvalue.list, auto.key=list(corner=c(.95,.05)), aspect="fill")
+
+              dev.off()
+
+
+              q
+
+            },error = function(err) {
+
+              # error handler picks up where error was generated
+              print(paste("MY_ERROR:  ",err))
+
+              pdf(NULL)
+              data <- c(paste("Error occured! Please try again.. Details -> ", err))
+
+              # Define the cars vector with 5 values
+              cars <- c(1,2)
+
+              # Graph the cars vector with all defaults
+              q <- plot(cars)
+
+              dev.off()
+              on.exit(progress$close())
+              q
+
+
+            }) # END tryCatch
+
 
             # Make sure it closes when we exit this reactive, even if there's an error
             on.exit(progress$close())
