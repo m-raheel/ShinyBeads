@@ -15,4 +15,3 @@ list of rnbeads modules performed
 \description{
 Takes in a working directory and returns a list of rnbeads modules performed for RRBS analysis
 }
-

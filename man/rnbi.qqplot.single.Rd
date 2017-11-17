@@ -16,4 +16,3 @@ return a plot object which can be used to draw qqplot of p-values using plotly
 Draw the qqplot for single data for idat analysis
 Takes in a differential methlytion p-value data frame and return a plot object which can be used to draw qqplot of p-values using plotly
 }
-

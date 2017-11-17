@@ -8,6 +8,8 @@ rnbi.analysis.datatype(wd, analysis.name)
 }
 \arguments{
 \item{wd}{path to the rnbeads results directory and analysis.name is the selected analysis}
+
+\item{analysis.name}{of the RnBeads generated report (root directory name)}
 }
 \value{
 text containg idat identifier to check and declare idat analysis or not
@@ -20,4 +22,3 @@ return the analysis data type of a specified analysis from the table in data_imp
 
 Takes in a working directory and analysis name and return the analysis data type of a specified analysis from the table in data_import.html file
 }
-

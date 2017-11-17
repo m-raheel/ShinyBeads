@@ -21,4 +21,3 @@ rnbi.qqplot.double.rrbs
  For RRBS analysis
 draw qqplot for two analysis
 }
-

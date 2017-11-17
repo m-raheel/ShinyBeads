@@ -21,4 +21,3 @@ dataframe of the data read from csv file
 \description{
 Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the Logical (True, False) results used for Venn Diagram purpose.
 }
-

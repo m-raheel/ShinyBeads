@@ -10,10 +10,38 @@ qqunif.plot(pvalues, should.thin = T, thin.obs.places = 2,
   " p-value)")), draw.conf = TRUE, conf.points = 1000,
   conf.col = "lightgray", conf.alpha = 0.05, already.transformed = FALSE,
   pch = 20, aspect = "fill", prepanel = prepanel.qqunif,
-  par.settings = list(superpose.symbol = list(pch = pch)), ...)
+  par.settings = list(superpose.symbol = list(pch = pch)))
 }
 \arguments{
 \item{pvalues}{p-values}
+
+\item{should.thin}{thining}
+
+\item{thin.obs.places}{thining observed}
+
+\item{thin.exp.places}{thining expected}
+
+\item{xlab}{x-axis label}
+
+\item{ylab}{y-axis label}
+
+\item{draw.conf}{draw the conf}
+
+\item{conf.points}{points}
+
+\item{conf.col}{columns}
+
+\item{conf.alpha}{alpha}
+
+\item{already.transformed}{transformation}
+
+\item{pch}{pch}
+
+\item{aspect}{aspect}
+
+\item{prepanel}{prepanel}
+
+\item{par.settings}{settings}
 }
 \value{
 functiont to draw qqplot
@@ -21,4 +49,3 @@ functiont to draw qqplot
 \description{
 Takes in a p-values
 }
-

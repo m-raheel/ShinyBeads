@@ -15,4 +15,3 @@ return an object to draw the qqplot for single data for RRBS analysis
 \description{
 Draw the qqplot for single data for RRBS analysis
 }
-

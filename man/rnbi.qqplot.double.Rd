@@ -17,4 +17,3 @@ return an object to draw qqplot for two analysis simultaneously using plotly
 \description{
 draw qqplot for two analysis
 }
-

@@ -4,12 +4,14 @@
 \alias{rnbi.qqplot.data.double}
 \title{rnbi.qqplot.data.double}
 \usage{
-rnbi.qqplot.data.double(x, y, p = "diffmeth.p.val", ...)
+rnbi.qqplot.data.double(x, y, p = "diffmeth.p.val")
 }
 \arguments{
 \item{x}{a dataframe of differential methlytion p-value from one analysis}
 
 \item{y}{a dataframe of differential methlytion p-value from second analysis}
+
+\item{p}{column consist of differential methylation p-values}
 }
 \value{
 return an object of class qqplot.data which will be used to draw qqplot for two analysis
@@ -17,4 +19,3 @@ return an object of class qqplot.data which will be used to draw qqplot for two 
 \description{
 convert the p-values of the two analysis in to an object of class qqplot.data which will be used to draw qqplot.
 }
-

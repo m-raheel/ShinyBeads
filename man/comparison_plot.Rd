@@ -8,6 +8,8 @@ comparison_plot(wd, f)
 }
 \arguments{
 \item{wd}{path to the rnbeads results directory where csv files are located and name of csv file}
+
+\item{f}{differential methylation csv file}
 }
 \value{
 list of p values
@@ -15,4 +17,3 @@ list of p values
 \description{
 Takes in a working directory and csv file name and returns a list of differential methylation p values from the comparisons csv files located in differential_methylation_data dir of Rnbeads Analysis
 }
-

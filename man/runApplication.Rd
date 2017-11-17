@@ -6,7 +6,9 @@
 \usage{
 runApplication(wd)
 }
-\description{
-Run the ShinyBeads application
+\arguments{
+\item{wd}{A path to the rnbeads analysis folder}
 }
-
+\description{
+Takes in a results directory and Run the ShinyBeads application
+}

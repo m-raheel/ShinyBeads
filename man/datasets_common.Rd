@@ -15,4 +15,3 @@ list of directories
 \description{
 Takes in a results directory and returns a list of grouped directories that used the same set of datasets
 }
-

@@ -10,6 +10,8 @@ rnbi.qqplot.data.single(x, p = "P")
 }
 \arguments{
 \item{x}{a dataframe of differential methlytion p-value}
+
+\item{p}{column consist of differential methylation p-values}
 }
 \value{
 return an object of class qqplot.data which will be used to draw qqplot .
@@ -19,4 +21,3 @@ rnbi.qqplot.data.single
 For Idat analysis
 convert the p-values of a one analysis in to an object of class qqplot.data which will be used to draw qqplot .
 }
-

@@ -256,9 +256,7 @@ rnbi.qqplot.double <- function(x,y) {
 
 
 rnbi.qqplot.data.double <- function(x,y,
-                                    p = "diffmeth.p.val",
-
-                                    ...) {
+                                    p = "diffmeth.p.val") {
 
   x <- data.frame(P = x[[p]], cgid = x[["cgid"]])
   y <- data.frame(P = y[[p]], cgid = y[["cgid"]])
@@ -383,9 +381,7 @@ rnbi.qqplot.double.rrbs <- function(x,y) {
 #' @export
 
 rnbi.qqplot.data.double.rrbs <- function(x,y,
-                                         p = "diffmeth.p.val",
-
-                                         ...) {
+                                         p = "diffmeth.p.val") {
 
   x <- data.frame(P = x[[p]], Chromosome = x[["Chromosome"]])
   y <- data.frame(P = y[[p]], Chromosome = y[["Chromosome"]])
@@ -560,19 +556,20 @@ rnbi.qqplot.data.static.rrbs <- function(wd,f) {
 #'
 #' Takes in a p-values
 #' @param pvalues p-values
-#' @param should.thin
-#' @param thin.obs.places
-#' @param thin.exp.places
-#' @param xlab
-#' @param ylab
-#' @param draw.conf
-#' @param conf.points
-#' @param conf.col
-#' @param conf.alpha
-#' @param already.transformed
-#' @param pch
-#' @param prepanel
-#' @param par.settings
+#' @param should.thin thining
+#' @param thin.obs.places thining observed
+#' @param thin.exp.places thining expected
+#' @param xlab x-axis label
+#' @param ylab y-axis label
+#' @param draw.conf draw the conf
+#' @param conf.points points
+#' @param conf.col columns
+#' @param conf.alpha alpha
+#' @param already.transformed transformation
+#' @param pch pch
+#' @param aspect aspect
+#' @param prepanel prepanel
+#' @param par.settings settings
 #' @return functiont to draw qqplot
 #' @export
 
@@ -582,7 +579,7 @@ qqunif.plot<-function(pvalues,
                       ylab=expression(paste("Observed (",-log[10], " p-value)")),
                       draw.conf=TRUE, conf.points=1000, conf.col="lightgray", conf.alpha=.05,
                       already.transformed=FALSE, pch=20, aspect="fill", prepanel=prepanel.qqunif,
-                      par.settings=list(superpose.symbol=list(pch=pch)), ...) {
+                      par.settings=list(superpose.symbol=list(pch=pch))) {
 
 
   #error checking
@@ -636,8 +633,8 @@ qqunif.plot<-function(pvalues,
 
 
   #this is a helper function to draw the confidence interval
-  panel.qqconf<-function(n, conf.points=1000, conf.col="gray", conf.alpha=.05, ...) {
-    require(grid)
+  panel.qqconf<-function(n, conf.points=1000, conf.col="gray", conf.alpha=.05) {
+    requireNamespace(grid)
     conf.points = min(conf.points, n-1);
     mpts<-matrix(nrow=conf.points*2, ncol=2)
     for(i in seq(from=1, to=conf.points)) {
@@ -665,7 +662,7 @@ qqunif.plot<-function(pvalues,
   }
   gc()
 
-  prepanel.qqunif= function(x,y,...) {
+  prepanel.qqunif= function(x,y) {
     A = list()
     A$xlim = range(x,y)*1.02
     #A$xlim[1]=0
@@ -676,14 +673,14 @@ qqunif.plot<-function(pvalues,
   #draw the plot
   xyplot(pvalues~exp.x, groups=grp, xlab=xlab, ylab=ylab, aspect=aspect,
          prepanel=prepanel, scales=list(axs="i"), pch=pch,
-         panel = function(x, y, ...) {
+         panel = function(x, y) {
            if (draw.conf) {
              panel.qqconf(n, conf.points=conf.points,
                           conf.col=conf.col, conf.alpha=conf.alpha)
            };
-           panel.xyplot(x,y, ...);
+           panel.xyplot(x,y);
            panel.abline(0,1);
-         }, par.settings=par.settings, ...
+         }, par.settings=par.settings
   )
 
 }

@@ -24,4 +24,3 @@ dataframe of the data read from csv file
 rnbi.read.comparisondata
 Reads the comparison csv file under differential_methylation_data folder of the selected analysis and returns the results.
 }
-

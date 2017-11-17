@@ -16,4 +16,3 @@ list of analysis found
 \description{
 Takes in a results directory and returns a list of analysis found in that directories
 }
-

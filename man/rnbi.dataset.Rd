@@ -20,4 +20,3 @@ return the list of datasets/sample sheet used in the RnBeads analysis found in t
 
 Takes in a results directory and returns the list of total common and uncommon datasets/sample sheet used in the RnBeads analysis found in the given path
 }
-
